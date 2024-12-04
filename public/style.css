@@ -1,0 +1,256 @@
+html {
+    position: relative;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Adjusted", "Segoe UI", "Liberation Sans", sans-serif;
+    background-color: black;
+    color: white;
+    max-width: 640px;
+    margin: auto;
+    padding: 0 20px;
+    text-align: center;
+    min-height: 100vh;
+    align-content: center;
+    text-shadow: -1px -1px 0 #000,
+                 0 -1px 0 #000,
+                 1px -1px 0 #000,
+                 1px 0 0 #000,
+                 1px 1px 0 #000,
+                 0 1px 0 #000,
+                 -1px 1px 0 #000,
+                 -1px 0 0 #000;
+    letter-spacing: 2px;
+    font-size: 14px;
+    line-height: 21px;
+    position: relative;
+    color-scheme: dark;
+}
+
+body.landing-page, body.page-not-found {
+    background: #222;
+}
+
+body.page-not-found img {
+    max-width: 100%;
+}
+
+#background-image {
+    position: fixed;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    opacity: 50%;
+    filter: blur(5px);
+}
+
+#content, #settings {
+    position: relative;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    align-content: center;
+}
+
+h1, .title {
+    line-height: 16px;
+    text-align: center;
+}
+
+a.button {
+    text-decoration: none;
+    color: white;
+    display: block;
+    width: 200px;
+    border: 1px solid white;
+    border-radius: 5px;
+    background: #444;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+a.button:hover {
+    box-shadow: 0 0 5px white;
+    background: #555;
+}
+
+a.button:active {
+    background: #444;
+    box-shadow: 0 0 5px black, 0 0 5px black inset;
+    position: relative;
+    top: 2px;
+}
+
+.info {
+    width: fit-content;
+    margin: 2em auto;
+    text-align: left;
+}
+
+.bonus-info, .mono.bonus-info {
+    color: #a0a0a0;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.mono, .player-list {
+    color: white;
+    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+    font-weight: bold;
+    font-size: 18px;
+    text-shadow: -1px -1px 0 #000,
+                 0 -1px 0 #000,
+                 1px -1px 0 #000,
+                 1px 0 0 #000,
+                 1px 1px 0 #000,
+                 0 1px 0 #000,
+                 -1px 1px 0 #000,
+                 -1px 0 0 #000;
+    letter-spacing: 2px;
+}
+
+.player-list {
+    margin: auto;
+    border-spacing: 10px 20px;
+}
+
+th.score, th.ping {
+    font-size: 10px;
+}
+
+.black {
+    color: black;
+}
+.red {
+    color: red;
+}
+.green {
+    color: limegreen;
+}
+.yellow {
+    color: yellow;
+}
+.blue {
+    color: blue;
+}
+.cyan {
+    color: cyan;
+}
+.magenta {
+    color: magenta;
+}
+.white {
+    color: white;
+}
+.orange {
+    color: orangered;
+}
+.gray {
+    color: gray;
+}
+
+.black, .blue {
+    text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.5),
+                 0 -1px 0 rgba(255, 255, 255, 0.5),
+                 1px -1px 0 rgba(255, 255, 255, 0.5),
+                 1px 0 0 rgba(255, 255, 255, 0.5),
+                 1px 1px 0 rgba(255, 255, 255, 0.5),
+                 0 1px 0 rgba(255, 255, 255, 0.5),
+                 -1px 1px 0 rgba(255, 255, 255, 0.5),
+                 -1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+td {
+    text-align: right;
+}
+
+td:first-child {
+    text-align: left;
+    word-break: break-word;
+}
+
+#refreshed-footer {
+    margin-top: 2em;
+}
+
+#refreshed-footer, #settings-footer, #settings {
+    display: none; /* Displayed by JavaScript */
+}
+
+#open-settings {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#setting-grid {
+    display: grid;
+    grid-template-columns: auto; /* Only 1 column in mobile view */
+    grid-gap: 5px;
+    text-align: left;
+    width: fit-content;
+    margin: auto;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 14px;
+}
+
+select, button {
+    padding: 5px 10px;
+    color: white;
+    background: #222;
+    border: 1px solid #808080;
+    border-radius: 5px;
+    font-size: 14px;
+    max-width: 280px;
+}
+
+input[type=range], input[type=color] {
+    vertical-align: middle;
+}
+
+.disabled {
+    opacity: 50%;
+}
+
+.form-button-span {
+    text-align: right;
+}
+
+@media (min-width: 640px) {
+    body, .bonus-info, .mono.bonus-info {
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    h1, .title {
+        line-height: 24px;
+    }
+
+    .mono, .player-list {
+        font-size: 24px;
+        line-height: 24px;
+    }
+
+    th.score, th.ping {
+        font-size: 24px;
+    }
+
+    #setting-grid {
+        grid-template-columns: auto auto;
+        grid-gap: 10px;
+    }
+
+    label {
+        margin-top: 0;
+    }
+}
