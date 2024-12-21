@@ -61,7 +61,7 @@
                         <br/>
                         <span class="bonus-info">
                             (<?= (int)$nb_humans?>&nbsp;<?= ($nb_humans === 1) ? 'human' : 'humans'?>
-                            +&nbsp;<?= (int)$nb_bots ?>&nbsp;bots)
+                            +&nbsp;<?= (int)$nb_bots ?>&nbsp;<?= ($nb_bots === 1) ? 'bot' : 'bots'?>)
                         </span>
                     <?php endif; ?>
                     <br/>
