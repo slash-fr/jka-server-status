@@ -4,8 +4,8 @@
         <meta charset="utf-8"/>
         <title>
             JKA Server Status
-            <?php if (isset($qstat->server->name)): ?>
-                - <?= htmlspecialchars(strip_colors($qstat->server->name)) ?>
+            <?php if (isset($data['server_name'])): ?>
+                - <?= htmlspecialchars(strip_colors($data['server_name'])) ?>
             <?php endif; ?>
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,34 +29,36 @@
         <input type="hidden" id="default-background-image" value="<?= $default_background_image_url ?>?version=1" />
 
         <div id="content">
-            <?php if (isset($qstat->server->name)): ?>
-                <h1><?= format_name(trim($qstat->server->name, '€')); ?></h1>
+            <?php if (isset($data['server_name'])): ?>
+                <h1><?= format_name(trim($data['server_name'], '€')); ?></h1>
             <?php else: ?>
                 <h1><span class="mono white">JKA Server Status</span></h1>
             <?php endif; ?>
             
             <p class="info"> 
-                <strong>Address:</strong> <?= htmlspecialchars($qstat->server['address'] ?? 'ERROR'); ?><br/>
+                <strong>Address:</strong> <?= htmlspecialchars($data['address']); ?><br/>
 
                 <strong>Status:</strong>
-                <?php if ($qstat->server['status'] == 'UP'): ?>
+                <?php if ($data['status'] == 'UP'): ?>
                     ✅
                 <?php else: ?>
                     ❌
                 <?php endif; ?>
-                <?= htmlspecialchars($qstat->server['status'] ?? 'ERROR'); ?><br/>
+                <?= htmlspecialchars($data['status']); ?><br/>
 
-                <?php if (isset($qstat->server->map)): ?>
-                    <strong>Map:</strong> <?= htmlspecialchars($qstat->server->map); ?><br/>
+                <?php if (isset($data['map'])): ?>
+                    <strong>Map:</strong> <?= htmlspecialchars($data['map']); ?><br/>
                 <?php endif; ?>
 
+                <?php /* Oops. Raw mode doesn't give us the gametype
                 <?php if (isset($qstat->server->gametype)): ?>
                     <strong>Game type:</strong> <?= htmlspecialchars($qstat->server->gametype); ?><br/>
                 <?php endif; ?>
+                */?>
 
-                <?php if (isset($qstat->server->numplayers) && isset($qstat->server->maxplayers)): ?>
+                <?php if (isset($data['nb_players']) && isset($data['max_players'])): ?>
                     <strong>Players:</strong>
-                    <?= (int)$qstat->server->numplayers ?> / <?= (int)$qstat->server->maxplayers ?>
+                    <?= (int)$data['nb_players'] ?> / <?= (int)$data['max_players'] ?>
                     <?php if($nb_bots): ?>
                         <br/>
                         <span class="bonus-info">
@@ -68,17 +70,17 @@
                 <?php endif; ?>
             </p>
 
-            <?php if (isset($qstat->server->numplayers) && $qstat->server->numplayers > 0): ?>
+            <?php if (isset($data['nb_players']) && $data['nb_players'] > 0): ?>
                 <table class="player-list">
                     <thead>
                         <tr><th>Name</th><th class="score">Score</th><th class="ping">Ping</th></tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($players as $player): ?>
+                        <?php foreach ($data['players'] as $player): ?>
                             <tr>
-                                <td><?= format_name($player->name ?? ''); ?></td>
-                                <td><?= htmlspecialchars($player->score ?? '0'); ?></td>
-                                <td><?= htmlspecialchars($player->ping ?? 'N/A'); ?></td>
+                                <td><?= format_name($player['name']); ?></td>
+                                <td><?= htmlspecialchars($player['score']); ?></td>
+                                <td><?= htmlspecialchars($player['ping']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

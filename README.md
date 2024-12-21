@@ -49,7 +49,6 @@ Minimum required packages on Debian 12:
 ```sh
 sudo apt install nginx-light
 sudo apt install php-fpm
-sudo apt install php-xml
 ```
 
 ## License
