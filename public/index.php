@@ -2,10 +2,6 @@
 
 require_once __DIR__ . '/../src/functions.php';
 
-// Path to QStat binary:
-//define('QSTAT_BINARY', 'quakestat'); // If "quakestat" is in your PATH
-define('QSTAT_BINARY', __DIR__ . '/../bin/qstat'); // If "qstat" is in the "bin" folder
-
 // Root URL (trailing slash required):
 define('ROOT_URL', '/'); // e.g. "/server-status/" if you're hosting the script in a subfolder of your actual web root
 

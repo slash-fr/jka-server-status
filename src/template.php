@@ -4,8 +4,8 @@
         <meta charset="utf-8"/>
         <title>
             JKA Server Status
-            <?php if (isset($data['server_name'])): ?>
-                - <?= htmlspecialchars(strip_colors($data['server_name'])) ?>
+            <?php if (isset($data['cvars']['sv_hostname'])): ?>
+                - <?= htmlspecialchars(strip_colors($data['cvars']['sv_hostname'])) ?>
             <?php endif; ?>
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,51 +22,55 @@
         <noscript>
             <!-- If JavaScript is enabled, let main.js add the background image, -->
             <!-- to avoid fetching an image that might not get displayed (depending on the user's settings). -->
-            <div id="background-image" style="background-image: url(<?= $background_image_url ?>?version=1)" /></div>
+            <div id="background-image" style="background-image: url(<?= $data['background_image_url'] ?>?version=1)" /></div>
             <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
         </noscript>
-        <input type="hidden" id="current-background-image" value="<?= $background_image_url ?>?version=1" />
-        <input type="hidden" id="default-background-image" value="<?= $default_background_image_url ?>?version=1" />
+        <input type="hidden" id="current-background-image" value="<?= $data['background_image_url'] ?>?version=1" />
+        <input type="hidden" id="default-background-image" value="<?= $data['default_background_image_url'] ?>?version=1" />
 
         <div id="content">
-            <?php if (isset($data['server_name'])): ?>
-                <h1><?= format_name(trim($data['server_name'], '€')); ?></h1>
+            <?php if (isset($data['cvars']['sv_hostname'])): ?>
+                <h1><?= format_name($data['cvars']['sv_hostname']); ?></h1>
             <?php else: ?>
                 <h1><span class="mono white">JKA Server Status</span></h1>
             <?php endif; ?>
             
             <p class="info"> 
-                <strong>Address:</strong> <?= htmlspecialchars($data['address']); ?><br/>
+                <label>Address:</label> <span><?= htmlspecialchars($data['address']); ?></span>
 
-                <strong>Status:</strong>
-                <?php if ($data['status'] == 'UP'): ?>
-                    ✅
-                <?php else: ?>
-                    ❌
-                <?php endif; ?>
-                <?= htmlspecialchars($data['status']); ?><br/>
-
-                <?php if (isset($data['map'])): ?>
-                    <strong>Map:</strong> <?= htmlspecialchars($data['map']); ?><br/>
-                <?php endif; ?>
-
-                <?php /* Oops. Raw mode doesn't give us the gametype
-                <?php if (isset($qstat->server->gametype)): ?>
-                    <strong>Game type:</strong> <?= htmlspecialchars($qstat->server->gametype); ?><br/>
-                <?php endif; ?>
-                */?>
-
-                <?php if (isset($data['nb_players']) && isset($data['max_players'])): ?>
-                    <strong>Players:</strong>
-                    <?= (int)$data['nb_players'] ?> / <?= (int)$data['max_players'] ?>
-                    <?php if($nb_bots): ?>
-                        <br/>
-                        <span class="bonus-info">
-                            (<?= (int)$nb_humans?>&nbsp;<?= ($nb_humans === 1) ? 'human' : 'humans'?>
-                            +&nbsp;<?= (int)$nb_bots ?>&nbsp;<?= ($nb_bots === 1) ? 'bot' : 'bots'?>)
-                        </span>
+                <label>Status:</label>
+                <span>
+                    <?php if ($data['is_up']): ?>
+                        ✅
+                    <?php else: ?>
+                        ❌
                     <?php endif; ?>
-                    <br/>
+                    <?= htmlspecialchars($data['status']); ?>
+                </span>
+
+                <?php if (isset($data['cvars']['mapname'])): ?>
+                    <label>Map:</label> <span><?= htmlspecialchars($data['cvars']['mapname']); ?></span>
+                <?php endif; ?>
+
+                <?php if (isset($data['game_type'])): ?>
+                    <label>Game type:</label> <span><?= htmlspecialchars($data['game_type']); ?></span>
+                <?php endif; ?>
+
+                <?php if (isset($data['cvars']['gamename'])): ?>
+                    <label>Mod:</label> <span><?= format_name($data['cvars']['gamename'], false); ?></span>
+                <?php endif; ?>
+
+                <?php if (isset($data['nb_players'])): ?>
+                    <label>Players:</label>
+                    <span>
+                        <?= (int)$data['nb_players'] ?>
+                        <?php if (isset($data['cvars']['sv_maxclients'])): ?>
+                            / <?= (int)$data['cvars']['sv_maxclients'] ?>
+                        <?php endif; ?>
+                        <?php if (isset($data['nb_humans'])): ?>
+                            <span class="bonus-info">(<?= $data['nb_humans'] ?> humans)</span>
+                        <?php endif; ?>
+                    </span>
                 <?php endif; ?>
             </p>
 
@@ -88,7 +92,10 @@
             <?php endif; ?>
             <p id="refreshed-footer" class="bonus-info"></p>
             <p id="settings-footer">
-                <button id="open-settings" class="mono bonus-info">Settings…</button>
+                <button id="open-settings">⚙️ Settings</button>
+                <?php if (isset($data['cvars'])): ?>
+                    <button id="open-cvars">📃 Show raw cvars</button>
+                <?php endif; ?>
             </p>
         </div>
         <div id="settings">
@@ -132,6 +139,18 @@
                 <span class="form-button-span"><button id="close-settings">Close settings</button></span>
             </p>
         </div>
+        <?php if (isset($data['cvars'])): ?>
+            <div id="cvars">
+                <p class="title mono">📃 Raw cvars</p>
+                <div id="cvar-grid">
+                    <?php foreach ($data['cvars'] as $cvar_name => $cvar_value): ?>
+                        <label><?= htmlspecialchars($cvar_name) ?></label>
+                        <span><?= htmlspecialchars($cvar_value) ?></span>
+                    <?php endforeach; ?>
+                </div>
+                <button id="close-cvars">Close raw cvars</button>
+            </div>
+        <?php endif; ?>
         <script src="<?= ROOT_URL ?>main.js?version=1"></script>
         <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
     </body>

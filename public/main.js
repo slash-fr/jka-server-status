@@ -190,3 +190,21 @@ function updateDuration() {
         }
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Handle "Raw cvars"
+const cvarsElement = document.getElementById('cvars');
+const openCvarsButton = document.getElementById('open-cvars');
+if (openCvarsButton) {
+    openCvarsButton.addEventListener('click', function() {
+        contentElement.style.display = 'none';
+        cvarsElement.style.display = 'block';
+    });
+}
+const closeCvarsButton = document.getElementById('close-cvars');
+if (closeCvarsButton) {
+    closeCvarsButton.addEventListener('click', function() {
+        cvarsElement.style.display = 'none';
+        contentElement.style.display = 'block';
+    });
+}

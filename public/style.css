@@ -49,7 +49,7 @@ body.page-not-found img {
     filter: blur(5px);
 }
 
-#content, #settings {
+#content, #settings, #cvars {
     position: relative;
     z-index: 1;
     top: 0;
@@ -64,6 +64,7 @@ h1, .title {
     text-align: center;
 }
 
+/* a.button is used in the landing page */
 a.button {
     text-decoration: none;
     color: white;
@@ -89,7 +90,10 @@ a.button:active {
 }
 
 .info {
+    display: grid;
+    grid-template-columns: auto auto;
     width: fit-content;
+    grid-gap: 5px;
     margin: 2em auto;
     text-align: left;
 }
@@ -180,17 +184,15 @@ td:first-child {
     margin-top: 2em;
 }
 
-#refreshed-footer, #settings-footer, #settings {
+#refreshed-footer, #settings-footer, #settings, #cvars {
     display: none; /* Displayed by JavaScript */
 }
 
-#open-settings {
-    background: none;
-    border: none;
-    cursor: pointer;
+#settings-footer {
+    margin-bottom: 2em;
 }
 
-#setting-grid {
+#setting-grid, #cvar-grid {
     display: grid;
     grid-template-columns: auto; /* Only 1 column in mobile view */
     grid-gap: 5px;
@@ -199,9 +201,38 @@ td:first-child {
     margin: auto;
 }
 
+#cvar-grid {
+    text-align: center;
+    max-height: calc(100vh - 200px);
+    overflow-y: scroll;
+    background-color: rgba(0, 0, 0, 0.67);
+    border: 10px solid transparent;
+    border-right: 0;
+    border-radius: 5px;
+    padding-right: 10px;
+}
+
+#cvars {
+    max-height: 100vh;
+}
+
 label {
     font-weight: bold;
+    text-align: right;
+}
+
+#setting-grid label {
     margin-top: 14px;
+    text-align: left;
+}
+
+#cvar-grid label {
+    margin-top: 14px;
+    text-align: center;
+}
+
+#close-cvars {
+    margin-top: 32px;
 }
 
 select, button {
@@ -212,6 +243,11 @@ select, button {
     border-radius: 5px;
     font-size: 14px;
     max-width: 280px;
+    cursor: pointer;
+}
+
+select:hover, button:hover {
+    background: #333;
 }
 
 input[type=range], input[type=color] {
@@ -236,6 +272,12 @@ input[type=range], input[type=color] {
         line-height: 24px;
     }
 
+    .info {
+        grid-template-columns: 50% 50%;
+        width: auto;
+        grid-gap: 5px 10px;
+    }
+
     .mono, .player-list {
         font-size: 24px;
         line-height: 24px;
@@ -245,12 +287,23 @@ input[type=range], input[type=color] {
         font-size: 24px;
     }
 
-    #setting-grid {
+    #setting-grid, #cvar-grid {
         grid-template-columns: auto auto;
         grid-gap: 10px;
     }
 
-    label {
+    #setting-grid label {
         margin-top: 0;
+        text-align: right;
+    }
+
+    #cvar-grid {
+        text-align: left;
+        max-height: calc(100vh - 210px); /* 10px shorter in desktop mode */
+    }
+
+    #cvar-grid label {
+        margin-top: 0;
+        text-align: left;
     }
 }
