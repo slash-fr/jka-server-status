@@ -68,7 +68,9 @@
                             / <?= (int)$data['cvars']['sv_maxclients'] ?>
                         <?php endif; ?>
                         <?php if (isset($data['nb_humans'])): ?>
-                            <span class="bonus-info">(<?= $data['nb_humans'] ?> humans)</span>
+                            <span class="bonus-info">
+                                (<?= $data['nb_humans'] . ' ' . ($data['nb_humans'] == 1  ? 'human' : 'humans') ?>)
+                            </span>
                         <?php endif; ?>
                     </span>
                 <?php endif; ?>
