@@ -217,7 +217,7 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
     }
 
     // Sort cvars by cvar name
-    ksort($data['cvars']); // Sort by keys
+    ksort($data['cvars'], SORT_NATURAL | SORT_FLAG_CASE); // Sort by keys (case insensitive)
 
     global $game_types;
     if (isset($data['cvars']['g_gametype']) && isset($game_types[(int)$data['cvars']['g_gametype']])) {
@@ -248,19 +248,19 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
 
     usort($data['players'], function ($player1, $player2) {
         // Sort by score (descending), then by ping (descending), then by name (alphabetical)
-        if ($player1['score'] > $player2['score']) {
+        if ((int)$player1['score'] > (int)$player2['score']) {
             return -1;
-        } else if ($player1['score'] < $player2['score']) {
+        } else if ((int)$player1['score'] < (int)$player2['score']) {
             return 1;
         }
-        // Same score
-        if ($player1['ping'] > $player2['ping']) {
+        // Same score => Sort by ping
+        if ((int)$player1['ping'] > (int)$player2['ping']) {
             return -1;
-        } else if ($player1['ping'] < $player2['ping']) {
+        } else if ((int)$player1['ping'] < (int)$player2['ping']) {
             return 1;
         }
-        // Same score, same ping
-        return strip_colors($player1['name']) <=> strip_colors($player2['name']); // Sort by name
+        // Same score, same ping => Sort by name (case insensitive)
+        return strcasecmp(strip_colors($player1['name']), strip_colors($player2['name']));
     });
     
     // Count players, bots and humans
