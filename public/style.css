@@ -59,8 +59,7 @@ body.page-not-found img {
     align-content: center;
 }
 
-h1, .title {
-    line-height: 16px;
+h1, h2 {
     text-align: center;
 }
 
@@ -70,7 +69,7 @@ a.button {
     color: white;
     display: block;
     width: 200px;
-    box-shadow: 0 0 5px black;
+    box-shadow: 0 0 2px black;
     border-radius: 5px;
     background: #404040;
     margin: 20px auto;
@@ -96,6 +95,7 @@ a.button:active {
 
 .status img {
     vertical-align: bottom;
+    filter: drop-shadow(0 0 2px black);
 }
 
 .bonus-info, .mono.bonus-info {
@@ -245,7 +245,7 @@ select, button {
     background: #404040;
     border: none;
     border-radius: 5px;
-    box-shadow: 0 0 5px black;
+    box-shadow: 0 0 2px black;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Adjusted", "Segoe UI", "Liberation Sans", sans-serif;
     font-size: 16px;
     line-height: 20px;
@@ -284,8 +284,9 @@ input[type=range], input[type=color] {
     opacity: 50%;
 }
 
-#settings .title img, #cvars .title img {
+h2 img {
     vertical-align: middle;
+    filter: drop-shadow(0 0 2px black);
 }
 
 @media (min-width: 640px) {
@@ -294,7 +295,7 @@ input[type=range], input[type=color] {
         line-height: 24px;
     }
 
-    h1, .title {
+    h1, h2 {
         line-height: 24px;
     }
 
@@ -316,12 +317,12 @@ input[type=range], input[type=color] {
         font-size: 24px;
     }
 
-    #settings .title img, #cvars .title img {
+    h2 img {
         width: 32px;
         height: 32px;
     }
 
-    #settings .title {
+    #settings h2 {
         margin-bottom: 2em;
     }
 

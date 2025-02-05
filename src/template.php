@@ -109,10 +109,10 @@
             </p>
         </div>
         <div id="settings">
-            <p class="title mono">
+            <h2 class="mono">
                 <img src="<?= ROOT_URL ?>settings-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
                 Settings
-            </p>
+            </h2>
             <p id="setting-grid">
                 <label for="auto-refresh-select">Auto-refresh:</label>
                 <select id="auto-refresh-select">
@@ -155,10 +155,10 @@
         </div>
         <?php if (isset($data['cvars'])): ?>
             <div id="cvars">
-                <p class="title mono">
+                <h2 class="mono">
                     <img src="<?= ROOT_URL ?>terminal-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
                     Raw cvars
-                </p>
+                </h2>
                 <div id="cvar-grid">
                     <?php foreach ($data['cvars'] as $cvar_name => $cvar_value): ?>
                         <label><?= htmlspecialchars($cvar_name) ?></label>
