@@ -39,11 +39,11 @@
                 <label>Address:</label> <span><?= htmlspecialchars($data['address']); ?></span>
 
                 <label>Status:</label>
-                <span>
+                <span class="status">
                     <?php if ($data['is_up']): ?>
-                        ✅
+                        <img src="<?= ROOT_URL ?>checkmark-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
                     <?php else: ?>
-                        ❌
+                        <img src="<?= ROOT_URL ?>alert-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
                     <?php endif; ?>
                     <?= htmlspecialchars($data['status']); ?>
                 </span>
@@ -94,14 +94,25 @@
             <?php endif; ?>
             <p id="refreshed-footer" class="bonus-info"></p>
             <p id="settings-footer">
-                <button id="open-settings">⚙️ Settings</button>
+                <button id="refresh-button" onclick="location.reload()">
+                    <img src="<?= ROOT_URL ?>refresh.svg" width="20" height="20" alt="" aria-hidden="true"/> Refresh
+                </button>
+                <button id="open-settings">
+                    <img src="<?= ROOT_URL ?>settings-sharp.svg" width="20" height="20" alt="" aria-hidden="true"/> Settings
+                </button>
                 <?php if (isset($data['cvars'])): ?>
-                    <button id="open-cvars">📃 Show raw cvars</button>
+                    <button id="open-cvars">
+                        <img src="<?= ROOT_URL ?>terminal-20x20.png" srcset="<?= ROOT_URL ?>terminal-40x40.png 2x" width="20" height="20" alt="" aria-hidden="true"/>
+                        Show raw cvars
+                    </button>
                 <?php endif; ?>
             </p>
         </div>
         <div id="settings">
-            <p class="title mono">⚙️ Settings</p>
+            <p class="title mono">
+                <img src="<?= ROOT_URL ?>settings-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
+                Settings
+            </p>
             <p id="setting-grid">
                 <label for="auto-refresh-select">Auto-refresh:</label>
                 <select id="auto-refresh-select">
@@ -136,21 +147,28 @@
                 
                 <label for="background-color-input">Background color:</label>
                 <input id="background-color-input" type="color" />
-
-                <span></span>
-                <span class="form-button-span"><button id="close-settings">Close settings</button></span>
             </p>
+            <button id="close-settings">
+                <img src="<?= ROOT_URL ?>close-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
+                Close settings
+            </button>
         </div>
         <?php if (isset($data['cvars'])): ?>
             <div id="cvars">
-                <p class="title mono">📃 Raw cvars</p>
+                <p class="title mono">
+                    <img src="<?= ROOT_URL ?>terminal-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
+                    Raw cvars
+                </p>
                 <div id="cvar-grid">
                     <?php foreach ($data['cvars'] as $cvar_name => $cvar_value): ?>
                         <label><?= htmlspecialchars($cvar_name) ?></label>
                         <span><?= htmlspecialchars($cvar_value) ?></span>
                     <?php endforeach; ?>
                 </div>
-                <button id="close-cvars">Close raw cvars</button>
+                <button id="close-cvars">
+                    <img src="<?= ROOT_URL ?>close-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
+                    Close raw cvars
+                </button>
             </div>
         <?php endif; ?>
         <script src="<?= ROOT_URL ?>main.js?version=1"></script>

@@ -23,6 +23,7 @@ as well as the player list.
     - User-configurable blur and opacity, to improve the readability,
     - Uses `default.jpg` when the map name doesn't match a known levelshot
     - You can add your own backgrounds in the `levelshots` folder, and they should be automatically detected
+- Responsive layout
 - Optional auto-refresh (user-configurable)
 
 [![Settings screenshot thumbnail](doc/settings-thumbnail.jpg)](doc/settings.jpg)
@@ -58,3 +59,4 @@ The code in this repository is released under the [MIT License](LICENSE.txt).
 - PHP / HTML / CSS / JS / Levelshots by [**Slash**](https://github.com/slash-fr)
 - `default.jpg` is based on the following photo (CC0 Public Domain): https://pxhere.com/en/photo/57901  
   → Slightly tweaked by Slash
+- Some icons are based on the [**ionicons pack**](https://ionic.io/ionicons) (MIT licensed).
