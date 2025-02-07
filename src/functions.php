@@ -228,7 +228,7 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
     }
 
     // Background image:
-    $map_name = $data['cvars']['mapname'] ?? 'default';
+    $map_name = strtolower($data['cvars']['mapname']) ?? 'default';
     $path_to_map_image = __DIR__ . '/../public/levelshots/' . $map_name . '.jpg';
     if (preg_match('/^[a-zA-z_0-9\/]+$/', $map_name) && file_exists($path_to_map_image)) {
         // If the file name is safe (no "..", no weird characters), and the file exists
