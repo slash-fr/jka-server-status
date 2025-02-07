@@ -78,6 +78,14 @@ function print_server_status(
     $data = parse_data($query_result, $jka_server_charset);
     $data['address'] = $jka_server_address;
     $data['server_name'] = $data['cvars']['sv_hostname'] ?? $jka_server_name;
+    if (strcasecmp($jka_server_charset, 'Windows-1252') === 0) {
+        // "Fix" the server name
+        $data['server_name'] = ltrim($data['server_name'], '€');
+        // Some server owners prepend "\x80" bytes to the "sv_hostname" cvar,
+        // ("\x80" is a euro sign in Windows-1252 encoding),
+        // to get their server displayed at the top of the list.
+    }
+
     log_message(
         'INFO',
         $jka_server_address . ' - Generating HTML -'
@@ -211,11 +219,6 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
     $nb_fields = floor(count($raw_server_info) / 2);
     for ($i = 0; $i < $nb_fields; $i++) {
         $data['cvars'][$raw_server_info[2 * $i]] = $raw_server_info[2 * $i + 1];
-    }
-
-    // "Fix" the server name
-    if (isset($data['cvars']['sv_hostname'])) {
-        $data['cvars']['sv_hostname'] = trim($data['cvars']['sv_hostname'], '€');
     }
 
     // Sort cvars by cvar name
