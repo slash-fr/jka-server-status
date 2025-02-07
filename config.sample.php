@@ -13,6 +13,7 @@ $jka_servers = [
     [
         // URI for the status page
         'uri' => '/main-server',
+        // If you have only 1 server, and you've disabled the landing page, you could use just '/'
 
         // IP address or domain name of the JKA server, with optional port (defaults to 29070)
         'address' => '192.0.2.1',
@@ -30,6 +31,7 @@ $jka_servers = [
     [
         // URI for the status page
         'uri' => '/secondary-server',
+        // If you have only 1 server, and you've disabled the landing page, you could use just '/'
 
         // IP address or domain name of the JKA server, with optional port (defaults to 29070)
         'address' => 'jka.example.com:29071',
