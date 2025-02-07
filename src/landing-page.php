@@ -14,13 +14,15 @@
         <link rel="manifest" href="/site.webmanifest" />
     </head>
     <body class="landing-page">
-        <h1><span class="mono white">JKA Server Status</span></h1>
+        <div id="background-image" style="background-image: url(<?= ROOT_URL ?>levelshots/default.jpg)" /></div>
+        <div id="content">
+            <h1><span class="mono white">JKA Server Status</span></h1>
 
-        <a class="button" href="/main-server">
-            <span class="cyan">M</span>ain <span class="cyan">S</span>erver
-        </a>
-        <a class="button" href="/secondary-server">
-            <span class="yellow">Secondary</span> Server
-        </a>
+            <?php foreach ($jka_servers as $jka_server): ?>
+                <a class="button" href="<?= htmlspecialchars($jka_server['uri']); ?>">
+                    <?= format_name($jka_server['name']); ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
     </body>
 </html>

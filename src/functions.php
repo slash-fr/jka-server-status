@@ -57,30 +57,35 @@ function strip_colors(string $name): string
 
 /**
  * Sends the server status (as HTML) to the browser
- * @param string $host JKA server IP or hostname, with optional port (defaults to 29070)
- *                     -> e.g. "192.0.2.1", "example.com", "example.com:29070"
- * @param string $jka_server_encoding Server charset (e.g. "ISO-8859-1", "UTF-8", ...). Defaults to "Windows-1252".
+ * @param string $jka_server_address JKA server IP or hostname, with optional port (defaults to 29070)
+ *                                   -> e.g. "192.0.2.1", "example.com", "example.com:29070"
+ * @param string $jka_server_name JKA Server name (used only if "sv_hostname" cannot be read)
+ * @param string $jka_server_charset JKA Server charset (e.g. "ISO-8859-1", "UTF-8", ...). Defaults to "Windows-1252".
  */
-function print_server_status(string $host, string $jka_server_encoding = 'Windows-1252')
-{
+function print_server_status(
+    string $jka_server_address,
+    string $jka_server_name,
+    string $jka_server_charset = 'Windows-1252'
+) {
     // Sanitize the host for use as a filename:
-    $cached_file = __DIR__ . '/../cache/' . preg_replace('/[^a-z0-9]/', '-', strtolower($host)) . '.html';
+    $cached_file = __DIR__ . '/../cache/' . preg_replace('/[^a-z0-9]/', '-', strtolower($jka_server_address)) . '.html';
     $cached_at = @filemtime($cached_file);
     if (time() < $cached_at + 10) { // Cached less than 10 seconds ago
-        log_message('INFO', "$host - from cache");
+        log_message('INFO', "$jka_server_address - from cache");
         readfile($cached_file);
         exit;
     }
 
     // Query the JKA server and parse its response
-    $query_result = query_jka_server($host);
-    $data = parse_data($query_result);
-    $data['address'] = $host;
+    $query_result = query_jka_server($jka_server_address);
+    $data = parse_data($query_result, $jka_server_charset);
+    $data['address'] = $jka_server_address;
+    $data['server_name'] = $data['cvars']['sv_hostname'] ?? $jka_server_name;
     log_message(
         'INFO',
-        $host . ' - Generating HTML -'
+        $jka_server_address . ' - Generating HTML -'
         . ' - Status: ' . $data['status']
-        . ' - Name: "' . ($data['cvars']['sv_hostname'] ?? '') . '"'
+        . ' - Name: "' . $data['server_name'] . '"'
         . ' - Map: "' . ($data['cvars']['mapname'] ?? '') . '"'
         . ' - Game type: ' . ($data['cvars']['g_gametype'] ?? '?') . ' (' . ($data['game_type'] ?? '?') . ')'
         . ' - Players: ' . ($data['nb_players'] ?? '?') . ' / ' . ($data['cvars']['sv_maxclients'] ?? '?')

@@ -3,10 +3,7 @@
     <head>
         <meta charset="utf-8"/>
         <title>
-            JKA Server Status
-            <?php if (isset($data['cvars']['sv_hostname'])): ?>
-                - <?= htmlspecialchars(strip_colors($data['cvars']['sv_hostname'])) ?>
-            <?php endif; ?>
+            JKA Server Status - <?= htmlspecialchars(strip_colors($data['server_name'])) ?>
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="<?= ROOT_URL ?>style.css?version=1" rel="stylesheet" />
@@ -29,11 +26,7 @@
         <input type="hidden" id="default-background-image" value="<?= $data['default_background_image_url'] ?>?version=1" />
 
         <div id="content">
-            <?php if (isset($data['cvars']['sv_hostname'])): ?>
-                <h1><?= format_name($data['cvars']['sv_hostname']); ?></h1>
-            <?php else: ?>
-                <h1><span class="mono white">JKA Server Status</span></h1>
-            <?php endif; ?>
+            <h1><?= format_name($data['server_name']); ?></h1>
             
             <p class="info"> 
                 <label>Address:</label> <span><?= htmlspecialchars($data['address']); ?></span>

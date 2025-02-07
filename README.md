@@ -33,10 +33,7 @@ as well as the player list.
 ## Installation
 - Clone (or copy the content of) this repository onto your server,
 - Setup your web server to point to the `public` folder,
-- In `index.php`:
-    - Check the value of the `ROOT_URL` constant,
-    - Setup conditions to handle routing (if you want to support multiple JKA servers)
-    - Pass the desired `$host` to `print_server_status()`,
+- Copy `config.sample.php` to `config.php` and edit the configuration to suit your needs,
 - Make sure PHP has write access to the `cache` and `log` folders.
 
 ## Sample Nginx config
