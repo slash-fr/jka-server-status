@@ -64,8 +64,22 @@ body.landing-page #background-image {
     align-content: center;
 }
 
+#content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+
+body.landing-page #content {
+    display: block;
+}
+
 h1, h2 {
+    font-size: 18px;
+    line-height: 24px;
     text-align: center;
+    margin: 1em 0;
 }
 
 body.landing-page h1 {
@@ -73,7 +87,7 @@ body.landing-page h1 {
 }
 
 body.landing-page h1 img {
-    vertical-align: middle;
+    vertical-align: -2px;
     margin-right: 5px;
 }
 
@@ -86,28 +100,22 @@ body.landing-page a.button {
     margin: 20px auto;
     padding: 13px 20px;
     box-sizing: border-box;
+    letter-spacing: 2px;
 }
 
-#home-button-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+body.landing-page a.button {
+    font-size: 16px;
+    font-weight: 600;
 }
 
 #home-button {
     border-radius: 0 0 5px 5px;
+    width: fit-content;
+    margin: 0 auto;
 }
 
 #home-button img {
     vertical-align: -2px;
-}
-
-#content h1:not(:first-child) {
-    /* Make room for the "Home" button (if present) */
-    margin-top: 60px;
 }
 
 .info {
@@ -124,35 +132,24 @@ body.landing-page a.button {
     filter: drop-shadow(0 0 2px black);
 }
 
-.bonus-info, .mono.bonus-info {
+.bonus-info {
     color: #a0a0a0;
     font-size: 14px;
     font-weight: normal;
 }
 
-.mono, .player-list {
-    color: white;
-    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+.player-list {
     font-weight: bold;
     font-size: 18px;
-    text-shadow: -1px -1px 0 #000,
-                 0 -1px 0 #000,
-                 1px -1px 0 #000,
-                 1px 0 0 #000,
-                 1px 1px 0 #000,
-                 0 1px 0 #000,
-                 -1px 1px 0 #000,
-                 -1px 0 0 #000;
-    letter-spacing: 2px;
 }
 
 .player-list {
-    margin: auto;
+    margin: 0 auto;
     border-spacing: 10px 20px;
 }
 
-th.score, th.ping {
-    font-size: 10px;
+th {
+    font-size: 14px;
 }
 
 .black {
@@ -184,6 +181,17 @@ th.score, th.ping {
 }
 .gray {
     color: gray;
+}
+
+.red, .green, .yellow, .cyan, .magenta, .white, .orange, .grey {
+    text-shadow: -1px -1px 0 #000,
+                 0 -1px 0 #000,
+                 1px -1px 0 #000,
+                 1px 0 0 #000,
+                 1px 1px 0 #000,
+                 0 1px 0 #000,
+                 -1px 1px 0 #000,
+                 -1px 0 0 #000;
 }
 
 .black, .blue {
@@ -315,31 +323,34 @@ input[type=range], input[type=color] {
 }
 
 h2 img {
-    vertical-align: middle;
+    vertical-align: -6px;
+    margin-right: 5px;
     filter: drop-shadow(0 0 2px black);
 }
 
 @media (min-width: 640px) {
-    body, .bonus-info, .mono.bonus-info {
+    body, .bonus-info {
         font-size: 16px;
         line-height: 24px;
     }
 
     h1, h2 {
-        line-height: 24px;
+        font-size: 24px;
+        line-height: 32px;
     }
 
-    body.landing-page h1 img {
+    body.landing-page h1 img, h2 img {
         width: 32px;
         height: 32px;
         margin-right: 10px;
+        vertical-align: -7px;
     }
 
     select, button, a.button {
         max-width: none;
     }
 
-    body.page-not-found h1 .mono {
+    body.page-not-found h1 {
         font-size: 32px;
         line-height: 32px;
     }
@@ -347,6 +358,7 @@ h2 img {
     body.landing-page a.button {
         width: 340px;
         padding: 15px 20px;
+        font-size: 18px;
     }
 
     .status img {
@@ -358,18 +370,13 @@ h2 img {
         grid-gap: 5px 10px;
     }
 
-    .mono, .player-list {
+    .player-list {
         font-size: 24px;
         line-height: 24px;
     }
 
-    th.score, th.ping {
-        font-size: 24px;
-    }
-
-    h2 img {
-        width: 32px;
-        height: 32px;
+    th {
+        font-size: 18px;
     }
 
     #settings h2 {

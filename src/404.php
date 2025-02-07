@@ -13,7 +13,7 @@
         <link rel="manifest" href="/site.webmanifest" />
     </head>
     <body class="page-not-found">
-        <h1><span class="mono white">404 Not Found</span></h1>
+        <h1><span class="white">404 Not Found</span></h1>
         <img src="<?= ROOT_URL ?>404.jpg" alt="This isn't the webpage you're looking for." title="Move along."/>
     </body>
 </html>

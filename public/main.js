@@ -14,7 +14,7 @@ openSettingsButton.addEventListener('click', function () {
 
     document.getElementById('close-settings').addEventListener('click', function() {
         settingsElement.style.display = 'none';
-        contentElement.style.display = 'block';
+        contentElement.style.display = 'flex';
     });
 });
 
@@ -205,6 +205,6 @@ const closeCvarsButton = document.getElementById('close-cvars');
 if (closeCvarsButton) {
     closeCvarsButton.addEventListener('click', function() {
         cvarsElement.style.display = 'none';
-        contentElement.style.display = 'block';
+        contentElement.style.display = 'flex';
     });
 }

@@ -1,16 +1,16 @@
 <?php
 
 $color_replacements = [
-    '^0' => '</span><span class="mono black">',
-    '^1' => '</span><span class="mono red">',
-    '^2' => '</span><span class="mono green">',
-    '^3' => '</span><span class="mono yellow">',
-    '^4' => '</span><span class="mono blue">',
-    '^5' => '</span><span class="mono cyan">',
-    '^6' => '</span><span class="mono magenta">',
-    '^7' => '</span><span class="mono white">',
-    '^8' => '</span><span class="mono orange">',
-    '^9' => '</span><span class="mono gray">',
+    '^0' => '</span><span class="black">',
+    '^1' => '</span><span class="red">',
+    '^2' => '</span><span class="green">',
+    '^3' => '</span><span class="yellow">',
+    '^4' => '</span><span class="blue">',
+    '^5' => '</span><span class="cyan">',
+    '^6' => '</span><span class="magenta">',
+    '^7' => '</span><span class="white">',
+    '^8' => '</span><span class="orange">',
+    '^9' => '</span><span class="gray">',
 ];
 
 $game_types = [
@@ -29,17 +29,14 @@ $game_types = [
 /**
  * Escapes HTML special characters and replaces color codes
  * @param string $name e.g. "^1Hello ^7World! >>"
- * @param bool $monospaced Add the "mono" class (defaults to true)
- * @return string e.g. '<span class="mono red">Hello </span><span class="mono white">World! &gt;&gt;</span>'
+ * @return string e.g. '<span class="red">Hello </span><span class="white">World! &gt;&gt;</span>'
  */
-function format_name(string $name, bool $monospaced = true): string
+function format_name(string $name): string
 {
     global $color_replacements;
-    $name = '<span class="mono white">' . htmlspecialchars($name, ENT_SUBSTITUTE, 'UTF-8') . '</span>';
+    $name = '<span class="white">' . htmlspecialchars($name, ENT_SUBSTITUTE, 'UTF-8') . '</span>';
     $name = str_replace(array_keys($color_replacements), array_values($color_replacements), $name);
-    if (!$monospaced) {
-        $name = str_replace('<span class="mono ', '<span class="', $name);
-    }
+
     return $name;
 }
 

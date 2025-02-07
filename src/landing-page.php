@@ -18,7 +18,7 @@
         <div id="content">
             <h1>
                 <img src="<?= ROOT_URL?>favicon.svg" width="16" height="16" alt="" aria-hidden="true"/>
-                <span class="mono white">JKA Server Status</span>
+                <span class="white">JKA Server Status</span>
             </h1>
 
             <?php foreach ($jka_servers as $jka_server): ?>

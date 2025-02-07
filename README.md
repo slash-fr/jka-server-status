@@ -1,5 +1,5 @@
 # JKA Server Status - PHP Script
-This tool can send a request to a **Jedi Academy** server, to retrieve some basic server info,
+This tool can send requests to a **Jedi Academy** server, to retrieve some basic server info,
 as well as the player list.
 
 [![Screenshot thumbnail](doc/screenshot-thumbnail.jpg)](doc/screenshot.jpg)

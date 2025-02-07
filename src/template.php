@@ -26,93 +26,99 @@
         <input type="hidden" id="default-background-image" value="<?= $data['default_background_image_url'] ?>?version=1" />
 
         <div id="content">
-            <?php global $enable_landing_page; ?>
-            <?php if ($enable_landing_page): ?>
-                <?php global $landing_page_uri; ?>
-                <div id="home-button-container">
+            <header>
+                <?php global $enable_landing_page; ?>
+                <?php if ($enable_landing_page): ?>
+                    <?php global $landing_page_uri; ?>
                     <a href="<?= htmlspecialchars($landing_page_uri); ?>" class="button" id="home-button" title="Go back to the server list">
                         <img src="<?= ROOT_URL ?>favicon.svg" width="16" height="16" alt="" aria-hidden="false" />
                         Server list
                     </a>
-                </div>
-            <?php endif; ?>
-            <h1><?= format_name($data['server_name']); ?></h1>
-            
-            <p class="info"> 
-                <label>Address:</label> <span><?= htmlspecialchars($data['address']); ?></span>
-
-                <label>Status:</label>
-                <span class="status">
-                    <?php if ($data['is_up']): ?>
-                        <img src="<?= ROOT_URL ?>checkmark-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
-                    <?php else: ?>
-                        <img src="<?= ROOT_URL ?>alert-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
-                    <?php endif; ?>
-                    <?= htmlspecialchars($data['status']); ?>
-                </span>
-
-                <?php if (isset($data['cvars']['mapname'])): ?>
-                    <label>Map:</label> <span><?= htmlspecialchars($data['cvars']['mapname']); ?></span>
                 <?php endif; ?>
+            </header>
 
-                <?php if (isset($data['game_type'])): ?>
-                    <label>Game type:</label> <span><?= htmlspecialchars($data['game_type']); ?></span>
-                <?php endif; ?>
+            <div id="main-content">
+                <h1><?= format_name($data['server_name']); ?></h1>
+                
+                <p class="info"> 
+                    <label>Address:</label> <span><?= htmlspecialchars($data['address']); ?></span>
 
-                <?php if (isset($data['cvars']['gamename'])): ?>
-                    <label>Mod:</label> <span><?= format_name($data['cvars']['gamename'], false); ?></span>
-                <?php endif; ?>
-
-                <?php if (isset($data['nb_players'])): ?>
-                    <label>Players:</label>
-                    <span>
-                        <?= (int)$data['nb_players'] ?>
-                        <?php if (isset($data['cvars']['sv_maxclients'])): ?>
-                            / <?= (int)$data['cvars']['sv_maxclients'] ?>
+                    <label>Status:</label>
+                    <span class="status">
+                        <?php if ($data['is_up']): ?>
+                            <img src="<?= ROOT_URL ?>checkmark-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
+                        <?php else: ?>
+                            <img src="<?= ROOT_URL ?>alert-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
                         <?php endif; ?>
-                        <?php if (isset($data['nb_humans'])): ?>
-                            <span class="bonus-info">
-                                (<?= $data['nb_humans'] . ' ' . ($data['nb_humans'] == 1  ? 'human' : 'humans') ?>)
-                            </span>
-                        <?php endif; ?>
+                        <?= htmlspecialchars($data['status']); ?>
                     </span>
-                <?php endif; ?>
-            </p>
 
-            <?php if (isset($data['nb_players']) && $data['nb_players'] > 0): ?>
-                <table class="player-list">
-                    <thead>
-                        <tr><th>Name</th><th class="score">Score</th><th class="ping">Ping</th></tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($data['players'] as $player): ?>
-                            <tr>
-                                <td><?= format_name($player['name']); ?></td>
-                                <td><?= htmlspecialchars($player['score']); ?></td>
-                                <td><?= htmlspecialchars($player['ping']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-            <p id="refreshed-footer" class="bonus-info"></p>
-            <p id="settings-footer">
-                <button id="refresh-button" onclick="location.reload()">
-                    <img src="<?= ROOT_URL ?>refresh.svg" width="20" height="20" alt="" aria-hidden="true"/> Refresh
-                </button>
-                <button id="open-settings">
-                    <img src="<?= ROOT_URL ?>settings-sharp.svg" width="20" height="20" alt="" aria-hidden="true"/> Settings
-                </button>
-                <?php if (isset($data['cvars'])): ?>
-                    <button id="open-cvars">
-                        <img src="<?= ROOT_URL ?>terminal-20x20.png" srcset="<?= ROOT_URL ?>terminal-40x40.png 2x" width="20" height="20" alt="" aria-hidden="true"/>
-                        Show raw cvars
-                    </button>
+                    <?php if (isset($data['cvars']['mapname'])): ?>
+                        <label>Map:</label> <span><?= htmlspecialchars($data['cvars']['mapname']); ?></span>
+                    <?php endif; ?>
+
+                    <?php if (isset($data['game_type'])): ?>
+                        <label>Game type:</label> <span><?= htmlspecialchars($data['game_type']); ?></span>
+                    <?php endif; ?>
+
+                    <?php if (isset($data['cvars']['gamename'])): ?>
+                        <label>Mod:</label> <span><?= format_name($data['cvars']['gamename']); ?></span>
+                    <?php endif; ?>
+
+                    <?php if (isset($data['nb_players'])): ?>
+                        <label>Players:</label>
+                        <span>
+                            <?= (int)$data['nb_players'] ?>
+                            <?php if (isset($data['cvars']['sv_maxclients'])): ?>
+                                / <?= (int)$data['cvars']['sv_maxclients'] ?>
+                            <?php endif; ?>
+                            <?php if (isset($data['nb_humans'])): ?>
+                                <span class="bonus-info">
+                                    (<?= $data['nb_humans'] . ' ' . ($data['nb_humans'] == 1  ? 'human' : 'humans') ?>)
+                                </span>
+                            <?php endif; ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+
+                <?php if (isset($data['nb_players']) && $data['nb_players'] > 0): ?>
+                    <table class="player-list">
+                        <thead>
+                            <tr><th>Name</th><th class="score">Score</th><th class="ping">Ping</th></tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($data['players'] as $player): ?>
+                                <tr>
+                                    <td><?= format_name($player['name']); ?></td>
+                                    <td><?= htmlspecialchars($player['score']); ?></td>
+                                    <td><?= htmlspecialchars($player['ping']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 <?php endif; ?>
-            </p>
+            </div>
+
+            <footer>
+                <p id="refreshed-footer" class="bonus-info"></p>
+                <p id="settings-footer">
+                    <button id="refresh-button" onclick="location.reload()">
+                        <img src="<?= ROOT_URL ?>refresh.svg" width="20" height="20" alt="" aria-hidden="true"/> Refresh
+                    </button>
+                    <button id="open-settings">
+                        <img src="<?= ROOT_URL ?>settings-sharp.svg" width="20" height="20" alt="" aria-hidden="true"/> Settings
+                    </button>
+                    <?php if (isset($data['cvars'])): ?>
+                        <button id="open-cvars">
+                            <img src="<?= ROOT_URL ?>terminal-20x20.png" srcset="<?= ROOT_URL ?>terminal-40x40.png 2x" width="20" height="20" alt="" aria-hidden="true"/>
+                            Show raw cvars
+                        </button>
+                    <?php endif; ?>
+                </p>
+            </footer>
         </div>
         <div id="settings">
-            <h2 class="mono">
+            <h2>
                 <img src="<?= ROOT_URL ?>settings-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
                 Settings
             </h2>
@@ -158,7 +164,7 @@
         </div>
         <?php if (isset($data['cvars'])): ?>
             <div id="cvars">
-                <h2 class="mono">
+                <h2>
                     <img src="<?= ROOT_URL ?>terminal-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
                     Raw cvars
                 </h2>
