@@ -72,25 +72,42 @@ body.landing-page h1 {
     margin-bottom: 1.5em;
 }
 
-body.landing-page a.button {
-    text-decoration: none;
-    color: white;
+body.landing-page h1 img {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+a.button {
     display: block;
+}
+
+body.landing-page a.button {
     width: 270px;
-    box-shadow: 0 0 2px black;
-    border-radius: 5px;
-    background: #404040;
     margin: 20px auto;
     padding: 13px 20px;
     box-sizing: border-box;
 }
 
-body.landing-page a.button:hover, body.landing-page a.button:focus {
-    background: #606060;
+#home-button-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-body.landing-page a.button:active {
-    background: #202020;
+#home-button {
+    border-radius: 0 0 5px 5px;
+}
+
+#home-button img {
+    vertical-align: -2px;
+}
+
+#content h1:not(:first-child) {
+    /* Make room for the "Home" button (if present) */
+    margin-top: 60px;
 }
 
 .info {
@@ -248,7 +265,7 @@ label {
     margin-top: 32px;
 }
 
-select, button {
+select, button, a.button {
     padding: 5px 10px;
     color: white;
     background: #404040;
@@ -260,27 +277,31 @@ select, button {
     line-height: 20px;
     max-width: 280px;
     cursor: pointer;
+    text-decoration: none;
 }
 
-select:hover, button:hover, select:focus, button:focus {
+select:hover, button:hover, a.button:hover,
+select:focus, button:focus, a.button:focus {
     background: #606060;
 }
 
-button:active {
+button:active, a.button:active {
     background: #202020;
     color: #c0c0c0;
 }
 
-button:active img {
+button:active img, a.button:active img {
     opacity: 75%;
 }
 
-button {
+button, a.button {
     font-weight: 600;
+    letter-spacing: normal;
+    text-shadow: none;
     padding: 10px 20px;
 }
 
-button img {
+button img, a.button img {
     vertical-align: -5px;
     margin-right: 5px;
 }
@@ -306,6 +327,16 @@ h2 img {
 
     h1, h2 {
         line-height: 24px;
+    }
+
+    body.landing-page h1 img {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+    }
+
+    select, button, a.button {
+        max-width: none;
     }
 
     body.page-not-found h1 .mono {

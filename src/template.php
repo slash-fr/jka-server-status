@@ -26,6 +26,16 @@
         <input type="hidden" id="default-background-image" value="<?= $data['default_background_image_url'] ?>?version=1" />
 
         <div id="content">
+            <?php global $enable_landing_page; ?>
+            <?php if ($enable_landing_page): ?>
+                <?php global $landing_page_uri; ?>
+                <div id="home-button-container">
+                    <a href="<?= htmlspecialchars($landing_page_uri); ?>" class="button" id="home-button" title="Go back to the server list">
+                        <img src="<?= ROOT_URL ?>favicon.svg" width="16" height="16" alt="" aria-hidden="false" />
+                        Server list
+                    </a>
+                </div>
+            <?php endif; ?>
             <h1><?= format_name($data['server_name']); ?></h1>
             
             <p class="info"> 

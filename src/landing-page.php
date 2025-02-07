@@ -16,7 +16,10 @@
     <body class="landing-page">
         <div id="background-image" style="background-image: url(<?= ROOT_URL ?>levelshots/default.jpg)" /></div>
         <div id="content">
-            <h1><span class="mono white">JKA Server Status</span></h1>
+            <h1>
+                <img src="<?= ROOT_URL?>favicon.svg" width="16" height="16" alt="" aria-hidden="true"/>
+                <span class="mono white">JKA Server Status</span>
+            </h1>
 
             <?php foreach ($jka_servers as $jka_server): ?>
                 <a class="button" href="<?= htmlspecialchars($jka_server['uri']); ?>">
