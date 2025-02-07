@@ -44,7 +44,7 @@ body.page-not-found img {
     height: 100vh;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll; /* Safari on iOS doesn't like "fixed" background-attachments */
     opacity: 50%;
     filter: blur(5px);
 }
