@@ -61,7 +61,7 @@
                     </span>
 
                     <?php if (isset($data['cvars']['mapname'])): ?>
-                        <label>Map:</label> <span><?= htmlspecialchars($data['cvars']['mapname']); ?></span>
+                        <label>Map name:</label> <span><?= htmlspecialchars($data['cvars']['mapname']); ?></span>
                     <?php endif; ?>
 
                     <?php if (isset($data['game_type'])): ?>
@@ -69,7 +69,7 @@
                     <?php endif; ?>
 
                     <?php if (isset($data['cvars']['gamename'])): ?>
-                        <label>Mod:</label> <span><?= format_name($data['cvars']['gamename']); ?></span>
+                        <label>Mod name:</label> <span><?= format_name($data['cvars']['gamename']); ?></span>
                     <?php endif; ?>
 
                     <?php if (isset($data['nb_players'])): ?>
