@@ -1,0 +1,5 @@
+ÿÿÿÿstatusResponse
+\version\JAmp: v1.0.1.0 win_msvc-x86 May  2 2024\timelimit\45\sv_privateClients\0\sv_minRate\4000\sv_minPing\0\sv_maxclients\32\sv_maxRate\90000\sv_maxPing\999\sv_httpdownloads\0\sv_hostname\€€€€€^5M^7ystic^5F^7orces^5.net - ^5M^7ystic ^5L^7ugormod\sv_fps\40\sv_floodProtectSlow\1\sv_floodProtect\1\sv_autoDemo\0\sv_allowDownload\0\serveruptime\3\protocol\26\mapname\mp/ffa3\gamename\^5Mystic Lugormod\g_weaponDisable\0\g_stepSlideFix\1\g_siegeTeamSwitch\1\g_siegeTeam2\none\g_siegeTeam1\none\g_siegeRespawn\20\g_showDuelHealths\1\g_saberWallDamageScale\0.4\g_saberLocking\0\g_privateDuel\255\g_noSpecMove\1\g_needpass\0\g_maxHolocronCarry\3\g_maxGameClients\0\g_maxForceRank\0\g_jediVmerc\0\g_gametype\0\g_gameMode\0\g_forceRegenTime\40\g_forcePowerDisable\0\g_forceBasedTeams\1\g_duelWeaponDisable\0\g_debugMelee\1\g_allownpc\1\fraglimit\0\duel_fraglimit\0\dmflags\128\capturelimit\0\bot_minplayers\29\bg_fighterAltControl\0\MysticLMD_Version\1.0.3
+0 0 "^2E^7arth^0-Bot"
+0 0 "^3A^7ncient^0-Bot"
+0 0 "^5M^7ystic^0-Bot"
