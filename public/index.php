@@ -3,6 +3,11 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../src/functions.php';
 
+check_config();
+
+////////////////////////////////////////////////////////////////////////////////
+// Front controller: Try to match the REQUEST_URI
+
 if ($enable_landing_page && $_SERVER['REQUEST_URI'] === $landing_page_uri) {
     require_once __DIR__ . '/../src/landing-page.php';
     exit;

@@ -1,6 +1,6 @@
 <?php
 
-$color_replacements = [
+define('COLOR_REPLACEMENTS', [
     '^0' => '</span><span class="black">',
     '^1' => '</span><span class="red">',
     '^2' => '</span><span class="green">',
@@ -11,9 +11,9 @@ $color_replacements = [
     '^7' => '</span><span class="white">',
     '^8' => '</span><span class="orange">',
     '^9' => '</span><span class="gray">',
-];
+]);
 
-$game_types = [
+define('GAME_TYPES', [
     0 => 'FFA',
     1 => 'Holocron FFA',
     2 => 'Jedi Master',
@@ -24,7 +24,149 @@ $game_types = [
     7 => 'Siege',
     8 => 'CTF (Capture The Flag)',
     9 => 'CTY (Capture The Ysalamiri)',
-];
+]);
+
+function check_config(): void {
+    global $log_level;
+    if (!isset($log_level)) {
+        $log_level = LOG_INFO;
+    } else if (!is_int($log_level) || !in_array($log_level, [0, LOG_INFO, LOG_WARNING, LOG_ERR])) {
+        $log_level = LOG_INFO;
+        log_message(LOG_WARNING, 'Config variable $log_level must be either: 0, LOG_INFO, LOG_WARNING, or LOG_ERR.');
+    }
+
+    global $caching_delay;
+    if (!isset($caching_delay)) {
+        $caching_delay = 10;
+    } else if (!is_int($caching_delay)) {
+        log_message(LOG_WARNING, 'Config variable $caching_delay must be an int.');
+        $caching_delay = (int)$caching_delay;
+    }
+
+    if ($caching_delay < 0) {
+        log_message(LOG_WARNING, 'Config variable $caching_delay must be >= 0');
+        $caching_delay = 0;
+    }
+
+    global $timeout_delay;
+    if (!isset($timeout_delay)) {
+        $timeout_delay = 3;
+    } else if (!is_int($timeout_delay)) {
+        log_message(LOG_WARNING, 'Config variable $timing_delay must be an int.');
+        $timeout_delay = (int)$timeout_delay;
+    }
+
+    if ($timeout_delay < 1) {
+        log_message(LOG_WARNING, 'Config variable $timing_delay must be >= 1');
+        $timeout_delay = 1;
+    }
+
+    global $root_url;
+    if (!isset($root_url)) {
+        $root_url = '';
+    } else if (!is_string($root_url)) {
+        log_message(LOG_WARNING, 'Config variable $root_url must be a string.');
+        $root_url = (string)$root_url;
+    }
+    $root_url = rtrim($root_url, '/'); // Remove the trailing slash
+    
+    global $jka_servers;
+    if (!isset($jka_servers)) {
+        config_error('$jka_servers is required.');
+    } else if (!is_array($jka_servers)) {
+        config_error('$jka_servers must be an array.');
+    }
+
+    $nb_jka_servers = count($jka_servers);
+
+    if ($nb_jka_servers < 1) {
+        config_error('$jka_servers must contain at least 1 server.');
+    }
+
+    foreach ($jka_servers as &$jka_server) {
+        if (!is_array($jka_server)) {
+            config_error('$jka_servers must be an array of arrays.');
+        }
+        
+        // URI
+        if (!isset($jka_server['uri'])) {
+            if ($nb_jka_servers > 1) {
+                config_error('An "uri" is required for each server (when multiple servers are declared).');
+            }
+            $jka_server['uri'] = '/';
+        } else if (!is_string($jka_server['uri'])) {
+            config_error('The "uri" of each server must be a string.');
+        }
+
+        // Address
+        if (!isset($jka_server['address'])) {
+            config_error('Each server must specify an address');
+        } else if (!is_string($jka_server['address'])) {
+            config_error('The "address" of each server must be a string.');
+        }
+
+        $full_url = build_url($jka_server['address']);
+
+        if (!filter_var($full_url, FILTER_VALIDATE_URL)) {
+            config_error('"' . $jka_server['address'] . '" is not a valid server address');
+        }
+
+        // Name
+        if (!isset($jka_server['name'])) {
+            $jka_server['name'] = $jka_server['address'];
+        } else if (!is_string($jka_server['name'])) {
+            log_message(LOG_WARNING, 'Config: The "name" of each server must be a string.');
+            $jka_server['name'] = (string)$jka_server['name'];
+        }
+
+        // Charset
+        if (!isset($jka_server['charset'])) {
+            $jka_server['charset'] = 'Windows-1252';
+        }
+        // TODO: check whether "charset" is valid. (mb_list_encodings?)
+    }
+
+    global $enable_landing_page;
+    if (!isset($enable_landing_page)) {
+        // By default, enable the landing page if multiple JKA servers are declared
+        $enable_landing_page = ($nb_jka_servers > 1);
+    } else if (!is_bool($enable_landing_page)) {
+        log_message(LOG_WARNING, 'Config variable $enable_landing_page must be a boolean.');
+        $enable_landing_page = (bool)$enable_landing_page;
+    }
+
+    global $landing_page_uri;
+    if (!isset($landing_page_uri)) {
+        $landing_page_uri = '/';
+    } else if (!is_string($landing_page_uri)) {
+        log_message(LOG_WARNING, 'Config variable $landing_page_uri must be a string.');
+        $landing_page_uri = (string)$landing_page_uri;
+    }
+}
+
+function config_error(string $error_message): void
+{
+    log_message(LOG_ERR, "Config error: $error_message");
+    http_response_code(500);
+    header('Content-type: text/plain');
+    die('JKA Server Status: configuration error');
+}
+
+/**
+ * Build the full URL from the IP or domain (with optional port number)
+ * @param string $jka_server_address e.g. "jka.example.com"
+ * @return string e.g. "udp://jka.example.com:29070"
+ */
+function build_url(string $jka_server_address): string
+{
+    $url = 'udp://' . $jka_server_address;
+    if (!preg_match('/\:[0-9]{1,5}$/', $url)) {
+        // The URL doesn't end with the port number
+        $url .= ':29070'; // Add the default port
+    }
+
+    return $url;
+}
 
 /**
  * Escapes HTML special characters and replaces color codes
@@ -33,9 +175,8 @@ $game_types = [
  */
 function format_name(string $name): string
 {
-    global $color_replacements;
     $name = '<span class="white">' . htmlspecialchars($name, ENT_SUBSTITUTE, 'UTF-8') . '</span>';
-    $name = str_replace(array_keys($color_replacements), array_values($color_replacements), $name);
+    $name = str_replace(array_keys(COLOR_REPLACEMENTS), array_values(COLOR_REPLACEMENTS), $name);
 
     return $name;
 }
@@ -47,8 +188,7 @@ function format_name(string $name): string
  */
 function strip_colors(string $name): string
 {
-    global $color_replacements;
-    $name = str_replace(array_keys($color_replacements), '', $name);
+    $name = str_replace(array_keys(COLOR_REPLACEMENTS), '', $name);
     return $name;
 }
 
@@ -69,7 +209,7 @@ function print_server_status(
     $cached_at = @filemtime($cached_file);
     $caching_delay = $GLOBALS['caching_delay'] ?? 10; // Default to 10 seconds if not set
     if (time() < $cached_at + $caching_delay) { // Shorter than the configured delay (in seconds)
-        log_message('INFO', "$jka_server_address - from cache");
+        log_message(LOG_INFO, "$jka_server_address - from cache");
         readfile($cached_file);
         exit;
     }
@@ -88,11 +228,11 @@ function print_server_status(
     }
 
     if (!$data['is_up']) {
-        log_message('ERROR', $jka_server_address . ' - Status: ' . $data['status']);
+        log_message(LOG_ERR, $jka_server_address . ' - Status: ' . $data['status']);
     }
 
     log_message(
-        'INFO',
+        LOG_INFO,
         $jka_server_address . ' - Generating HTML'
         . ' - Status: ' . $data['status']
         . ' - Name: "' . $data['server_name'] . '"'
@@ -131,21 +271,12 @@ function query_jka_server(string $host): array
         'timeout' => false,
     ];
 
-    $url = "udp://$host";
-    if (!preg_match('/\:[0-9]{1,5}$/', $url)) {
-        // The URL doesn't end with the port number
-        $url .= ':29070'; // Add the default port
-    }
-
-    if (!filter_var($url, FILTER_VALIDATE_URL)) {
-        log_message('ERROR', "$url is not a valid URL");
-        return $query_result; // 'error' => true
-    }
+    $url = build_url($host);
 
     // 3 second timeout for the connect() system call (shouldn't be a problem for a UDP socket)
     $socket = @stream_socket_client($url, $error_code, $error_message, 3.0);
     if (!$socket) {
-        log_message('ERROR', "$host - Error code: $error_code - Error message: $error_message");
+        log_message(LOG_ERR, "$host - Error code: $error_code - Error message: $error_message");
         return $query_result; // 'error' => true
     }
 
@@ -184,8 +315,8 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
     $data = [
         'is_up' => false,
         'status' => 'Error',
-        'background_image_url' => ROOT_URL . 'levelshots/default.jpg',
-        'default_background_image_url' => ROOT_URL . 'levelshots/default.jpg',
+        'background_image_url' => $GLOBALS['root_url'] . '/levelshots/default.jpg',
+        'default_background_image_url' => $GLOBALS['root_url'] . '/levelshots/default.jpg',
     ];
 
     if ($query_result['error']) {
@@ -218,6 +349,9 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
     // Fix the encoding
     for ($i = 1; $i < $nb_lines; $i++) {
         $lines[$i] = iconv($jka_server_encoding, 'UTF-8', $lines[$i]);
+        // TODO: what if there are illegal characters?
+        // TODO: @iconv + '//IGNORE' ?
+        // TODO: mb_convert_encoding ?
     }
 
     // Cvars (e.g. "\key1\value1\key2\value2...")
@@ -231,10 +365,9 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
     // Sort cvars by cvar name
     ksort($data['cvars'], SORT_NATURAL | SORT_FLAG_CASE); // Sort by keys (case insensitive)
 
-    global $game_types;
-    if (isset($data['cvars']['g_gametype']) && isset($game_types[(int)$data['cvars']['g_gametype']])) {
+    if (isset($data['cvars']['g_gametype']) && isset(GAME_TYPES[(int)$data['cvars']['g_gametype']])) {
         // Readable name for the game type
-        $data['game_type'] = $game_types[(int)$data['cvars']['g_gametype']];
+        $data['game_type'] = GAME_TYPES[(int)$data['cvars']['g_gametype']];
     }
 
     // Background image:
@@ -242,7 +375,7 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
     $path_to_map_image = __DIR__ . '/../public/levelshots/' . $map_name . '.jpg';
     if (preg_match('/^[a-zA-z_0-9\/]+$/', $map_name) && file_exists($path_to_map_image)) {
         // If the file name is safe (no "..", no weird characters), and the file exists
-        $data['background_image_url'] = ROOT_URL . 'levelshots/' . $map_name . '.jpg';
+        $data['background_image_url'] = $GLOBALS['root_url'] . '/levelshots/' . $map_name . '.jpg';
     }
 
     // Players
@@ -292,27 +425,28 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
 
 /**
  * Logs the specified message (prefixed by date/time) to the log file
- * @param string $level "INFO" or "ERROR"
+ * @param int $level LOG_INFO, LOG_WARNING, or LOG_ERR
  * @param string $message The message to log
  */
-function log_message(string $level, string $message): void
+function log_message(int $level, string $message): void
 {
-    $global_log_level = $GLOBALS['log_level'] ?? false;
-    $log_levels = [
-        'INFO' => 1,
-        'ERROR' => 4,
-    ];
-    if (
-        !isset($log_levels[$level]) // Invalid $level parameter
-        || !isset($log_levels[$global_log_level]) // Invalid log level configuration (or logging is disabled)
-        || $log_levels[$global_log_level] > $log_levels[$level] // Configured to log only higher-level messages
-    ) {
+    $global_log_level = $GLOBALS['log_level'];
+    if (!$global_log_level || $global_log_level < $level) {
+        // Logging is disabled, or configured to log only more important messages
         return; // Don't log
     }
 
+    $level_names = [
+        LOG_INFO => 'INFO',
+        LOG_WARNING => 'WARNING',
+        LOG_ERR => 'ERROR',
+    ];
+
+    $level_string = $level_names[$level] ?? (string)$level; // If $level doesn't match $level_names, leave it in number form
+
     file_put_contents(
         __DIR__ . '/../log/server.log',
-        date('Y-m-d H:i:s') . " - $level - $message\n",
+        date('Y-m-d H:i:s') . " - $level_string - $message\n",
         FILE_APPEND
     );
 }

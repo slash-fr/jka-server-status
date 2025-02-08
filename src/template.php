@@ -6,7 +6,7 @@
             JKA Server Status - <?= htmlspecialchars(strip_colors($data['server_name'])) ?>
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="<?= ROOT_URL ?>style.css?version=1" rel="stylesheet" />
+        <link href="<?= htmlspecialchars($GLOBALS['root_url']) ?>/style.css?version=1" rel="stylesheet" />
         <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
         <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -19,19 +19,24 @@
         <noscript>
             <!-- If JavaScript is enabled, let main.js add the background image, -->
             <!-- to avoid fetching an image that might not get displayed (depending on the user's settings). -->
-            <div id="background-image" style="background-image: url(<?= $data['background_image_url'] ?>?version=1)" /></div>
+            <div id="background-image"
+                 style="background-image: url(<?= htmlspecialchars($data['background_image_url']) ?>?version=1)" />
+            </div>
             <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
         </noscript>
-        <input type="hidden" id="current-background-image" value="<?= $data['background_image_url'] ?>?version=1" />
-        <input type="hidden" id="default-background-image" value="<?= $data['default_background_image_url'] ?>?version=1" />
+        <input type="hidden" id="current-background-image"
+               value="<?= htmlspecialchars($data['background_image_url']) ?>?version=1" />
+        <input type="hidden" id="default-background-image"
+               value="<?= htmlspecialchars($data['default_background_image_url']) ?>?version=1" />
 
         <div id="content">
             <header>
-                <?php global $enable_landing_page; ?>
-                <?php if ($enable_landing_page): ?>
-                    <?php global $landing_page_uri; ?>
-                    <a href="<?= htmlspecialchars($landing_page_uri); ?>" class="button" id="home-button" title="Go back to the server list">
-                        <img src="<?= ROOT_URL ?>favicon.svg" width="16" height="16" alt="" aria-hidden="false" />
+                <?php if (!empty($GLOBALS['enable_landing_page'])): ?>
+                    <a href="<?= htmlspecialchars($GLOBALS['landing_page_uri'] ?? '/'); ?>"
+                       id="home-button" class="button" title="Go back to the server list">
+
+                        <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/favicon.svg"
+                             width="16" height="16" alt="" aria-hidden="true" />
                         Server list
                     </a>
                 <?php endif; ?>
@@ -46,9 +51,11 @@
                     <label>Status:</label>
                     <span class="status">
                         <?php if ($data['is_up']): ?>
-                            <img src="<?= ROOT_URL ?>checkmark-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
+                            <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/checkmark-circle.svg"
+                                 width="20" height="20" alt="" aria-hidden="true"/>
                         <?php else: ?>
-                            <img src="<?= ROOT_URL ?>alert-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
+                            <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/alert-circle.svg"
+                                 width="20" height="20" alt="" aria-hidden="true"/>
                         <?php endif; ?>
                         <?= htmlspecialchars($data['status']); ?>
                     </span>
@@ -103,14 +110,20 @@
                 <p id="refreshed-footer" class="bonus-info"></p>
                 <p id="settings-footer">
                     <button id="refresh-button" onclick="location.reload()">
-                        <img src="<?= ROOT_URL ?>refresh.svg" width="20" height="20" alt="" aria-hidden="true"/> Refresh
+                        <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/refresh.svg"
+                             width="20" height="20" alt="" aria-hidden="true"/>
+                        Refresh
                     </button>
                     <button id="open-settings">
-                        <img src="<?= ROOT_URL ?>settings-sharp.svg" width="20" height="20" alt="" aria-hidden="true"/> Settings
+                        <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/settings-sharp.svg"
+                             width="20" height="20" alt="" aria-hidden="true"/>
+                        Settings
                     </button>
                     <?php if (isset($data['cvars'])): ?>
                         <button id="open-cvars">
-                            <img src="<?= ROOT_URL ?>terminal-20x20.png" srcset="<?= ROOT_URL ?>terminal-40x40.png 2x" width="20" height="20" alt="" aria-hidden="true"/>
+                            <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/terminal-20x20.png"
+                                 srcset="<?= htmlspecialchars($GLOBALS['root_url']) ?>/terminal-40x40.png 2x"
+                                 width="20" height="20" alt="" aria-hidden="true"/>
                             Show raw cvars
                         </button>
                     <?php endif; ?>
@@ -119,7 +132,8 @@
         </div>
         <div id="settings">
             <h2>
-                <img src="<?= ROOT_URL ?>settings-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
+                <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/settings-sharp.svg"
+                     width="24" height="24" alt="" aria-hidden="true"/>
                 Settings
             </h2>
             <p id="setting-grid">
@@ -158,14 +172,16 @@
                 <input id="background-color-input" type="color" />
             </p>
             <button id="close-settings">
-                <img src="<?= ROOT_URL ?>close-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
+                <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/close-circle.svg"
+                     width="20" height="20" alt="" aria-hidden="true"/>
                 Close settings
             </button>
         </div>
         <?php if (isset($data['cvars'])): ?>
             <div id="cvars">
                 <h2>
-                    <img src="<?= ROOT_URL ?>terminal-sharp.svg" width="24" height="24" alt="" aria-hidden="true"/>
+                    <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/terminal-sharp.svg"
+                         width="24" height="24" alt="" aria-hidden="true"/>
                     Raw cvars
                 </h2>
                 <div id="cvar-grid">
@@ -175,12 +191,13 @@
                     <?php endforeach; ?>
                 </div>
                 <button id="close-cvars">
-                    <img src="<?= ROOT_URL ?>close-circle.svg" width="20" height="20" alt="" aria-hidden="true"/>
+                    <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/close-circle.svg"
+                         width="20" height="20" alt="" aria-hidden="true"/>
                     Close raw cvars
                 </button>
             </div>
         <?php endif; ?>
-        <script src="<?= ROOT_URL ?>main.js?version=1"></script>
+        <script src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/main.js?version=1"></script>
         <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
     </body>
 </html>
