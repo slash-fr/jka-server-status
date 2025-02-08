@@ -86,9 +86,13 @@ function print_server_status(
         // to get their server displayed at the top of the list.
     }
 
+    if (!$data['is_up']) {
+        log_message('ERROR', $jka_server_address . ' - Status: ' . $data['status']);
+    }
+
     log_message(
         'INFO',
-        $jka_server_address . ' - Generating HTML -'
+        $jka_server_address . ' - Generating HTML'
         . ' - Status: ' . $data['status']
         . ' - Name: "' . $data['server_name'] . '"'
         . ' - Map: "' . ($data['cvars']['mapname'] ?? '') . '"'
@@ -149,10 +153,7 @@ function query_jka_server(string $host): array
         $metadata = stream_get_meta_data($socket);
         fclose($socket);
         if ($metadata['timed_out']) {
-            log_message('ERROR', "$host - Timeout");
             $query_result['timeout'] = true;
-        } else {
-            log_message('ERROR', "$host - Error (could not get server response)");
         }
         return $query_result; // 'error' => true
     }
@@ -285,11 +286,24 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
 
 /**
  * Logs the specified message (prefixed by date/time) to the log file
- * @param string $level "INFO", "ERROR", or "WARNING"
+ * @param string $level "INFO" or "ERROR"
  * @param string $message The message to log
  */
 function log_message(string $level, string $message): void
 {
+    $global_log_level = $GLOBALS['log_level'] ?? false;
+    $log_levels = [
+        'INFO' => 1,
+        'ERROR' => 4,
+    ];
+    if (
+        !isset($log_levels[$level]) // Invalid $level parameter
+        || !isset($log_levels[$global_log_level]) // Invalid log level configuration (or logging is disabled)
+        || $log_levels[$global_log_level] > $log_levels[$level] // Configured to log only higher-level messages
+    ) {
+        return; // Don't log
+    }
+
     file_put_contents(
         __DIR__ . '/../log/server.log',
         date('Y-m-d H:i:s') . " - $level - $message\n",

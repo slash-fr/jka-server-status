@@ -1,5 +1,13 @@
 <?php
 
+// Application-level logging configuration
+$log_level = 'INFO';
+// false => no logging
+// 'INFO' => logs 'INFO' messages and higher levels ('ERROR')
+// 'ERROR' => logs 'ERROR' messages only
+// Application-level messages will be stored in `log/server.log`
+// => Make sure the file permissions allow PHP to write into that file.
+
 // Root URL (trailing slash required)
 // e.g. "/server-status/" if you're hosting the script in a subfolder of your actual web root
 define('ROOT_URL', '/');
