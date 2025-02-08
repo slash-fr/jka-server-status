@@ -13,6 +13,9 @@ $caching_delay = 10; // 10 seconds
 // Cached responses will be stored in the `cache` folder.
 // => Make sure the file permissions allow PHP to write into that folder.
 
+// How long to wait for a response from the JKA server
+$timeout_delay = 3; // 3 seconds
+
 // Root URL (trailing slash required)
 // e.g. "/server-status/" if you're hosting the script in a subfolder of your actual web root
 define('ROOT_URL', '/');

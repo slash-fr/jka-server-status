@@ -142,13 +142,16 @@ function query_jka_server(string $host): array
         return $query_result; // 'error' => true
     }
 
-    $socket = @stream_socket_client($url, $error_code, $error_message, 3.0); // 3 second timeout for the connect() system call 
+    // 3 second timeout for the connect() system call (shouldn't be a problem for a UDP socket)
+    $socket = @stream_socket_client($url, $error_code, $error_message, 3.0);
     if (!$socket) {
         log_message('ERROR', "$host - Error code: $error_code - Error message: $error_message");
         return $query_result; // 'error' => true
     }
 
-    stream_set_timeout($socket, 3); // 3 second timeout (for reading over the socket)
+    // Timeout for reading over the socket
+    $timeout_delay = (int)($GLOBALS['timeout_delay'] ?? 3); // Default to 3 seconds if not set
+    stream_set_timeout($socket, $timeout_delay);
 
     @fwrite($socket, "\xFF\xFF\xFF\xFFgetstatus\n");
     $response = @fread($socket, 65535);
