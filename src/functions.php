@@ -123,7 +123,11 @@ function check_config(): void {
         if (!isset($jka_server['charset'])) {
             $jka_server['charset'] = 'Windows-1252';
         }
-        // TODO: check whether "charset" is valid. (mb_list_encodings?)
+        // Check whether the charset is known to iconv()
+        $encoding_test = @iconv($jka_server['charset'], 'UTF-8//IGNORE', '123456');
+        if (!$encoding_test) {
+            config_error('Charset "' . $jka_server['charset'] . '" does not seem to be supported by iconv().');
+        }
     }
 
     global $enable_landing_page;
@@ -219,9 +223,10 @@ function print_server_status(
     $data = parse_data($query_result, $jka_server_charset);
     $data['address'] = $jka_server_address;
     $data['server_name'] = $data['cvars']['sv_hostname'] ?? $jka_server_name;
-    if (strcasecmp($jka_server_charset, 'Windows-1252') === 0) {
+    $char_x80 = @iconv($jka_server_charset, 'UTF-8//IGNORE', "\x80");
+    if ($char_x80) {
         // "Fix" the server name
-        $data['server_name'] = ltrim($data['server_name'], '€');
+        $data['server_name'] = ltrim($data['server_name'], $char_x80);
         // Some server owners prepend "\x80" bytes to the "sv_hostname" cvar,
         // ("\x80" is a euro sign in Windows-1252 encoding),
         // to get their server displayed at the top of the list.
@@ -348,10 +353,7 @@ function parse_data(array $query_result, string $jka_server_encoding = 'Windows-
 
     // Fix the encoding
     for ($i = 1; $i < $nb_lines; $i++) {
-        $lines[$i] = iconv($jka_server_encoding, 'UTF-8', $lines[$i]);
-        // TODO: what if there are illegal characters?
-        // TODO: @iconv + '//IGNORE' ?
-        // TODO: mb_convert_encoding ?
+        $lines[$i] = @iconv($jka_server_encoding, 'UTF-8//IGNORE', $lines[$i]);
     }
 
     // Cvars (e.g. "\key1\value1\key2\value2...")
