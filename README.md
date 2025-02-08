@@ -17,7 +17,7 @@ as well as the player list.
         - Score
         - Ping
 - Can also display all `cvars` received from the server,
-- Caches responses for 10 seconds (server-side)
+- Caches responses for 10 seconds (server-side, configurable delay)
 - Uses backgrounds from my [**Widescreen levelshots**](https://jkhub.org/files/file/4179-widescreen-levelshots/) pack
     - 1920x1080 resolution, available in JPG + AVIF formats,
     - User-configurable blur and opacity, to improve the readability,
@@ -32,9 +32,10 @@ as well as the player list.
 
 ## Installation
 - Clone (or copy the content of) this repository onto your server,
-- Setup your web server to point to the `public` folder,
 - Copy `config.sample.php` to `config.php` and edit the configuration to suit your needs,
-- Make sure PHP has write access to the `cache` and `log` folders.
+- Make sure PHP has write access to the `cache` and `log` folders,
+- Setup your web server to point to the `public` folder,
+- Let the web server serve static files, and pass all other requests to `index.php`.
 
 ## Sample Nginx config
 Have a look at [`nginx.sample.conf`](doc/nginx.sample.conf) for an example of:

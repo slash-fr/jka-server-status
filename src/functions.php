@@ -67,7 +67,8 @@ function print_server_status(
     // Sanitize the host for use as a filename:
     $cached_file = __DIR__ . '/../cache/' . preg_replace('/[^a-z0-9]/', '-', strtolower($jka_server_address)) . '.html';
     $cached_at = @filemtime($cached_file);
-    if (time() < $cached_at + 10) { // Cached less than 10 seconds ago
+    $caching_delay = $GLOBALS['caching_delay'] ?? 10; // Default to 10 seconds if not set
+    if (time() < $cached_at + $caching_delay) { // Shorter than the configured delay (in seconds)
         log_message('INFO', "$jka_server_address - from cache");
         readfile($cached_file);
         exit;
@@ -106,7 +107,9 @@ function print_server_status(
     ob_start();
     require_once __DIR__ . '/template.php';
     $buffer = ob_get_clean();
-    file_put_contents($cached_file, $buffer);
+    if ($caching_delay > 0) {
+        file_put_contents($cached_file, $buffer);
+    }
 
     // Send the HTML to the browser
     echo $buffer;
