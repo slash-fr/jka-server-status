@@ -149,7 +149,7 @@ backgroundColorInput.addEventListener('change', function() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Handle "Refreshed X minutes ago" info + auto-refresh
+// Handle "Updated X minutes ago" info + auto-refresh
 
 let updateInterval;
 const updatedAtElement = document.getElementById('refreshed-footer');
@@ -162,26 +162,22 @@ if (updatedAtElement) {
 function updateDuration() {
     const nbSeconds = Math.round((Date.now() - refreshedAt) / 1000);
     if (nbSeconds < 60) {
-        if (nbSeconds == 1) {
-            updatedAtElement.textContent = 'Refreshed 1 second ago';
-        } else {
-            updatedAtElement.textContent = 'Refreshed ' + nbSeconds + ' seconds ago';
-        }
+        updatedAtElement.textContent = 'Updated just now';
     } else if (nbSeconds < 120) {
-        updatedAtElement.textContent = 'Refreshed a minute ago'
+        updatedAtElement.textContent = 'Updated a minute ago'
         if (autoRefresh === 1) {
             autoRefresh = 0; // Don't call location.reload() multiple times, if the response takes more than 1 second.
             location.reload();
         }
     } else if (nbSeconds < 3600) {
         const nbMinutes = Math.floor(nbSeconds / 60);
-        updatedAtElement.textContent = 'Refreshed ' + nbMinutes + ' minutes ago';
+        updatedAtElement.textContent = 'Updated ' + nbMinutes + ' minutes ago';
         if (autoRefresh > 0 && autoRefresh <= nbMinutes) {
             autoRefresh = 0; // Don't call location.reload() multiple times, if the response takes more than 1 second.
             location.reload();
         }
     } else { // More than 1 hour?
-        updatedAtElement.textContent = 'Refreshed over an hour ago';
+        updatedAtElement.textContent = 'Updated over an hour ago';
         updatedAtElement.classList.add('red');
         clearInterval(updateInterval);
         if (autoRefresh === 60) {
