@@ -159,6 +159,8 @@ if (updatedAtElement) {
     updateDuration(); // Update it now
 }
 
+// TODO: use a variable to store the number of minutes of the label, and compare the current number of minutes to that.
+// You know, to avoid updating the DOM every second...
 function updateDuration() {
     const nbSeconds = Math.round((Date.now() - refreshedAt) / 1000);
     if (nbSeconds < 60) {

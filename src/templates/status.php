@@ -1,41 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8"/>
-        <title>
-            JKA Server Status - <?= htmlspecialchars(strip_colors($data['server_name'])) ?>
-        </title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="<?= htmlspecialchars($GLOBALS['root_url']) ?>/style.css?version=1" rel="stylesheet" />
-        <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
-        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-title" content="JKA Server" />
-        <link rel="manifest" href="/site.webmanifest" />
+        <?php /** @var StatusData $data */ ?>
+        <?php $title = strip_colors($data->serverName); ?>
+        <?php require_once __DIR__ . '/_head.php'; ?>
     </head>
     <body>
         <noscript>
             <!-- If JavaScript is enabled, let main.js add the background image, -->
             <!-- to avoid fetching an image that might not get displayed (depending on the user's settings). -->
             <div id="background-image"
-                 style="background-image: url(<?= htmlspecialchars($data['background_image_url']) ?>?version=1)" />
+                 style="background-image: url(<?= asset($data->backgroundImageUrl) ?>)" />
             </div>
-            <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
         </noscript>
         <input type="hidden" id="current-background-image"
-               value="<?= htmlspecialchars($data['background_image_url']) ?>?version=1" />
+               value="<?= htmlspecialchars(asset($data->backgroundImageUrl)) ?>" />
         <input type="hidden" id="default-background-image"
-               value="<?= htmlspecialchars($data['default_background_image_url']) ?>?version=1" />
+               value="<?= htmlspecialchars(asset($data->defaultBackgroundImageUrl)) ?>" />
 
         <div id="content">
             <header>
-                <?php if (!empty($GLOBALS['enable_landing_page'])): ?>
-                    <a href="<?= htmlspecialchars($GLOBALS['landing_page_uri'] ?? '/'); ?>"
+                <?php if (!empty($data->isLandingPageEnabled)): ?>
+                    <a href="<?= htmlspecialchars($data->landingPageUri); ?>"
                        id="home-button" class="button" title="Go back to the server list">
 
-                        <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/favicon.svg"
+                        <img src="<?= asset('/favicon.svg') ?>"
                              width="16" height="16" alt="" aria-hidden="true" />
                         Server list
                     </a>
@@ -43,62 +32,62 @@
             </header>
 
             <div id="main-content">
-                <h1><?= format_name($data['server_name']); ?></h1>
+                <h1><?= format_name($data->serverName); ?></h1>
                 
                 <p class="info"> 
-                    <label>Address:</label> <span><?= htmlspecialchars($data['address']); ?></span>
+                    <label>Address:</label> <span><?= htmlspecialchars($data->address); ?></span>
 
                     <label>Status:</label>
                     <span class="status">
-                        <?php if ($data['is_up']): ?>
-                            <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/checkmark-circle.svg"
+                        <?php if ($data->isUp): ?>
+                            <img src="<?= asset('/checkmark-circle.svg') ?>"
                                  width="20" height="20" alt="" aria-hidden="true"/>
                         <?php else: ?>
-                            <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/alert-circle.svg"
+                            <img src="<?= asset('/alert-circle.svg') ?>"
                                  width="20" height="20" alt="" aria-hidden="true"/>
                         <?php endif; ?>
-                        <?= htmlspecialchars($data['status']); ?>
+                        <?= htmlspecialchars($data->status); ?>
                     </span>
 
-                    <?php if (isset($data['cvars']['mapname'])): ?>
-                        <label>Map name:</label> <span><?= htmlspecialchars($data['cvars']['mapname']); ?></span>
+                    <?php if (isset($data->mapName)): ?>
+                        <label>Map name:</label> <span><?= htmlspecialchars($data->mapName); ?></span>
                     <?php endif; ?>
 
-                    <?php if (isset($data['game_type'])): ?>
-                        <label>Game type:</label> <span><?= htmlspecialchars($data['game_type']); ?></span>
+                    <?php if (isset($data->gameType)): ?>
+                        <label>Game type:</label> <span><?= htmlspecialchars($data->gameType); ?></span>
                     <?php endif; ?>
 
-                    <?php if (isset($data['cvars']['gamename'])): ?>
-                        <label>Mod name:</label> <span><?= format_name($data['cvars']['gamename']); ?></span>
+                    <?php if (isset($data->gameName)): ?>
+                        <label>Mod name:</label> <span><?= format_name($data->gameName); ?></span>
                     <?php endif; ?>
 
-                    <?php if (isset($data['nb_players'])): ?>
+                    <?php if (isset($data->nbPlayers)): ?>
                         <label>Players:</label>
                         <span>
-                            <?= (int)$data['nb_players'] ?>
-                            <?php if (isset($data['cvars']['sv_maxclients'])): ?>
-                                / <?= (int)$data['cvars']['sv_maxclients'] ?>
+                            <?= (int)$data->nbPlayers ?>
+                            <?php if (isset($data->maxPlayers)): ?>
+                                / <?= (int)$data->maxPlayers ?>
                             <?php endif; ?>
-                            <?php if (isset($data['nb_humans'])): ?>
+                            <?php if (isset($data->nbHumans)): ?>
                                 <span class="bonus-info">
-                                    (<?= $data['nb_humans'] . ' ' . ($data['nb_humans'] == 1  ? 'human' : 'humans') ?>)
+                                    (<?= $data->nbHumans . ' ' . ($data->nbHumans === 1  ? 'human' : 'humans') ?>)
                                 </span>
                             <?php endif; ?>
                         </span>
                     <?php endif; ?>
                 </p>
 
-                <?php if (isset($data['nb_players']) && $data['nb_players'] > 0): ?>
+                <?php if (isset($data->nbPlayers) && $data->nbPlayers > 0): ?>
                     <table class="player-list">
                         <thead>
                             <tr><th>Name</th><th class="score">Score</th><th class="ping">Ping</th></tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($data['players'] as $player): ?>
+                            <?php foreach ($data->players as $player): ?>
                                 <tr>
-                                    <td><?= format_name($player['name']); ?></td>
-                                    <td><?= htmlspecialchars($player['score']); ?></td>
-                                    <td><?= htmlspecialchars($player['ping']); ?></td>
+                                    <td><?= format_name($player->name); ?></td>
+                                    <td><?= htmlspecialchars($player->score); ?></td>
+                                    <td><?= htmlspecialchars($player->ping); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -110,21 +99,21 @@
                 <p id="refreshed-footer" class="bonus-info"></p>
                 <p id="settings-footer">
                     <button id="refresh-button" onclick="location.reload()">
-                        <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/refresh.svg"
+                        <img src="<?= asset('/refresh.svg') ?>"
                              width="20" height="20" alt="" aria-hidden="true"/>
                         Refresh
                     </button>
                     <button id="open-settings">
-                        <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/settings-sharp.svg"
+                        <img src="<?= asset('/settings-sharp.svg') ?>"
                              width="20" height="20" alt="" aria-hidden="true"/>
                         Settings
                     </button>
-                    <?php if (isset($data['cvars'])): ?>
+                    <?php if ($data->cvars): ?>
                         <button id="open-cvars">
-                            <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/terminal-20x20.png"
-                                 srcset="<?= htmlspecialchars($GLOBALS['root_url']) ?>/terminal-40x40.png 2x"
+                            <img src="<?= asset('/terminal-20x20.png') ?>"
+                                 srcset="<?= asset('/terminal-40x40.png') ?> 2x"
                                  width="20" height="20" alt="" aria-hidden="true"/>
-                            Show raw cvars
+                            Server info
                         </button>
                     <?php endif; ?>
                 </p>
@@ -132,7 +121,7 @@
         </div>
         <div id="settings">
             <h2>
-                <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/settings-sharp.svg"
+                <img src="<?= asset('/settings-sharp.svg') ?>"
                      width="24" height="24" alt="" aria-hidden="true"/>
                 Settings
             </h2>
@@ -172,32 +161,31 @@
                 <input id="background-color-input" type="color" />
             </p>
             <button id="close-settings">
-                <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/close-circle.svg"
+                <img src="<?= asset('/close-circle.svg') ?>"
                      width="20" height="20" alt="" aria-hidden="true"/>
                 Close settings
             </button>
         </div>
-        <?php if (isset($data['cvars'])): ?>
+        <?php if ($data->cvars): ?>
             <div id="cvars">
                 <h2>
-                    <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/terminal-sharp.svg"
+                    <img src="<?= asset('/terminal-sharp.svg') ?>"
                          width="24" height="24" alt="" aria-hidden="true"/>
-                    Raw cvars
+                    Server info
                 </h2>
                 <div id="cvar-grid">
-                    <?php foreach ($data['cvars'] as $cvar_name => $cvar_value): ?>
+                    <?php foreach ($data->cvars as $cvar_name => $cvar_value): ?>
                         <label><?= htmlspecialchars($cvar_name) ?></label>
-                        <span><?= htmlspecialchars($cvar_value) ?></span>
+                        <span><?= format_name($cvar_value) ?></span>
                     <?php endforeach; ?>
                 </div>
                 <button id="close-cvars">
-                    <img src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/close-circle.svg"
+                    <img src="<?= asset('/close-circle.svg') ?>"
                          width="20" height="20" alt="" aria-hidden="true"/>
-                    Close raw cvars
+                    Close server info
                 </button>
             </div>
         <?php endif; ?>
-        <script src="<?= htmlspecialchars($GLOBALS['root_url']) ?>/main.js?version=1"></script>
-        <?php /* The query string ("?version=1") is used for cache busting purposes */ ?>
+        <script src="<?= asset('/main.js') ?>"></script>
     </body>
 </html>

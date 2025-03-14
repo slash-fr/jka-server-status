@@ -5,17 +5,7 @@ as well as the player list.
 [![Screenshot thumbnail](doc/screenshot-thumbnail.jpg)](doc/screenshot.jpg)
 
 ## Features
-- Retrieves the following information from the server:
-    - Server name (with colors)
-    - Status
-    - Map name
-    - Game type
-    - Mod name (with colors)
-    - Number of players
-    - Player list
-        - Name (with colors)
-        - Score
-        - Ping
+- Retrieves some basic server info, as well as the player list,
 - Can also display all `cvars` received from the server,
 - Caches responses for 10 seconds (server-side, configurable delay)
 - Uses backgrounds from my [**Widescreen levelshots**](https://jkhub.org/files/file/4179-widescreen-levelshots/) pack
@@ -29,6 +19,10 @@ as well as the player list.
 [![Settings screenshot thumbnail](doc/settings-thumbnail.jpg)](doc/settings.jpg)
 
 [![Raw cvars screenshot thumbnail](doc/raw-cvars-thumbnail.jpg)](doc/raw-cvars.jpg)
+
+## Requirements
+- A **web server** (Nginx, Apache, ...)
+- **PHP 8.1** or newer
 
 ## Installation
 - Clone (or copy the content of) this repository onto your server,

@@ -1,0 +1,327 @@
+<?php
+
+declare(strict_types=1);
+
+class JkaServerService
+{
+    private const GAME_TYPES = [
+        0 => 'FFA',
+        1 => 'Holocron FFA',
+        2 => 'Jedi Master',
+        3 => 'Duel',
+        4 => 'Power Duel',
+        5 => 'Single Player FFA',
+        6 => 'Team FFA',
+        7 => 'Siege',
+        8 => 'CTF (Capture The Flag)',
+        9 => 'CTY (Capture The Ysalamiri)',
+    ];
+
+    private readonly Config $config;
+    private readonly Logger $logger;
+
+    public function __construct(Config $config, Logger $logger) {
+        $this->config = $config;
+        $this->logger = $logger;
+    }
+
+    public function getStatusData(JkaServerConfig $jkaServerConfig): StatusData
+    {
+        $jkaServerResponse = $this->queryJkaServer($jkaServerConfig->address);
+        return $this->buildStatusData($jkaServerConfig, $jkaServerResponse);
+    }
+
+    /**
+    * Send a request to the JKA server, determine whether it was successful, and return the response.
+    * @param string $host JKA server IP or hostname, with optional port (defaults to 29070)
+    *                     -> e.g. "192.0.2.1", "example.com", "example.com:29070"
+    * @return JkaServerResponse
+    */
+    private function queryJkaServer(string $host): JkaServerResponse
+    {
+        $url = self::buildFullUdpUrl($host);
+    
+        // 3 second timeout for the connect() system call (shouldn't be a problem for a UDP socket)
+        $socket = @stream_socket_client($url, $error_code, $error_message, 3.0);
+        if (!$socket) {
+            $this->logger->error("$host - Error code: $error_code - Error message: $error_message");
+            return new JkaServerResponse(true, false); // $isError = true // $isTimeout = false
+        }
+    
+        // Timeout for reading over the socket
+        stream_set_timeout($socket, $this->config->timeoutDelay);
+    
+        @fwrite($socket, "\xFF\xFF\xFF\xFFgetstatus\n");
+        $response = @fread($socket, 65535);
+        if (!$response) {
+            $metadata = stream_get_meta_data($socket);
+            fclose($socket);
+            if ($metadata['timed_out']) {
+                return new JkaServerResponse(true, true); // $isError = true // $isTimeout = true
+            }
+            return new JkaServerResponse(true, false); // $isError = true // $isTimeout = false
+        }
+    
+        fclose($socket);
+    
+        // $isError = true // $isTimeout = false // $data = $response
+        return new JkaServerResponse(false, false, $response);
+    }
+
+    /**
+     * Parse the server response, and build the StatusData object
+     */
+    private function buildStatusData(jkaServerConfig $jkaServerConfig, JkaServerResponse $jkaServerResponse): StatusData
+    {
+        if ($jkaServerResponse->isTimeout) {
+            return new StatusData(
+                $this->config->isLandingPageEnabled,
+                $this->config->landingPageUri,
+                $jkaServerConfig->name,
+                $jkaServerConfig->address,
+                false, // isUp
+                'Timeout'
+            );
+        }
+
+        if ($jkaServerResponse->isError) {
+            return new StatusData(
+                $this->config->isLandingPageEnabled,
+                $this->config->landingPageUri,
+                $jkaServerConfig->name,
+                $jkaServerConfig->address,
+                false, // isUp
+                'Down'
+            );
+        }
+
+        // Make sure line endings are only "\n"
+        $response = str_replace("\r", "", $jkaServerResponse->data);
+
+        // Parse the output
+        $lines = explode("\n", $response);
+        $nbLines = count($lines);
+        if (
+            $nbLines < 2
+            || $lines[0] !== "\xFF\xFF\xFF\xFFstatusResponse"
+            || !str_starts_with($lines[1], "\\")
+        ) {
+            return new StatusData(
+                $this->config->isLandingPageEnabled,
+                $this->config->landingPageUri,
+                $jkaServerConfig->name,
+                $jkaServerConfig->address,
+                false, // isUp
+                'Invalid response'
+            );
+        }
+
+        // Fix the encoding
+        for ($i = 1; $i < $nbLines; $i++) {
+            $lines[$i] = (string)Charset::toUtf8($lines[$i], $jkaServerConfig->charset);
+        }
+
+        // Cvars (e.g. "\key1\value1\key2\value2..." => ["key1" => "value1", "key2" => "value2"])
+        $cvars = $this->getCvarsFromRawData($lines[1]);
+
+        // Players
+        $players = $this->getPlayers($lines);
+        
+        // Count players, bots and humans
+        $nbPlayers = $nbBots = $nbHumans = 0;
+        $this->countPlayers($players, $nbPlayers, $nbBots, $nbHumans);
+
+        return new StatusData(
+            $this->config->isLandingPageEnabled,
+            $this->config->landingPageUri,
+            $this->getServerName($jkaServerConfig, $cvars),
+            $jkaServerConfig->address,
+            true, // isUp
+            'Up',
+            $this->getBackgroundImageUrl($cvars),
+            $cvars['mapname'] ?? null,
+            $this->getGameType($cvars),
+            $cvars['gamename'] ?? null,
+            $nbPlayers,
+            $this->getMaxPlayers($cvars),
+            $nbHumans,
+            $nbBots,
+            $players,
+            $cvars
+        );
+    }
+
+    /**
+     * Parses the cvars from the raw server info
+     * @param string $rawCvarData The line with just the cvars (2nd line, e.g. "\key1\value1\key2\value2...")
+     * @return array e.g. ["key1" => "value1", "key2" => "value2"]
+     */
+    private function getCvarsFromRawData(string $rawCvarData): array
+    {
+        $cvars = [];
+        $rawServerArray = explode("\\", $rawCvarData);
+        // e.g. ["", "key1", "value1", "key2", "value2"]
+        array_shift($rawServerArray); // Ignore the starting backslash
+        $nbFields = floor(count($rawServerArray) / 2);
+        for ($i = 0; $i < $nbFields; $i++) {
+            $name = $rawServerArray[2 * $i];
+            $value = $rawServerArray[2 * $i + 1];
+            $cvars[$name] = $value;
+        }
+
+        // Sort cvars by cvar name
+        ksort($cvars, SORT_NATURAL | SORT_FLAG_CASE); // Sort by keys (case insensitive)
+
+        return $cvars;
+    }
+
+    /**
+     * Gets the server name, from the cvars if possible, from the config otherwise
+     * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
+     * @return string The server name (e.g. "Mystic Lugormod")
+     */
+    private function getServerName(JkaServerConfig $jkaServerConfig, array $cvars): string
+    {
+        $serverName = $cvars['sv_hostname'] ?? $jkaServerConfig->name;
+        $x80 = Charset::toUtf8("\x80", $jkaServerConfig->charset);
+        if ($x80) {
+            // "Fix" the server name
+            $serverName = ltrim($serverName, $x80);
+            // Some server owners prepend "\x80" bytes to the "sv_hostname" cvar,
+            // ("\x80" is a euro sign in Windows-1252 encoding),
+            // to get their server displayed at the top of the list.
+        }
+
+        return $serverName;
+    }
+
+    /**
+     * Gets the game type as string
+     * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
+     * @return string The game type (e.g. "FFA")
+     */
+    private function getGameType(array $cvars): ?string
+    {
+        $gameType = null;
+        if (isset($cvars['g_gametype']) && isset(self::GAME_TYPES[(int)$cvars['g_gametype']])) {
+            // Readable name for the game type
+            $gameType = self::GAME_TYPES[(int)$cvars['g_gametype']];
+        }
+
+        return $gameType;
+    }
+
+    /**
+     * Gets the map-dependent (root-relative) background image URL
+     * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
+     * @return string e.g. "/levelshots/mp/ffa3.jpg"
+     */
+    private function getBackgroundImageUrl(array $cvars): string
+    {
+        $backgroundImageUrl = StatusData::DEFAULT_BACKGROUND_IMAGE_URL;
+        $mapName = strtolower($cvars['mapname'] ?? 'default');
+        if (
+            preg_match('/^[a-zA-z_0-9\/]+$/', $mapName) // If the file name is safe (no "..", no weird characters)
+            && file_exists(PROJECT_DIR . '/public/levelshots/' . $mapName . '.jpg') // and the file exists
+        ) {
+            $backgroundImageUrl = '/levelshots/' . $mapName . '.jpg';
+        }
+
+        return $backgroundImageUrl;
+    }
+
+    /**
+     * Parses player data from the response
+     * @param string[] $lines Lines from the raw server response
+     * @return PlayerData[]
+     */
+    private function getPlayers(array $lines): array
+    {
+        $nbLines = count($lines);
+
+        $players = [];
+        for ($i = 2; $i < $nbLines; $i++) {
+            if (!preg_match('/^([0-9]+)\s+([0-9]+)\s+(.+)$/', $lines[$i], $matches)) {
+                continue;
+            }
+            $players[] = new PlayerData(
+                trim($matches[3], '"'), // Name
+                (int)$matches[1], // Score
+                (int)$matches[2], // Ping
+            );
+        }
+
+        usort($players, function (PlayerData $player1, PlayerData $player2) {
+            // Sort by score (descending), then by ping (descending), then by name (alphabetical)
+            if ((int)$player1->score > (int)$player2->score) {
+                return -1;
+            } else if ((int)$player1->score < (int)$player2->score) {
+                return 1;
+            }
+            // Same score => Sort by ping
+            if ((int)$player1->ping > (int)$player2->ping) {
+                return -1;
+            } else if ((int)$player1->ping < (int)$player2->ping) {
+                return 1;
+            }
+            // Same score, same ping => Sort by name (case insensitive)
+            return strcasecmp(strip_colors($player1->name), strip_colors($player2->name));
+        });
+
+        return $players;
+    }
+
+    /**
+     * Count bots and humans
+     * @param PlayerData[] $players
+     * @param int $nbPlayers Output parameter: Number of players (bots + humans)
+     * @param int $nbBots Output parameter: Number of bots
+     * @param int $nbHumans Output parameter: Number of humans
+     */
+    private function countPlayers(array $players, int &$nbPlayers, int &$nbBots, int &$nbHumans): void
+    {
+        $nbPlayers = 0;
+        $nbBots = 0;
+        $nbHumans = 0;
+        foreach ($players as $player) {
+            $nbPlayers++;
+            if (isset($player->ping) && $player->ping === 0) {
+                $nbBots++;
+            } else {
+                $nbHumans++;
+            }
+        }
+    }
+
+    /**
+     * Gets the maximum number of players advertised by the server
+     * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_maxclients" => "32"]
+     * @return int|null Maximum number of players (e.g. 32). Might not be set.
+     */
+    private function getMaxPlayers(array $cvars): ?int
+    {
+        $maxPlayers = null;
+        if (isset($cvars['sv_maxclients'])) {
+            $maxPlayers = (int)$cvars['sv_maxclients'];
+        }
+
+        return $maxPlayers;
+    }
+
+    /**
+     * Builds the full UDP URL from the JKA server IP address or domain, with optional port (defaults to 29070).
+     * Does not check whether it's valid.
+     * @param string $jkaServerAddress IP address or domain name, with optional port (e.g. "192.0.2.1" or "jka.example.com:29071")
+     * @return string e.g. "udp://192.0.2.1:29070"
+     */
+    public static function buildFullUdpUrl(string $jkaServerAddress): string
+    {
+        $url = 'udp://' . $jkaServerAddress;
+        if (!preg_match('/\:[0-9]{1,5}$/', $url)) {
+            // The URL doesn't end with the port number
+            $url .= ':29070'; // Add the default port
+        }
+
+        return $url;
+    }
+}

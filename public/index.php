@@ -1,25 +1,55 @@
 <?php
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../src/functions.php';
+require_once __DIR__ . '/../src/autoload.php';
 
-check_config();
+define('DEFAULT_LOG_FILE', PROJECT_DIR . '/log/server.log');
+
+// Initialize the config
+try {
+    // Classes (such as Config) use dependency injection, by declaring their dependencies in their constructor
+    $config = new Config(
+        PROJECT_DIR . '/config.php',
+        // Use a different logger at this stage, because we don't know what log config the user wants, yet.
+        new ConfigLogger(DEFAULT_LOG_FILE, LOG_INFO),
+        DEFAULT_LOG_FILE,
+    );
+} catch (ConfigException $exception) {
+    http_response_code(500);
+    header('Content-type: text/plain');
+    die('JKA Server Status: configuration error. Please check the logs.');
+}
+
+// Main logger, set to the configured file and level
+$logger = new Logger($config->logFile, $config->logLevel);
+
+// Template functions
+$templateHelper = new TemplateHelper($config, $logger);
+require_once PROJECT_DIR . '/src/template_functions.php';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Front controller: Try to match the REQUEST_URI
 
-if ($enable_landing_page && $_SERVER['REQUEST_URI'] === $landing_page_uri) {
-    require_once __DIR__ . '/../src/landing-page.php';
+$urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+if ($config->isLandingPageEnabled && $urlPath === $config->landingPageUri) {
+    require_once PROJECT_DIR . '/src/templates/landing_page.php';
     exit;
 }
 
-foreach ($jka_servers as $jka_server) {
-    if ($_SERVER['REQUEST_URI'] === $jka_server['uri']) {
-        print_server_status($jka_server['address'], $jka_server['name'], $jka_server['charset']);
+foreach ($config->jkaServers as $jkaServer) {
+    if ($urlPath === $jkaServer->uri) {
+        // Output the "status" page (as HTML)
+        $jkaServerController = new JkaServerController(
+            new JkaServerService($config, $logger),
+            $config,
+            $logger,
+            $templateHelper
+        );
+        echo $jkaServerController->getHtmlStatus($jkaServer); // Handles server-side caching and rendering.
         exit;
     }
 }
 
 // Did not match the landing page, nor one of the specified JKA servers => 404 Error
 http_response_code(404);
-require_once __DIR__ . '/../src/404.php';
+require_once PROJECT_DIR . '/src/templates/404.php';

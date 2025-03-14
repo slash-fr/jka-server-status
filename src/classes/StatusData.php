@@ -1,0 +1,121 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * DTO for the JKA server status data
+ */
+class StatusData
+{
+    public const DEFAULT_BACKGROUND_IMAGE_URL = '/levelshots/default.jpg';
+
+    public readonly bool $isLandingPageEnabled;
+    public readonly string $landingPageUri;
+
+    /**
+     * @var string $serverName Server name, with color codes
+     */
+    public readonly string $serverName;
+
+    public readonly string $address;
+
+    public readonly bool $isUp;
+
+    public readonly string $status;
+
+    /**
+     * @var string $backgroundImageUrl Map-dependent background image URL. Root-relative.
+     * Please call asset() on it to get the correct path, with the cache busting query string.
+     */
+    public readonly string $backgroundImageUrl;
+
+    /**
+     * @var string $default Default background image URL. Root-relative.
+     * Please call asset() on it to get the correct path, with the cache busting query string.
+     */
+    public readonly string $defaultBackgroundImageUrl;
+
+    /** 
+     * @var string|null $mapName Map name (e.g. "mp/ffa3").
+     * Might not be set (e.g. if the server is down, or doesn't give the info, for some reason)
+     */
+    public readonly ?string $mapName;
+
+    /** 
+     * @var string|null $gameType Game type (e.g. "FFA"). Might not be set.
+     */
+    public readonly ?string $gameType;
+
+    /** 
+     * @var string|null $gameName Mod name ("gamename" cvar, e.g. "Lugormod"). Might not be set.
+     */
+    public readonly ?string $gameName;
+
+    /**
+     * @var int|null $nbPlayers Number of players. Might not be set.
+     */
+    public readonly ?int $nbPlayers;
+
+    /**
+     * @var int|null $maxPlayers Max number of players ("sv_maxclients" cvar). Might not be set.
+     */
+    public readonly ?int $maxPlayers;
+
+    /**
+     * @var int|null $nbHumans Number of human players. Might not be set.
+     */
+    public readonly ?int $nbHumans;
+
+    /**
+     * @var int|null $nbBots Number of bots. Might not be set.
+     */
+    public readonly ?int $nbBots;
+
+    /**
+     * @var PlayerData[] $players
+     */
+    public readonly array $players;
+
+    /**
+     * @var string[] $cvars Indexed array: "cvar_name" => "cvar_value"
+     */
+    public readonly array $cvars;
+
+    public function __construct(
+        bool $isLandingPageEnabled,
+        string $landingPageUri,
+        string $serverName,
+        string $address,
+        bool $isUp,
+        string $status,
+        string $backgroundImageUrl = self::DEFAULT_BACKGROUND_IMAGE_URL,
+        ?string $mapName = null,
+        ?string $gameType = null,
+        ?string $gameName = null,
+        ?int $nbPlayers = null,
+        ?int $maxPlayers = null,
+        ?int $nbHumans = null,
+        ?int $nbBots = null,
+        array $players = [],
+        array $cvars = []
+    )
+    {
+        $this->isLandingPageEnabled = $isLandingPageEnabled;
+        $this->landingPageUri = $landingPageUri;
+        $this->serverName = $serverName;
+        $this->address = $address;
+        $this->isUp = $isUp;
+        $this->status = $status;
+        $this->backgroundImageUrl = $backgroundImageUrl;
+        $this->defaultBackgroundImageUrl = self::DEFAULT_BACKGROUND_IMAGE_URL; // Not configurable, currently
+        $this->mapName = $mapName;
+        $this->gameType = $gameType;
+        $this->gameName = $gameName;
+        $this->nbPlayers = $nbPlayers;
+        $this->maxPlayers = $maxPlayers;
+        $this->nbHumans = $nbHumans;
+        $this->nbBots = $nbBots;
+        $this->players = $players;
+        $this->cvars = $cvars;
+    }
+}

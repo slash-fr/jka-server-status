@@ -1,15 +1,16 @@
 <?php
 
 // Application-level logging configuration
+$log_file = __DIR__ . '/log/server.log';
+// Default value if omitted: __DIR__ . '/log/server.log'
+// Make sure the file permissions allow PHP to write into that file.
+
 $log_level = LOG_INFO;
 // 0 => No logging
 // LOG_INFO => Logs LOG_INFO messages and higher levels (LOG_WARNING and LOG_ERR)
 // LOG_WARNING => Logs LOG_WARNING messages and higher levels (LOG_ERR)
 // LOG_ERR => Only logs LOG_ERR messages
 // Default value if omitted: LOG_INFO
-//
-// Application-level messages will be stored in `log/server.log`
-// => Make sure the file permissions allow PHP to write into that file.
 
 // Cache JKA server responses for a few seconds, to avoid sending an excessive amount of requests
 $caching_delay = 10; // 10 seconds
