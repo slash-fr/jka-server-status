@@ -225,7 +225,7 @@ class Config
     {
         if (!is_array($jkaServer)) {
             $message = 'Config variable $jka_servers must be an array of arrays '
-                . '(got: ' . gettype($jkaServer) . ' for $jka_servers[' . $index . '])';
+                . '(got: ' . gettype($jkaServer) . ' for $jka_servers[' . var_export($index, true) . '])';
             $this->logger->error($message);
             throw new ConfigException($message);
         }

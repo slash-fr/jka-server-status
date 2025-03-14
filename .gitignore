@@ -4,5 +4,9 @@
 /log/*
 !/log/.gitkeep
 /config.php
+# phpunit.phar, ...
 /phpunit*
 /.phpunit*
+# If your IDE does not autocomplete PHPUnit classes with just the PHAR file,
+# you can add the content of PHPUnit's "src" folder to:
+/src/classes/PHPUnit
