@@ -6,7 +6,7 @@ if (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0) {
     $log_file = 'NUL';
 }
 
-// Voluntary mistake: $jka_servers should be an array of arrays
+// Intentional mistake: $jka_servers should be an array of arrays
 $jka_servers = [
     'address' => '192.0.2.1'
 ];

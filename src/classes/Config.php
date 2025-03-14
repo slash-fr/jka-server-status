@@ -97,8 +97,8 @@ class Config
         }
 
         if (!is_string($logFile)) {
-            $message = 'Config variable $log_file must be a string (got: ' . gettype($logFile) . ')';
-            error_log(date('Y-m-d H:i:s') . ' - ERROR - ' . $message);
+            $message = 'Config variable $log_file must be a string (got: ' . gettype($logFile) . ').';
+            $this->logger->error($message);
             throw new ConfigException($message);
         }
 
@@ -113,11 +113,10 @@ class Config
         }
 
         if (!is_int($logLevel)) {
-            $logLevel = LOG_INFO;
-            $this->logger->warning(
-                'Config variable $log_level must be an int (got: ' . gettype($logLevel) . '). Defaulting to LOG_INFO. '
-                . 'Tip: use one of the constants (LOG_INFO, LOG_WARNING, LOG_ERR), or 0 to disable logging.'
-            );
+            $message = 'Config variable $log_level must be an int (got: ' . gettype($logLevel) . '). '
+                . 'Tip: use one of the constants (LOG_INFO, LOG_WARNING, LOG_ERR), or 0 to disable logging.';
+            $this->logger->error($message);
+            throw new ConfigException($message);
         }
 
         $this->logLevel = $logLevel;
@@ -147,9 +146,9 @@ class Config
         }
 
         if (!is_int($cachingDelay)) {
-            $this->logger->warning(
-                'Config variable $caching_delay must be an int (got: ' . gettype($cachingDelay) . ').'
-            );
+            $message = 'Config variable $caching_delay must be an int (got: ' . gettype($cachingDelay) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
         }
 
         $this->cachingDelay = (int)$cachingDelay;
@@ -163,16 +162,17 @@ class Config
         }
 
         if (!is_int($timeoutDelay)) {
-            $this->logger->warning(
-                'Config variable $timeout_delay must be an int (got: ' . gettype($timeoutDelay) . ').
-            ');
+            $message = 'Config variable $timeout_delay must be an int (got: ' . gettype($timeoutDelay) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
         }
 
         $this->timeoutDelay = (int)$timeoutDelay;
 
         if ($this->timeoutDelay < 1) {
-            $this->timeoutDelay = 1;
-            $this->logger->warning('Config variable $timeout_delay must be >= 1. Changing to 1.');
+            $message = 'Config variable $timeout_delay must be >= 1.';
+            $this->logger->error($message);
+            throw new ConfigException($message);
         }
     }
 
@@ -184,7 +184,9 @@ class Config
         }
 
         if (!is_string($rootUrl)) {
-            $this->logger->warning('Config variable $root_url must be a string (got: ' . gettype($rootUrl) . ').');
+            $message = 'Config variable $root_url must be a string (got: ' . gettype($rootUrl) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
         }
 
         $this->rootUrl = rtrim((string)$rootUrl, '/'); // Remove the trailing slash
@@ -345,9 +347,10 @@ class Config
         }
 
         if (!is_bool($isLandingPageEnabled)) {
-            $this->logger->warning(
-                'Config variable $enable_landing_page must be a boolean (got: ' . gettype($isLandingPageEnabled) . ').'
-            );
+            $message = 'Config variable $enable_landing_page must be a boolean '
+                . '(got: ' . gettype($isLandingPageEnabled) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
         }
 
         $this->isLandingPageEnabled = (bool)$isLandingPageEnabled;
@@ -361,9 +364,9 @@ class Config
         }
         
         if (!is_string($landingPageUri)) {
-            $this->logger->warning(
-                'Config variable $landing_page_uri must be a string (got: ' . gettype($landingPageUri) . ').'
-            );
+            $message = 'Config variable $landing_page_uri must be a string (got: ' . gettype($landingPageUri) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
         }
 
         $this->landingPageUri = (string)$landingPageUri;

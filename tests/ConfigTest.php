@@ -58,20 +58,22 @@ class ConfigTest extends TestCase
         $logFile = $isWindows ? 'NUL' : '/dev/null';
         $configLogger = new ConfigLogger($logFile, 0); // No logging
 
-        $expectedMessages = [
-            1 => 'Config variable $jka_servers must be an array of arrays (got: string for $jka_servers[\'address\'])',
+        $expectedMessageStarts = [
+            1 => 'Config variable $jka_servers must be an array of arrays',
             2 => 'Config variable $jka_servers is required.',
             3 => 'Each configured server must specify an "address". $jka_servers[0] does not specify an "address".',
+            4 => 'Config variable $log_level must be an int',
+            5 => 'Config variable $enable_landing_page must be a boolean',
         ];
 
         // Iterate over all the "invalid-config-*.php" files
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $gotException = false;
             try {
                 $config = new Config(__DIR__ . "/sample-configs/invalid-config-$i.php", $configLogger, $logFile);
             } catch (ConfigException $exception) {
                 $gotException = true;
-                $this->assertSame($expectedMessages[$i], $exception->getMessage());
+                $this->assertStringStartsWith($expectedMessageStarts[$i], $exception->getMessage());
             }
             $this->assertTrue(
                 $gotException,

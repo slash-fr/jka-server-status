@@ -6,9 +6,11 @@ if (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0) {
     $log_file = 'NUL';
 }
 
-// Intentional typo: should be $jka_servers (with an "s")
-$jka_server = [
+// Intentional mistake: should be a boolean (not a string)
+$enable_landing_page = 'true';
+
+$jka_servers = [
     [
-        'address' => '192.0.2.1'
+        'address' => '127.0.0.1'
     ]
 ];

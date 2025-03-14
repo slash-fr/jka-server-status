@@ -6,7 +6,7 @@ if (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0) {
     $log_file = 'NUL';
 }
 
-// Voluntary mistake: missing required field "address"
+// Intentional mistake: missing required field "address"
 $jka_servers = [
     [
         'uri' => '/main-server',
