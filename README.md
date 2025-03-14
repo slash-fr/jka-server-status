@@ -25,11 +25,12 @@ as well as the player list.
 - **PHP 8.1** or newer
 
 ## Installation
-- Clone (or copy the content of) this repository onto your server,
-- Copy `config.sample.php` to `config.php` and edit the configuration to suit your needs,
-- Make sure PHP has write access to the `cache` and `log` folders,
-- Setup your web server to point to the `public` folder,
-- Let the web server serve static files, and pass all other requests to `index.php`.
+1. Clone (or copy the content of) this repository onto your server,
+2. Copy `config.sample.php` to `config.php` and edit the configuration to suit your needs,  
+   For more basic examples, see: [**Basic `config.php` examples**](doc/basic-config-php-examples.md).
+3. Make sure PHP has write access to the `cache` and `log` folders,
+4. Setup your web server to point to the `public` folder,
+5. Let the web server serve static files, and pass all other requests to `index.php`.
 
 ## Sample Nginx config
 Have a look at [`nginx.sample.conf`](doc/nginx.sample.conf) for an example of:
