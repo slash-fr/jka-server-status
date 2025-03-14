@@ -4,3 +4,5 @@
 /log/*
 !/log/.gitkeep
 /config.php
+/phpunit*
+/.phpunit*

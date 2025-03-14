@@ -45,6 +45,13 @@ sudo apt install nginx-light
 sudo apt install php-fpm
 ```
 
+## PHPUnit
+There are a few automated tests for PHP developers (with very incomplete coverage).
+```sh
+wget -O phpunit.phar https://phar.phpunit.de/phpunit-12.phar
+php phpunit.phar --bootstrap src/autoload.php tests
+```
+
 ## License
 The code in this repository is released under the [MIT License](LICENSE.txt).
 
