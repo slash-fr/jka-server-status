@@ -28,11 +28,17 @@ final class LoggerTest extends TestCase
         chmod($tempFile, 0400); // r-- --- ---
 
         $logger = new Logger($tempFile, LOG_INFO);
-        error_log(
-            'testReadOnlyLogFile() -> Trying to write to a read-only file. '
-            . 'This is expected to generate 2 error messages below. Nothing to worry about.'
-        );
+
+        // Disable error_log() temporarily - it's used as backup by the Logger, when it can't write to the log file
+        $isWindows = (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0);
+        $nullLogFile = $isWindows ? 'NUL' : '/dev/null';
+        $previousErrorLogValue = ini_set('error_log', $nullLogFile);
+
+        // Try writing to the read-only file
         $logger->error('Test');
+        
+        // Reset "error_log"
+        ini_set('error_log', $previousErrorLogValue);
 
         $logFileContent = file_get_contents($tempFile);
 
