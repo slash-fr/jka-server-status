@@ -125,7 +125,7 @@ class JkaServerService
         $cvars = $this->getCvarsFromRawData($lines[1]);
 
         // Players
-        $players = $this->getPlayers($lines);
+        $players = $this->getPlayers($lines, $jkaServerConfig->address);
         
         // Count players, bots and humans
         $nbPlayers = $nbBots = $nbHumans = 0;
@@ -233,17 +233,30 @@ class JkaServerService
     /**
      * Parses player data from the response
      * @param string[] $lines Lines from the raw server response
+     * @param string $jkaServerAddress JKA Server Address (used in log messages)
      * @return PlayerData[]
      */
-    private function getPlayers(array $lines): array
+    private function getPlayers(array $lines, string $jkaServerAddress): array
     {
         $nbLines = count($lines);
 
         $players = [];
         for ($i = 2; $i < $nbLines; $i++) {
-            if (!preg_match('/^([0-9]+)\s+([0-9]+)\s+(.+)$/', $lines[$i], $matches)) {
-                continue;
+            if ($i === ($nbLines - 1) && $lines[$i] === '') {
+                // The last line is allowed to be empty (without generating a warning)                
+                break;
+                //TODO: Unit test with and without an empty last line
             }
+
+            if (!preg_match('/^(-?[0-9]+)\s+([0-9]+)\s+(.+)$/', $lines[$i], $matches)) {
+                $this->logger->warning(
+                    $jkaServerAddress . ' - The server response contains an invalid player line: '
+                    . var_export($lines[$i], true)
+                );
+                continue;
+                //TODO: Unit test with and without negative scores
+            }
+
             $players[] = new PlayerData(
                 trim($matches[3], '"'), // Name
                 (int)$matches[1], // Score
