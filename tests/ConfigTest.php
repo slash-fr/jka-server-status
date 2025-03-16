@@ -52,11 +52,67 @@ class ConfigTest extends TestCase
         $this->assertSame('Windows-1252', $config->jkaServers[0]->charset ?? null);
     }
 
+    public function testMissingConfigFile(): void
+    {
+        $nullLogFile = $this->getNullLogFile();
+        
+        $gotException = false;
+
+        try {
+            new Config(
+                __DIR__ . "/sample-configs/DO-NO-CREATE-THIS-FILE.php",
+                new ConfigLogger($nullLogFile, 0), // No logging
+                $nullLogFile
+            );
+        } catch (ConfigException $exception) {
+            $gotException = true;
+            $this->assertStringStartsWith("Could not find the configuration file", $exception->getMessage());
+        }
+
+        $this->assertTrue(
+            $gotException,
+            "Did not catch the expected ConfigException."
+        );
+    }
+
+    public function testUnreadableConfigFile(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'JKA');
+        chmod($tempFile, 0000); // --- --- ---
+        // TODO: chmod 000 does not work on Windows
+        $isWindows = (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0);
+        if ($isWindows) {
+            echo "\nWARNING: chmod 000 does not work on Windows. Skipping testUnreadableConfigFile().\n";
+            return;
+        }
+
+        $nullLogFile = $this->getNullLogFile();
+        
+        $gotException = false;
+
+        try {
+            new Config(
+                $tempFile,
+                new ConfigLogger($nullLogFile, 0), // No logging
+                $nullLogFile
+            );
+        } catch (ConfigException $exception) {
+            $gotException = true;
+            $this->assertStringStartsWith("Could not read the configuration file", $exception->getMessage());
+        }
+
+        $this->assertTrue(
+            $gotException,
+            "Did not catch the expected ConfigException."
+        );
+
+        chmod($tempFile, 0600); // rw- --- ---
+        unlink($tempFile);
+    }
+
     public function testInvalidConfigs(): void
     {
-        $isWindows = (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0);
-        $logFile = $isWindows ? 'NUL' : '/dev/null';
-        $configLogger = new ConfigLogger($logFile, 0); // No logging
+        $nullLogFile = $this->getNullLogFile();
 
         $expectedMessageStarts = [
             1 => 'Config variable $jka_servers must be an array of arrays',
@@ -69,16 +125,36 @@ class ConfigTest extends TestCase
         // Iterate over all the "invalid-config-*.php" files
         for ($i = 1; $i <= 5; $i++) {
             $gotException = false;
+
             try {
-                $config = new Config(__DIR__ . "/sample-configs/invalid-config-$i.php", $configLogger, $logFile);
+                new Config(
+                    __DIR__ . "/sample-configs/invalid-config-$i.php",
+                    new ConfigLogger($nullLogFile, 0), // No logging
+                    $nullLogFile
+                );
             } catch (ConfigException $exception) {
                 $gotException = true;
                 $this->assertStringStartsWith($expectedMessageStarts[$i], $exception->getMessage());
             }
+
             $this->assertTrue(
                 $gotException,
                 "Did not catch the expected ConfigException for invalid-config-$i.php"
             );
         }
+    }
+
+    /**
+     * Gets a file name that won't log anything (typically, "/dev/null")
+     */
+    private function getNullLogFile(): string
+    {
+        $isWindows = (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0);
+        
+        if ($isWindows) {
+            return 'NUL';
+        }
+
+        return '/dev/null';
     }
 }
