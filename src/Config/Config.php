@@ -1,6 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace JkaServerStatus\Config;
+
+use JkaServerStatus\JkaServer\JkaServerService;
+use JkaServerStatus\Log\ConfigLogger;
+use JkaServerStatus\Log\Logger;
+use JkaServerStatus\Util\Charset;
 
 class Config
 {
@@ -8,7 +13,7 @@ class Config
     // Public (read-only) properties
 
     /**
-     * @var string $logFile Path to the log file (e.g. "/var/www/jka-server-status/log/server.log")
+     * @var string $logFile Path to the log file (e.g. "/var/www/jka-server-status/var/log/server.log")
      */
     public readonly string $logFile;
 
@@ -56,7 +61,7 @@ class Config
      * Initializes the config from the specified file
      * @var string $configFile Path to the PHP config file (e.g. PROJECT_DIR . '/config.php')
      * @var ConfigLogger $configLogger Logger to use if config errors are detected
-     * @var string $defaultLogFile Path to the default log file (e.g. "/var/www/jka-server-status/log/server.log")
+     * @var string $defaultLogFile Path to the default log file (e.g. "/var/www/jka-server-status/var/log/server.log")
      * @throws ConfigException if the config is invalid
      */
     public function __construct(string $configFile, Logger $configLogger, string $defaultLogFile)
@@ -64,7 +69,7 @@ class Config
         $this->logger = $configLogger;
         $this->defaultLogFile = $defaultLogFile;
 
-        if (!file_exists($configFile)) {
+        if (!is_file($configFile)) {
             $message = 'Could not find the configuration file ("' . $configFile . '").';
             $this->logger->error($message);
             throw new ConfigException($message);

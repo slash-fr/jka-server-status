@@ -1,8 +1,8 @@
 <?php
 
 // Application-level logging configuration
-$log_file = __DIR__ . '/log/server.log';
-// Default value if omitted: __DIR__ . '/log/server.log'
+$log_file = __DIR__ . '/var/log/server.log';
+// Default value if omitted: __DIR__ . '/var/log/server.log'
 // Make sure the file permissions allow PHP to write into that file.
 
 $log_level = LOG_INFO;

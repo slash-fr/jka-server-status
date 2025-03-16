@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 
+namespace JkaServerStatus\Tests;
+
+use JkaServerStatus\Util\Charset;
 use PHPUnit\Framework\TestCase;
 
 class CharsetTest extends TestCase

@@ -1,6 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace JkaServerStatus\JkaServer;
+
+use JkaServerStatus\Config\Config;
+use JkaServerStatus\Config\JkaServerConfig;
+use JkaServerStatus\Log\Logger;
+use JkaServerStatus\Util\Charset;
 
 class JkaServerService
 {
@@ -71,7 +76,7 @@ class JkaServerService
     /**
      * Parse the server response, and build the StatusData object
      */
-    private function buildStatusData(jkaServerConfig $jkaServerConfig, JkaServerResponse $jkaServerResponse): StatusData
+    public function buildStatusData(jkaServerConfig $jkaServerConfig, JkaServerResponse $jkaServerResponse): StatusData
     {
         if ($jkaServerResponse->isTimeout) {
             return new StatusData(

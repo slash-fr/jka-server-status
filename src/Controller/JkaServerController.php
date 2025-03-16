@@ -1,6 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace JkaServerStatus\Controller;
+
+use JkaServerStatus\Config\Config;
+use JkaServerStatus\Config\JkaServerConfig;
+use JkaServerStatus\JkaServer\JkaServerService;
+use JkaServerStatus\Log\Logger;
+use JkaServerStatus\Template\TemplateHelper;
 
 /**
  * Controller that handles the "status" page
@@ -30,7 +36,7 @@ class JkaServerController
     public function getHtmlStatus(JkaServerConfig $jkaServerConfig): string
     {
         // Sanitize the host for use as a filename:
-        $cachedFile = PROJECT_DIR . '/cache/' . preg_replace('/[^a-z0-9]/', '-', strtolower($jkaServerConfig->address)) . '.html';
+        $cachedFile = PROJECT_DIR . '/var/cache/' . preg_replace('/[^a-z0-9]/', '-', strtolower($jkaServerConfig->address)) . '.html';
         $cachingDelay = $this->config->cachingDelay;
         // Try to get the HTML from the cache
         $cachedAt = @filemtime($cachedFile);
@@ -63,7 +69,7 @@ class JkaServerController
 
         // Render and cache the HTML
         ob_start();
-        require_once PROJECT_DIR . '/src/templates/status.php';
+        require_once PROJECT_DIR . '/templates/status.php';
         $htmlStatus = ob_get_clean();
         if ($cachingDelay > 0) {
             if (!file_put_contents($cachedFile, $htmlStatus)) {

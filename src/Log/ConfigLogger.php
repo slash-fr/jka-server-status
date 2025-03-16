@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace JkaServerStatus\Log;
 
 /**
  * Config Logger. Allows you to update the log file and level after instanciation. Use it sparingly.

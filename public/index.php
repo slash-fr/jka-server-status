@@ -2,7 +2,16 @@
 
 require_once __DIR__ . '/../src/autoload.php';
 
-define('DEFAULT_LOG_FILE', PROJECT_DIR . '/log/server.log');
+use JkaServerStatus\Config\Config;
+use JkaServerStatus\Config\ConfigException;
+use JkaServerStatus\Controller\JkaServerController;
+use JkaServerStatus\JkaServer\JkaServerService;
+use JkaServerStatus\Log\ConfigLogger;
+use JkaServerStatus\Log\Logger;
+use JkaServerStatus\Template\TemplateHelper;
+
+define('PROJECT_DIR', __DIR__ . '/..');
+define('DEFAULT_LOG_FILE', PROJECT_DIR . '/var/log/server.log');
 
 // Initialize the config
 try {
@@ -32,7 +41,7 @@ require_once PROJECT_DIR . '/src/template_functions.php';
 $urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 if ($config->isLandingPageEnabled && $urlPath === $config->landingPageUri) {
-    require_once PROJECT_DIR . '/src/templates/landing_page.php';
+    require_once PROJECT_DIR . '/templates/landing_page.php';
     exit;
 }
 
@@ -52,4 +61,4 @@ foreach ($config->jkaServers as $jkaServer) {
 
 // Did not match the landing page, nor one of the specified JKA servers => 404 Error
 http_response_code(404);
-require_once PROJECT_DIR . '/src/templates/404.php';
+require_once PROJECT_DIR . '/templates/404.php';

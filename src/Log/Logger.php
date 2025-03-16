@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace JkaServerStatus\Log;
 
 /**
  * Basic Logger. Can be extended

@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 
+namespace JkaServerStatus\Tests;
+
+use JkaServerStatus\Log\Logger;
 use PHPUnit\Framework\TestCase;
 
 final class LoggerTest extends TestCase

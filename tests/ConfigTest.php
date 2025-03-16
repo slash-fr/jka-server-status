@@ -1,5 +1,10 @@
 <?php declare(strict_types=1);
 
+namespace JkaServerStatus\Tests;
+
+use JkaServerStatus\Config\Config;
+use JkaServerStatus\Config\ConfigException;
+use JkaServerStatus\Log\ConfigLogger;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase

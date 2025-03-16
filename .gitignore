@@ -1,12 +1,21 @@
+# IDE-specific files
 /.vscode
-/cache/*
-!/cache/.gitkeep
-/log/*
-!/log/.gitkeep
+
+# Generated files
+/var/cache/*
+!/var/cache/.gitkeep
+/var/log/*
+!/var/log/.gitkeep
+
+# Config file
 /config.php
+# (Config.sample.php is versioned, however)
+
+# PHPUnit
 # phpunit.phar, ...
 /phpunit*
+# .phpunit.result.cache, ...
 /.phpunit*
 # If your IDE does not autocomplete PHPUnit classes with just the PHAR file,
-# you can add the content of PHPUnit's "src" folder to:
-/src/classes/PHPUnit
+# you can put the content of PHPUnit's "src" folder into:
+/src/PHPUnit

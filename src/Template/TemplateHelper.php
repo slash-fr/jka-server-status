@@ -1,6 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace JkaServerStatus\Template;
+
+use JkaServerStatus\Config\Config;
+use JkaServerStatus\Log\Logger;
 
 /**
  * Template-related methods
