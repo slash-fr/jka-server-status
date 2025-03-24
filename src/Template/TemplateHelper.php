@@ -2,8 +2,8 @@
 
 namespace JkaServerStatus\Template;
 
-use JkaServerStatus\Config\Config;
-use JkaServerStatus\Log\Logger;
+use JkaServerStatus\Config\ConfigData;
+use JkaServerStatus\Log\LoggerInterface;
 
 /**
  * Template-related methods
@@ -23,10 +23,10 @@ class TemplateHelper
         '^9' => '</span><span class="gray">',
     ];
 
-    private Config $config;
-    private Logger $logger;
+    private readonly ConfigData $config;
+    private readonly LoggerInterface $logger;
 
-    public function __construct(Config $config, Logger $logger)
+    public function __construct(ConfigData $config, LoggerInterface $logger)
     {
         $this->config = $config;
         $this->logger = $logger;
@@ -62,7 +62,7 @@ class TemplateHelper
      */
     private function getVersionString(string $path): string
     {
-        $updatedAt = filemtime(PROJECT_DIR . '/public' . $path); // Timestamp (int)
+        $updatedAt = filemtime($this->config->projectDir . '/public' . $path); // Timestamp (int)
 
         if (!$updatedAt) {
             $this->logger->warning(
@@ -73,7 +73,7 @@ class TemplateHelper
         }
 
         // Human-readable version string
-        return date('Y-m-d--h-i-s', $updatedAt); // e.g. "2025-02-09--18-59-42"
+        return date('Y-m-d--H-i-s', $updatedAt); // e.g. "2025-02-09--18-59-42"
     }
 
     /**

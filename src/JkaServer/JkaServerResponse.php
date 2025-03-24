@@ -4,14 +4,12 @@ namespace JkaServerStatus\JkaServer;
 
 class JkaServerResponse
 {
-    public readonly bool $isError;
-    public readonly bool $isTimeout;
+    public readonly JkaServerResponseStatus $status;
     public readonly string $data;
 
-    public function __construct(bool $isError, bool $isTimeout, string $data = "")
+    public function __construct(JkaServerResponseStatus $status, string $data = "")
     {
-        $this->isError = $isError;
-        $this->isTimeout = $isTimeout;
+        $this->status = $status;
         $this->data = $data;
     }
 }

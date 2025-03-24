@@ -28,5 +28,4 @@ spl_autoload_register(function ($className) {
 
     // Test classes should be in the "tests" folder:
     require_once $path . "/$className.php";
-    // TODO: test "use \Exception;"
 });

@@ -2,38 +2,72 @@
 
 require_once __DIR__ . '/../src/autoload.php';
 
-use JkaServerStatus\Config\Config;
 use JkaServerStatus\Config\ConfigException;
-use JkaServerStatus\Controller\JkaServerController;
+use JkaServerStatus\Config\ConfigFileException;
+use JkaServerStatus\Config\ConfigFileService;
+use JkaServerStatus\Config\ConfigService;
+use JkaServerStatus\Config\LogConfigException;
+use JkaServerStatus\Config\LogConfigService;
+use JkaServerStatus\Controller\StatusController;
 use JkaServerStatus\JkaServer\JkaServerService;
-use JkaServerStatus\Log\ConfigLogger;
 use JkaServerStatus\Log\Logger;
 use JkaServerStatus\Template\TemplateHelper;
 
-define('PROJECT_DIR', __DIR__ . '/..');
-define('DEFAULT_LOG_FILE', PROJECT_DIR . '/var/log/server.log');
-
+////////////////////////////////////////////////////////////////////////////////
 // Initialize the config
+
+// Check that config.php exists and is readable
 try {
-    // Classes (such as Config) use dependency injection, by declaring their dependencies in their constructor
-    $config = new Config(
-        PROJECT_DIR . '/config.php',
-        // Use a different logger at this stage, because we don't know what log config the user wants, yet.
-        new ConfigLogger(DEFAULT_LOG_FILE, LOG_INFO),
-        DEFAULT_LOG_FILE,
+    $configFileService = new ConfigFileService();
+    $configFile = $configFileService->getConfigFile();
+} catch (ConfigFileException $exception) {
+    error_log($exception->getMessage());
+    http_response_code(500);
+    header('Content-type: text/plain');
+    die(
+        "JKA Server Status: CONFIGURATION ERROR\n"
+        . "\n"
+        . "Could not read config.php. Make sure that it exists and is readable by PHP.\n"
     );
+}
+
+// Initialize the log config
+try {
+    $logConfigService = new LogConfigService();
+    $logConfig = $logConfigService->getLogConfig($configFile);
+} catch (LogConfigException $exception) {
+    error_log($exception->getMessage());
+    http_response_code(500);
+    header('Content-type: text/plain');
+    die(
+        "JKA Server Status: CONFIGURATION ERROR\n"
+        . "\n"
+        . "The specified logging configuration is invalid.\n"
+        . "\n"
+        . "Please check PHP's system logger instead."
+    );
+}
+
+// Initialize the logger with the specified settings
+$logger = new Logger($logConfig->logFile, $logConfig->logLevel);
+// Classes (such as Logger) use dependency injection, by declaring their dependencies in their constructor
+
+// Main config object
+try {
+    $configService = new ConfigService($logger);
+    $config = $configService->getConfig($configFile);
 } catch (ConfigException $exception) {
     http_response_code(500);
     header('Content-type: text/plain');
-    die('JKA Server Status: configuration error. Please check the logs.');
+    die(
+        "JKA Server Status: CONFIGURATION ERROR.\n"
+        . 'Please check the logs.'
+    );
 }
-
-// Main logger, set to the configured file and level
-$logger = new Logger($config->logFile, $config->logLevel);
 
 // Template functions
 $templateHelper = new TemplateHelper($config, $logger);
-require_once PROJECT_DIR . '/src/template_functions.php';
+require_once $config->projectDir . '/src/template_functions.php';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Front controller: Try to match the REQUEST_URI
@@ -41,15 +75,15 @@ require_once PROJECT_DIR . '/src/template_functions.php';
 $urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 if ($config->isLandingPageEnabled && $urlPath === $config->landingPageUri) {
-    require_once PROJECT_DIR . '/templates/landing_page.php';
+    require_once $config->projectDir . '/templates/landing_page.php';
     exit;
 }
 
 foreach ($config->jkaServers as $jkaServer) {
     if ($urlPath === $jkaServer->uri) {
         // Output the "status" page (as HTML)
-        $jkaServerController = new JkaServerController(
-            new JkaServerService($config, $logger),
+        $jkaServerController = new StatusController(
+            new JkaServerService($config, $logger, $templateHelper),
             $config,
             $logger,
             $templateHelper
@@ -61,4 +95,4 @@ foreach ($config->jkaServers as $jkaServer) {
 
 // Did not match the landing page, nor one of the specified JKA servers => 404 Error
 http_response_code(404);
-require_once PROJECT_DIR . '/templates/404.php';
+require_once $config->projectDir . '/templates/404.php';

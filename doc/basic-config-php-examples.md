@@ -15,7 +15,7 @@ $jka_servers = [
 ];
 ```
 - `config.php` **must** start with `<?php`
-- You don't need to add a PHP closing tag (`?>`). In fact, you shouldn't.
+- You don't need to add a PHP closing tag (`?>`). In fact, **you shouldn't**.
 - There are **two** opening and closing square brackets (`[` and `]`),
   because `$jka_servers` allows you to declare multiple servers.
 - PHP supports both single quotes (`'`) and double quotes (`"`) as string delimiters.
@@ -25,7 +25,7 @@ $jka_servers = [
    - a domain name (e.g. `'jka.example.com'`)
    - domain name + port (e.g. `'jka.example.com:29071'`)
 - If the port is omitted, it defaults to **29070**.
-- You server will be listed on the root URL (`/`).
+- Your server will be listed on the root URL (`/`).
 
 ## Minimal config - 2 servers
 ```php

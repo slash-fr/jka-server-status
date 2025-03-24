@@ -2,9 +2,10 @@
 
 namespace JkaServerStatus\JkaServer;
 
-use JkaServerStatus\Config\Config;
-use JkaServerStatus\Config\JkaServerConfig;
-use JkaServerStatus\Log\Logger;
+use JkaServerStatus\Config\ConfigData;
+use JkaServerStatus\Config\JkaServerConfigData;
+use JkaServerStatus\Log\LoggerInterface;
+use JkaServerStatus\Template\TemplateHelper;
 use JkaServerStatus\Util\Charset;
 
 class JkaServerService
@@ -22,15 +23,17 @@ class JkaServerService
         9 => 'CTY (Capture The Ysalamiri)',
     ];
 
-    private readonly Config $config;
-    private readonly Logger $logger;
+    private readonly ConfigData $config;
+    private readonly LoggerInterface $logger;
+    private readonly TemplateHelper $templateHelper;
 
-    public function __construct(Config $config, Logger $logger) {
+    public function __construct(ConfigData $config, LoggerInterface $logger, TemplateHelper $templateHelper) {
         $this->config = $config;
         $this->logger = $logger;
+        $this->templateHelper = $templateHelper;
     }
 
-    public function getStatusData(JkaServerConfig $jkaServerConfig): StatusData
+    public function getStatusData(JkaServerConfigData $jkaServerConfig): StatusData
     {
         $jkaServerResponse = $this->queryJkaServer($jkaServerConfig->address);
         return $this->buildStatusData($jkaServerConfig, $jkaServerResponse);
@@ -50,7 +53,7 @@ class JkaServerService
         $socket = @stream_socket_client($url, $error_code, $error_message, 3.0);
         if (!$socket) {
             $this->logger->error("$host - Error code: $error_code - Error message: $error_message");
-            return new JkaServerResponse(true, false); // $isError = true // $isTimeout = false
+            return new JkaServerResponse(JkaServerResponseStatus::NetworkError);
         }
     
         // Timeout for reading over the socket
@@ -62,41 +65,50 @@ class JkaServerService
             $metadata = stream_get_meta_data($socket);
             fclose($socket);
             if ($metadata['timed_out']) {
-                return new JkaServerResponse(true, true); // $isError = true // $isTimeout = true
+                return new JkaServerResponse(JkaServerResponseStatus::Timeout);
             }
-            return new JkaServerResponse(true, false); // $isError = true // $isTimeout = false
+            return new JkaServerResponse(JkaServerResponseStatus::NetworkError);
         }
     
         fclose($socket);
     
-        // $isError = true // $isTimeout = false // $data = $response
-        return new JkaServerResponse(false, false, $response);
+        // DEBUG: Uncomment the following line to dump the raw response to disk
+        //file_put_contents(__DIR__ . '/../../var/log/' . date('Y-m-d_H-i-s') . '_raw_response.txt', $response);
+
+        return new JkaServerResponse(JkaServerResponseStatus::Success, $response);
     }
 
     /**
      * Parse the server response, and build the StatusData object
      */
-    public function buildStatusData(jkaServerConfig $jkaServerConfig, JkaServerResponse $jkaServerResponse): StatusData
+    public function buildStatusData(
+        jkaServerConfigData $jkaServerConfig,
+        JkaServerResponse $jkaServerResponse,
+    ): StatusData
     {
-        if ($jkaServerResponse->isTimeout) {
+        if ($jkaServerResponse->status === JkaServerResponseStatus::Timeout) {
+            $statusMessage = 'Timeout';
+            $this->logger->error($jkaServerConfig->address . ' - Status: ' . $statusMessage);
             return new StatusData(
                 $this->config->isLandingPageEnabled,
                 $this->config->landingPageUri,
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
-                'Timeout'
+                $statusMessage
             );
         }
 
-        if ($jkaServerResponse->isError) {
+        if ($jkaServerResponse->status !== JkaServerResponseStatus::Success) {
+            $statusMessage = 'Down';
+            $this->logger->error($jkaServerConfig->address . ' - Status: ' . $statusMessage);
             return new StatusData(
                 $this->config->isLandingPageEnabled,
                 $this->config->landingPageUri,
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
-                'Down'
+                $statusMessage
             );
         }
 
@@ -111,13 +123,15 @@ class JkaServerService
             || $lines[0] !== "\xFF\xFF\xFF\xFFstatusResponse"
             || !str_starts_with($lines[1], "\\")
         ) {
+            $statusMessage = 'Invalid response';
+            $this->logger->error($jkaServerConfig->address . ' - Status: ' . $statusMessage);
             return new StatusData(
                 $this->config->isLandingPageEnabled,
                 $this->config->landingPageUri,
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
-                'Invalid response'
+                $statusMessage
             );
         }
 
@@ -185,7 +199,7 @@ class JkaServerService
      * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
      * @return string The server name (e.g. "Mystic Lugormod")
      */
-    private function getServerName(JkaServerConfig $jkaServerConfig, array $cvars): string
+    private function getServerName(JkaServerConfigData $jkaServerConfig, array $cvars): string
     {
         $serverName = $cvars['sv_hostname'] ?? $jkaServerConfig->name;
         $x80 = Charset::toUtf8("\x80", $jkaServerConfig->charset);
@@ -227,7 +241,7 @@ class JkaServerService
         $mapName = strtolower($cvars['mapname'] ?? 'default');
         if (
             preg_match('/^[a-zA-z_0-9\/]+$/', $mapName) // If the file name is safe (no "..", no weird characters)
-            && file_exists(PROJECT_DIR . '/public/levelshots/' . $mapName . '.jpg') // and the file exists
+            && file_exists($this->config->projectDir . '/public/levelshots/' . $mapName . '.jpg') // and the file exists
         ) {
             $backgroundImageUrl = '/levelshots/' . $mapName . '.jpg';
         }
@@ -250,7 +264,6 @@ class JkaServerService
             if ($i === ($nbLines - 1) && $lines[$i] === '') {
                 // The last line is allowed to be empty (without generating a warning)                
                 break;
-                //TODO: Unit test with and without an empty last line
             }
 
             if (!preg_match('/^(-?[0-9]+)\s+([0-9]+)\s+(.+)$/', $lines[$i], $matches)) {
@@ -259,7 +272,6 @@ class JkaServerService
                     . var_export($lines[$i], true)
                 );
                 continue;
-                //TODO: Unit test with and without negative scores
             }
 
             $players[] = new PlayerData(
@@ -283,7 +295,10 @@ class JkaServerService
                 return 1;
             }
             // Same score, same ping => Sort by name (case insensitive)
-            return strcasecmp(strip_colors($player1->name), strip_colors($player2->name));
+            return strcasecmp(
+                $this->templateHelper->stripColors($player1->name),
+                $this->templateHelper->stripColors($player2->name),
+            );
         });
 
         return $players;
@@ -330,7 +345,7 @@ class JkaServerService
      * Builds the full UDP URL from the JKA server IP address or domain, with optional port (defaults to 29070).
      * Does not check whether it's valid.
      * @param string $jkaServerAddress IP address or domain name, with optional port (e.g. "192.0.2.1" or "jka.example.com:29071")
-     * @return string e.g. "udp://192.0.2.1:29070"
+     * @return string URL with scheme and port (defaults to 29070) (e.g. "udp://192.0.2.1:29070")
      */
     public static function buildFullUdpUrl(string $jkaServerAddress): string
     {
