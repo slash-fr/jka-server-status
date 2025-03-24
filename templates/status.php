@@ -103,11 +103,6 @@
                              width="20" height="20" alt="" aria-hidden="true"/>
                         Refresh
                     </button>
-                    <button id="open-settings">
-                        <img src="<?= asset('/settings-sharp.svg') ?>"
-                             width="20" height="20" alt="" aria-hidden="true"/>
-                        Settings
-                    </button>
                     <?php if ($data->cvars): ?>
                         <button id="open-cvars">
                             <img src="<?= asset('/terminal-20x20.png') ?>"
@@ -116,6 +111,11 @@
                             Server info
                         </button>
                     <?php endif; ?>
+                    <button id="open-settings">
+                        <img src="<?= asset('/settings-sharp.svg') ?>"
+                             width="20" height="20" alt="" aria-hidden="true"/>
+                        Settings
+                    </button>
                 </p>
             </footer>
         </div>
