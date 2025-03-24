@@ -1,5 +1,5 @@
 /* Mobile-first stylesheet */
-/* See the media query at the bottom for desktop styles */
+/* Have a look at the "min-width" media query for desktop styles */
 
 html {
     position: relative;
@@ -329,7 +329,9 @@ h2 img {
     filter: drop-shadow(0 0 2px black);
 }
 
+/***************/
 /* Desktop CSS */
+/***************/
 @media (min-width: 640px) {
     body, .bonus-info {
         font-size: 16px;
@@ -404,5 +406,54 @@ h2 img {
     #cvar-grid label {
         margin-top: 0;
         text-align: left;
+    }
+}
+
+/*************/
+/* Print CSS */
+/*************/
+@media print {
+    body, body.page-not-found, #background-image, #cvar-grid {
+        background-image: none !important;
+        background-color: white !important;
+    }
+
+    /* Hide some stuff */
+    header, footer, #close-settings, #close-cvars {
+        display: none;
+    }
+
+    body {
+        color: black;
+        text-shadow: none;
+    }
+
+    h2 img, .status img {
+        filter: none; /* No drop shadow */
+    }
+
+    .black, .red, .green, .yellow, .blue, .cyan, .magenta, .white, .orange, .grey {
+        text-shadow: none;
+    }
+
+    .white, .player-list .white {
+        color: black;
+        font-weight: normal;
+    }
+
+    select, button, a.button {
+        color: black;
+        background: white;
+        border: 1px solid #808080;
+        box-shadow: none;
+    }
+
+    #settings h2 img {
+        filter: invert(100%);
+    }
+
+    #cvar-grid {
+        max-height: none;
+        overflow-y: visible;
     }
 }
