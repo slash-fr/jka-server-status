@@ -13,6 +13,9 @@ class JkaServerConfigData
     /** @var string $name JKA Server Name (supports colors) */
     public readonly string $name;
 
+    /** @var string $subtitle Subtitle to display inside the server button on the landing pagee */
+    public readonly string $subtitle;
+
     /** @var string $charset Charset to use when parsing the response */
     public readonly string $charset;
 
@@ -22,11 +25,12 @@ class JkaServerConfigData
      * @param string $name JKA Server Name (supports colors)
      * @param string $charset Charset to use when parsing the response
      */
-    public function __construct(string $uri, string $address, string $name, string $charset)
+    public function __construct(string $uri, string $address, string $name, string $subtitle, string $charset)
     {
         $this->uri = $uri;
         $this->address = $address;
         $this->name = $name;
+        $this->subtitle = $subtitle;
         $this->charset = $charset;
     }
 }

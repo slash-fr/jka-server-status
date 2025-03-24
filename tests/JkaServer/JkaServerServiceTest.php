@@ -88,6 +88,7 @@ class JkaServerServiceTest extends TestCase
             '/', // URI
             self::CONFIG_SERVER_ADDRESS,
             self::CONFIG_SERVER_NAME,
+            '', // The subtitle isn't used in the StatusData object
             self::CONFIG_SERVER_CHARSET,
         );
 

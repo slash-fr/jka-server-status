@@ -49,10 +49,12 @@ class ConfigServiceTest extends TestCase
         $this->assertSame('/main-server', $config->jkaServers[0]->uri ?? null);
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->address ?? null);
         $this->assertSame('^5M^7ain ^5S^7erver', $config->jkaServers[0]->name ?? null);
+        $this->assertSame('', $config->jkaServers[0]->subtitle ?? null);
         $this->assertSame('Windows-1252', $config->jkaServers[0]->charset ?? null);
         $this->assertSame('/secondary-server', $config->jkaServers[1]->uri ?? null);
         $this->assertSame('jka.example.com:29071', $config->jkaServers[1]->address ?? null);
         $this->assertSame('^3Secondary ^7Server', $config->jkaServers[1]->name ?? null);
+        $this->assertSame('Server location: Earth', $config->jkaServers[1]->subtitle ?? null);
         $this->assertSame('UTF-8', $config->jkaServers[1]->charset ?? null);
 
         // A valid config file shouldn't generate errors nor warnings
@@ -82,6 +84,7 @@ class ConfigServiceTest extends TestCase
         yield [18, 'Config variable $landing_page_uri must be a string'];
         yield [19, '$jka_servers[1]["uri"] conflicts with $jka_servers[0]["uri"]'];
         yield [20, '$jka_servers[0]["uri"] conflicts with the landing page URI'];
+        yield [21, 'The "subtitle" of each configured server must be a string'];
     }
 
     #[DataProvider('invalidConfigDataProvider')]

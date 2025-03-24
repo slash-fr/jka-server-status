@@ -140,11 +140,22 @@ class ConfigService
         $jkaServerUri = $this->sanitizeServerUri($jkaServer, $index, $totalNbServers);
         $jkaServerAddress = $this->sanitizeServerAddress($jkaServer, $index);
         $jkaServerName = $this->sanitizeServerName($jkaServer, $index, $jkaServerAddress);
+        $jkaServerSubtitle = $this->sanitizeServerSubtitle($jkaServer, $index);
         $jkaServerCharset = $this->sanitizeServerCharset($jkaServer, $index);
 
-        return new JkaServerConfigData($jkaServerUri, $jkaServerAddress, $jkaServerName, $jkaServerCharset);
+        return new JkaServerConfigData(
+            $jkaServerUri,
+            $jkaServerAddress,
+            $jkaServerName,
+            $jkaServerSubtitle,
+            $jkaServerCharset
+        );
     }
 
+    /**
+     * @param mixed $jkaServer ONE entry from the $jka_servers config variable (should be an indexed array)
+     * @param string|int $index Index of the server within $jka_servers (should be an int)
+     */
     private function sanitizeServerUri(mixed $jkaServer, string|int $index, int $totalNbServers): string
     {
         if (!isset($jkaServer['uri']) && $totalNbServers > 1) {
@@ -168,6 +179,10 @@ class ConfigService
         return $uri;
     }
 
+    /**
+     * @param array $jkaServer ONE entry from the $jka_servers config variable (should be an indexed array)
+     * @param string|int $index Index of the server within $jka_servers (should be an int)
+     */
     private function sanitizeServerAddress(array $jkaServer, string|int $index): string
     {
         if (!isset($jkaServer['address'])) {
@@ -212,6 +227,8 @@ class ConfigService
     }
 
     /**
+     * @param array $jkaServer ONE entry from the $jka_servers config variable (should be an indexed array)
+     * @param string|int $index Index of the server within $jka_servers (should be an int)
      * @param string $jkaServerAddress The sanitized server address (used as default value if the name is missing)
      */
     private function sanitizeServerName(array $jkaServer, string|int $index, string $jkaServerAddress): string
@@ -230,6 +247,30 @@ class ConfigService
         return $jkaServer['name'];
     }
 
+    /**
+     * @param array $jkaServer ONE entry from the $jka_servers config variable (should be an indexed array)
+     * @param string|int $index Index of the server within $jka_servers (should be an int)
+     */
+    private function sanitizeServerSubtitle(array $jkaServer, string|int $index): string
+    {
+        if (!isset($jkaServer['subtitle'])) {
+            return '';
+        }
+
+        if (!is_string($jkaServer['subtitle'])) {
+            $message = 'The "subtitle" of each configured server must be a string (got: ' . gettype($jkaServer['subtitle'])
+                . ' for $jka_servers[' . var_export($index, true) . ']["subtitle"]).';
+            $this->logger->error($message);
+            throw new ConfigException($message);
+        }
+
+        return trim($jkaServer['subtitle']);
+    }
+
+    /**
+     * @param array $jkaServer ONE entry from the $jka_servers config variable (should be an indexed array)
+     * @param string|int $index Index of the server within $jka_servers (should be an int)
+     */
     private function sanitizeServerCharset(array $jkaServer, string|int $index): string
     {
         $charset = 'Windows-1252';

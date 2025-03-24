@@ -19,6 +19,7 @@ $jka_servers = [
         'uri' => '/secondary-server',
         'address' => 'jka.example.com:29071',
         'name' => '^3Secondary ^7Server',
+        'subtitle' => '  Server location: Earth   ', // The leading/trailing spaces should get trimmed
         'charset' => 'UTF-8',
     ],
 ];

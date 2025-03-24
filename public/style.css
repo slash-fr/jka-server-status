@@ -99,7 +99,7 @@ a.button {
 }
 
 body.landing-page a.button {
-    width: 270px;
+    max-width: 340px;
     margin: 20px auto;
     padding: 10px 20px;
     box-sizing: border-box;
@@ -107,6 +107,12 @@ body.landing-page a.button {
     font-size: 16px;
     font-weight: 600;
     line-height: 22px;
+}
+
+body.landing-page .subtitle {
+    font-size: 14px;
+    font-weight: normal;
+    letter-spacing: normal;
 }
 
 #home-button {

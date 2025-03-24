@@ -16,8 +16,12 @@
 
             <?php /** @var Config $config */ ?>
             <?php foreach ($config->jkaServers as $jkaServer): ?>
+                <?php /** @var \JkaServerStatus\Config\JkaServerConfigData $jkaServer */  ?>
                 <a class="button" href="<?= htmlspecialchars($jkaServer->uri); ?>">
                     <?= format_name($jkaServer->name); ?>
+                    <?php if($jkaServer->subtitle): ?>
+                        <br/><span class="subtitle"><?= htmlspecialchars($jkaServer->subtitle) ?></span>
+                    <?php endif; ?>
                 </a>
             <?php endforeach; ?>
         </div>

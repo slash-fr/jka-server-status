@@ -53,6 +53,10 @@ $jka_servers = [
         'name' => '^5M^7ain ^5S^7erver',
         // Defaults to the value of the "address" field if omitted.
 
+        // Subtitle to display inside the server button on the landing page
+        'subtitle' => 'Server location: Germany', // Just text (no HTML, no color codes)
+        // Totally optional, and the landing page looks better without it
+
         // Character encoding used by the JKA server
         'charset' => 'Windows-1252',
         // Defaults to "Windows-1252" if omitted.
@@ -63,6 +67,7 @@ $jka_servers = [
         'uri' => '/secondary-server',
         'address' => 'jka.example.com:29071',
         'name' => '^3Secondary ^7Server',
+        'subtitle' => 'Server location: USA',
         'charset' => 'Windows-1252',
     ],
 
