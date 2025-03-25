@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <?php /** @var StatusData $data */ ?>
+        <?php /** @var \JkaServerStatus\JkaServer\StatusData $data */ ?>
         <?php $title = strip_colors($data->serverName); ?>
         <?php require_once __DIR__ . '/_head.php'; ?>
     </head>
@@ -31,13 +31,14 @@
                 <?php endif; ?>
             </header>
 
-            <div id="main-content">
+            <article id="main-content">
                 <h1><?= format_name($data->serverName); ?></h1>
                 
                 <p class="info"> 
-                    <label>Address:</label> <span><?= htmlspecialchars($data->address); ?></span>
+                    <label><strong>Address:</strong></label>
+                    <span><?= htmlspecialchars($data->address); ?><br/></span>
 
-                    <label>Status:</label>
+                    <label><strong>Status:</strong></label>
                     <span class="status">
                         <?php if ($data->isUp): ?>
                             <img src="<?= asset('/checkmark-circle.svg') ?>"
@@ -47,22 +48,26 @@
                                  width="20" height="20" alt="" aria-hidden="true"/>
                         <?php endif; ?>
                         <?= htmlspecialchars($data->status); ?>
+                        <br/>
                     </span>
 
                     <?php if (isset($data->mapName)): ?>
-                        <label>Map name:</label> <span><?= htmlspecialchars($data->mapName); ?></span>
+                        <label><strong>Map name:</strong></label>
+                        <span><?= htmlspecialchars($data->mapName); ?><br/></span>
                     <?php endif; ?>
 
                     <?php if (isset($data->gameType)): ?>
-                        <label>Game type:</label> <span><?= htmlspecialchars($data->gameType); ?></span>
+                        <label><strong>Game type:</strong></label>
+                        <span><?= htmlspecialchars($data->gameType); ?><br/></span>
                     <?php endif; ?>
 
                     <?php if (isset($data->gameName)): ?>
-                        <label>Mod name:</label> <span><?= format_name($data->gameName); ?></span>
+                        <label><strong>Mod name:</strong></label>
+                        <span><?= format_name($data->gameName); ?><br/></span>
                     <?php endif; ?>
 
                     <?php if (isset($data->nbPlayers)): ?>
-                        <label>Players:</label>
+                        <label><strong>Players:</strong></label>
                         <span>
                             <?= (int)$data->nbPlayers ?>
                             <?php if (isset($data->maxPlayers)): ?>
@@ -73,6 +78,7 @@
                                     (<?= $data->nbHumans . ' ' . ($data->nbHumans === 1  ? 'human' : 'humans') ?>)
                                 </span>
                             <?php endif; ?>
+                            <br/>
                         </span>
                     <?php endif; ?>
                 </p>
@@ -93,10 +99,11 @@
                         </tbody>
                     </table>
                 <?php endif; ?>
-            </div>
+            </article>
 
             <footer>
                 <p id="refreshed-footer" class="bonus-info"></p>
+
                 <p id="settings-footer">
                     <button id="refresh-button" onclick="location.reload()">
                         <img src="<?= asset('/refresh.svg') ?>"
@@ -117,9 +124,18 @@
                         Settings
                     </button>
                 </p>
+
+                <?php if ($data->isAboutPageEnabled): ?>
+                    <p class="footnote bonus-info">
+                        <a href="<?= htmlspecialchars($data->aboutPageUri) ?>">
+                            <?= htmlspecialchars($data->aboutPageTitle); ?>
+                        </a>
+                    </p>
+                <?php endif; ?>
             </footer>
         </div>
-        <div id="settings">
+
+        <div id="settings" style="display: none;">
             <h2>
                 <img src="<?= asset('/settings-sharp.svg') ?>"
                      width="24" height="24" alt="" aria-hidden="true"/>
@@ -166,8 +182,9 @@
                 Close settings
             </button>
         </div>
+
         <?php if ($data->cvars): ?>
-            <div id="cvars">
+            <div id="cvars" style="display: none;">
                 <h2>
                     <img src="<?= asset('/terminal-sharp.svg') ?>"
                          width="24" height="24" alt="" aria-hidden="true"/>
@@ -186,6 +203,7 @@
                 </button>
             </div>
         <?php endif; ?>
+
         <script src="<?= asset('/main.js') ?>"></script>
     </body>
 </html>

@@ -24,6 +24,9 @@ class ConfigServiceTest extends TestCase
         $this->assertSame('', $config->rootUrl);
         $this->assertSame(false, $config->isLandingPageEnabled);
         $this->assertSame('/', $config->landingPageUri);
+        $this->assertSame(false, $config->isAboutPageEnabled);
+        $this->assertSame('/about', $config->aboutPageUri);
+        $this->assertSame('About', $config->aboutPageTitle);
         $this->assertSame(1, count($config->jkaServers));
         $this->assertSame('/', $config->jkaServers[0]->uri ?? null);
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->address ?? null);
@@ -45,6 +48,9 @@ class ConfigServiceTest extends TestCase
         $this->assertSame('/prefix', $config->rootUrl);
         $this->assertSame(false, $config->isLandingPageEnabled);
         $this->assertSame('/server-list', $config->landingPageUri);
+        $this->assertSame(true, $config->isAboutPageEnabled);
+        $this->assertSame('/tell-me-about-it', $config->aboutPageUri);
+        $this->assertSame('Credits (and legal stuff)', $config->aboutPageTitle);
         $this->assertSame(2, count($config->jkaServers));
         $this->assertSame('/main-server', $config->jkaServers[0]->uri ?? null);
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->address ?? null);
@@ -85,6 +91,11 @@ class ConfigServiceTest extends TestCase
         yield [19, '$jka_servers[1]["uri"] conflicts with $jka_servers[0]["uri"]'];
         yield [20, '$jka_servers[0]["uri"] conflicts with the landing page URI'];
         yield [21, 'The "subtitle" of each configured server must be a string'];
+        yield [22, 'Config variable $enable_about_page must be a boolean'];
+        yield [23, 'Config variable $about_page_uri must be a string'];
+        yield [24, 'Config variable $about_page_title must be a string'];
+        yield [25, 'Config variable $about_page_uri conflicts with the landing page URI'];
+        yield [26, '$jka_servers[0]["uri"] conflicts with the "About" page URI'];
     }
 
     #[DataProvider('invalidConfigDataProvider')]

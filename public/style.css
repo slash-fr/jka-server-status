@@ -23,15 +23,17 @@ body {
                  0 1px 0 #000,
                  -1px 1px 0 #000,
                  -1px 0 0 #000;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     font-size: 14px;
     line-height: 21px;
     position: relative;
     color-scheme: dark;
 }
 
-body.page-not-found {
+body.page-not-found, body.about-page {
     background: #181818;
+    text-shadow: none;
+    letter-spacing: normal;
 }
 
 body.page-not-found img {
@@ -74,10 +76,6 @@ body.landing-page #background-image {
     justify-content: space-between;
 }
 
-body.landing-page #content {
-    display: block;
-}
-
 h1, h2 {
     font-size: 18px;
     line-height: 24px;
@@ -89,7 +87,7 @@ body.landing-page h1 {
     margin-bottom: 1.5em;
 }
 
-body.landing-page h1 img {
+h1 img {
     vertical-align: -2px;
     margin-right: 5px;
 }
@@ -103,7 +101,7 @@ body.landing-page a.button {
     margin: 20px auto;
     padding: 10px 20px;
     box-sizing: border-box;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     font-size: 16px;
     font-weight: 600;
     line-height: 22px;
@@ -113,6 +111,19 @@ body.landing-page .subtitle {
     font-size: 14px;
     font-weight: normal;
     letter-spacing: normal;
+}
+
+p.footnote {
+    margin: 0;
+}
+
+p.footnote a {
+    text-decoration: none;
+    color: #a0a0a0;
+}
+
+p.footnote a:hover {
+    color: #d0d0d0;
 }
 
 #home-button {
@@ -221,6 +232,10 @@ td:first-child {
     word-break: break-word;
 }
 
+footer {
+    padding-bottom: 20px;
+}
+
 #refreshed-footer {
     margin-top: 2em;
 }
@@ -230,7 +245,7 @@ td:first-child {
 }
 
 #settings-footer {
-    margin-bottom: 1em;
+    margin-bottom: 0;
 }
 
 #settings-footer button {
@@ -264,6 +279,10 @@ td:first-child {
 label {
     font-weight: bold;
     text-align: right;
+}
+
+label strong {
+    font-weight: bold; /* Not "bolder" */
 }
 
 #setting-grid label {
@@ -335,6 +354,21 @@ h2 img {
     filter: drop-shadow(0 0 2px black);
 }
 
+body.about-page {
+    text-align: left;
+}
+
+body.about-page h2, body.about-page h3, body.about-page h4, body.about-page h5, body.about-page h6 {
+    text-align: left;
+    margin-top: 1.5em;
+    margin-bottom: 0.667em;
+}
+
+body.about-page #main-content a {
+    color: #a0a0ff;
+    text-decoration: underline;
+}
+
 /***************/
 /* Desktop CSS */
 /***************/
@@ -349,7 +383,7 @@ h2 img {
         line-height: 32px;
     }
 
-    body.landing-page h1 img, h2 img {
+    h1 img, h2 img {
         width: 32px;
         height: 32px;
         margin-right: 10px;

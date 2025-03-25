@@ -95,9 +95,12 @@ class JkaServerServiceTest extends TestCase
         $config = new ConfigData(
             10, // Caching delay
             3, // Timeout delay
-            '', // Root URL (prefix)
-            false, // Disable the landing page
-            '/', // Landing page URL
+            '/prefix', // Root URL (prefix)
+            true, // Enable the landing page
+            '/home', // Landing page URL
+            true, // Enable the "About" page
+            '/tell-me-about-it', // "About" page URI
+            'Credits (and legal stuff)', // "About" page title
             [$this->jkaServerConfig]
         );
 
@@ -124,9 +127,15 @@ class JkaServerServiceTest extends TestCase
      */
     private function assertBasicStatusDataIsValid(StatusData $statusData): void
     {
-        $this->assertFalse($statusData->isLandingPageEnabled);
+        $this->assertTrue($statusData->isLandingPageEnabled);
+        $this->assertSame('/home', $statusData->landingPageUri);
+        $this->assertTrue($statusData->isAboutPageEnabled);
+        $this->assertSame('/tell-me-about-it', $statusData->aboutPageUri);
+        $this->assertSame('Credits (and legal stuff)', $statusData->aboutPageTitle);
         $this->assertSame(self::CONFIG_SERVER_ADDRESS, $statusData->address);
         $this->assertSame('/levelshots/default.jpg', $statusData->defaultBackgroundImageUrl);
+        // The background image URIs are NOT prefixed by the "root URL" at this point.
+        // The asset() function will do that in the templates.
         $this->assertIsArray($statusData->cvars);
     }
 
@@ -154,6 +163,8 @@ class JkaServerServiceTest extends TestCase
         $this->assertSame(0, count($statusData->players));
         // No map => default background
         $this->assertSame('/levelshots/default.jpg', $statusData->backgroundImageUrl);
+        // The background image URIs are NOT prefixed by the "root URL" at this point.
+        // The asset() function will do that in the templates.
     }
 
     public function testBuildStatusDataWithTimeout(): void

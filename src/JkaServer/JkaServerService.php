@@ -92,6 +92,9 @@ class JkaServerService
             return new StatusData(
                 $this->config->isLandingPageEnabled,
                 $this->config->landingPageUri,
+                $this->config->isAboutPageEnabled,
+                $this->config->aboutPageUri,
+                $this->config->aboutPageTitle,
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
@@ -105,6 +108,9 @@ class JkaServerService
             return new StatusData(
                 $this->config->isLandingPageEnabled,
                 $this->config->landingPageUri,
+                $this->config->isAboutPageEnabled,
+                $this->config->aboutPageUri,
+                $this->config->aboutPageTitle,
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
@@ -128,6 +134,9 @@ class JkaServerService
             return new StatusData(
                 $this->config->isLandingPageEnabled,
                 $this->config->landingPageUri,
+                $this->config->isAboutPageEnabled,
+                $this->config->aboutPageUri,
+                $this->config->aboutPageTitle,
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
@@ -153,6 +162,9 @@ class JkaServerService
         return new StatusData(
             $this->config->isLandingPageEnabled,
             $this->config->landingPageUri,
+            $this->config->isAboutPageEnabled,
+            $this->config->aboutPageUri,
+            $this->config->aboutPageTitle,
             $this->getServerName($jkaServerConfig, $cvars),
             $jkaServerConfig->address,
             true, // isUp
@@ -231,7 +243,8 @@ class JkaServerService
     }
 
     /**
-     * Gets the map-dependent (root-relative) background image URL
+     * Returns the map-dependent (root-relative) background image URL.
+     * WITHOUT ConfigData::$rootUrl prefix.
      * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
      * @return string e.g. "/levelshots/mp/ffa3.jpg"
      */

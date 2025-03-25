@@ -27,6 +27,7 @@ $timeout_delay = 3; // 3 seconds
 
 // Root URL, prepended to asset URLs
 // e.g. "/server-status/" if you're hosting the script in a subfolder of your actual web root
+// Could also be your CDN's URL (e.g. "https://cdn.example.com/")
 $root_url = '/';
 // Defaults to '/' if omitted.
 // The trailing slash is optional (will be added automatically).
@@ -35,6 +36,18 @@ $root_url = '/';
 $enable_landing_page = true; // If you have only 1 server, you should probably set it to `false`
 // If omitted, the landing page will be enabled only if you have declared multiple $jka_servers below (not just one).
 $landing_page_uri = '/'; // Defaults to '/' if omitted.
+
+// "About" page
+$enable_about_page = false; // Defaults to false
+// If you enable the "About" page:
+// - Copy: "templates/_config_page_content.default.php"
+//     To: "templates/_config_page_content.php" (keep the leading underscore)
+// - Write valid HTML. Don't worry, you actually don't need to know PHP.
+$about_page_uri = '/about'; // Defaults to '/about'
+$about_page_title = 'About'; // Title of the "About" page (and "About" link). Defaults to 'About'.
+// Depending on your jurisdiction, you may be required by law to host a "Legal notice" / "Impressum"
+// (or similar) section on your website.
+// The "About" page can be a good place to put it.
 
 // JKA Server(s) (required)
 $jka_servers = [

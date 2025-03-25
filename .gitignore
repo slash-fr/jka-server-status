@@ -9,7 +9,11 @@
 
 # Config file
 /config.php
-# (Config.sample.php is versioned, however)
+# => config.sample.php is versioned
+
+# "About" page content
+/templates/_about_page_content.php
+# => /templates/_about_page_content.default.php is versioned
 
 # PHPUnit
 # phpunit.phar, ...

@@ -11,6 +11,9 @@ class StatusData
 
     public readonly bool $isLandingPageEnabled;
     public readonly string $landingPageUri;
+    public readonly bool $isAboutPageEnabled;
+    public readonly string $aboutPageUri;
+    public readonly string $aboutPageTitle;
 
     /**
      * @var string $serverName Server name, with color codes
@@ -25,12 +28,13 @@ class StatusData
 
     /**
      * @var string $backgroundImageUrl Map-dependent background image URL. Root-relative.
+     * WITHOUT ConfigData::$rootUrl prefix.
      * Please call asset() on it to get the correct path, with the cache busting query string.
      */
     public readonly string $backgroundImageUrl;
 
     /**
-     * @var string $default Default background image URL. Root-relative.
+     * @var string $default Default background image URL. Root-relative. WITHOUT ConfigData::$rootUrl prefix.
      * Please call asset() on it to get the correct path, with the cache busting query string.
      */
     public readonly string $defaultBackgroundImageUrl;
@@ -84,6 +88,9 @@ class StatusData
     public function __construct(
         bool $isLandingPageEnabled,
         string $landingPageUri,
+        bool $isAboutPageEnabled,
+        string $aboutPageUri,
+        string $aboutPageTitle,
         string $serverName,
         string $address,
         bool $isUp,
@@ -102,6 +109,9 @@ class StatusData
     {
         $this->isLandingPageEnabled = $isLandingPageEnabled;
         $this->landingPageUri = $landingPageUri;
+        $this->isAboutPageEnabled = $isAboutPageEnabled;
+        $this->aboutPageUri = $aboutPageUri;
+        $this->aboutPageTitle = $aboutPageTitle;
         $this->serverName = $serverName;
         $this->address = $address;
         $this->isUp = $isUp;

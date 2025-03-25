@@ -72,13 +72,22 @@ require_once $config->projectDir . '/src/template_functions.php';
 ////////////////////////////////////////////////////////////////////////////////
 // Front controller: Try to match the REQUEST_URI
 
+// URL Path, without the query string (e.g. "/home", not "/home?lang=en")
 $urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+// Try to match the landing page
 if ($config->isLandingPageEnabled && $urlPath === $config->landingPageUri) {
     require_once $config->projectDir . '/templates/landing_page.php';
     exit;
 }
 
+// Try to match the "About" page
+if ($config->isAboutPageEnabled && $urlPath === $config->aboutPageUri) {
+    require_once $config->projectDir . '/templates/about.php';
+    exit;
+}
+
+// Try to match one of the JKA servers
 foreach ($config->jkaServers as $jkaServer) {
     if ($urlPath === $jkaServer->uri) {
         // Output the "status" page (as HTML)
@@ -93,6 +102,6 @@ foreach ($config->jkaServers as $jkaServer) {
     }
 }
 
-// Did not match the landing page, nor one of the specified JKA servers => 404 Error
+// Did not match anything => 404 Error
 http_response_code(404);
 require_once $config->projectDir . '/templates/404.php';

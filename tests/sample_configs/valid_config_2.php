@@ -7,6 +7,9 @@ $timeout_delay = 2;
 $root_url = '/prefix';
 $enable_landing_page = false;
 $landing_page_uri = '/server-list';
+$enable_about_page = true;
+$about_page_uri = '/tell-me-about-it';
+$about_page_title = 'Credits (and legal stuff)';
 
 $jka_servers = [
     [
