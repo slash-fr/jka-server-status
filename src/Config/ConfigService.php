@@ -32,9 +32,9 @@ class ConfigService
 
         $cachingDelay = $this->sanitizeCachingDelay($caching_delay ?? null);
         $timeoutDelay = $this->sanitizeTimeoutDelay($timeout_delay ?? null);
-        $rootUrl = $this->sanitizeRootUrl($root_url ?? null);
+        $assetUrl = $this->sanitizeAssetUrl($asset_url ?? null);
         $jkaServers = $this->getJkaServers($jka_servers ?? null);
-        $isLandingPageEnabled = $this->isLandingPageEnabled($enable_landing_page ?? null, count($jkaServers));
+        $isLandingPageEnabled = $this->sanitizeIsLandingPageEnabled($enable_landing_page ?? null, count($jkaServers));
         $landingPageUri = $this->sanitizeLandingPageUri($landing_page_uri ?? null);
         $isAboutPageEnabled = $this->sanitizeIsAboutPageEnabled($enable_about_page ?? null);
         $aboutPageUri = $this->sanitizeAboutPageUri($about_page_uri ?? null);
@@ -48,7 +48,7 @@ class ConfigService
         return new ConfigData(
             $cachingDelay,
             $timeoutDelay,
-            $rootUrl,
+            $assetUrl,
             $isLandingPageEnabled,
             $landingPageUri,
             $isAboutPageEnabled,
@@ -110,24 +110,24 @@ class ConfigService
     }
 
     /**
-     * @param mixed $rootUrl Config variable $root_url from "config.php". Should be a string (or null if not set).
+     * @param mixed $assetUrl Config variable $asset_url from "config.php". Should be a string (or null if not set).
      * 
-     * @return string The sanitized root URL.
+     * @return string The sanitized asset URL.
      * @throws ConfigException if the input value is invalid.
      */
-    private function sanitizeRootUrl(mixed $rootUrl): string
+    private function sanitizeAssetUrl(mixed $assetUrl): string
     {
-        if (!isset($rootUrl)) {
+        if (!isset($assetUrl)) {
             return '';
         }
 
-        if (!is_string($rootUrl)) {
-            $message = 'Config variable $root_url must be a string (got: ' . gettype($rootUrl) . ').';
+        if (!is_string($assetUrl)) {
+            $message = 'Config variable $asset_url must be a string (got: ' . gettype($assetUrl) . ').';
             $this->logger->error($message);
             throw new ConfigException($message);
         }
 
-        return rtrim((string)$rootUrl, '/'); // Remove the trailing slash
+        return rtrim($assetUrl, '/'); // Remove the trailing slash
     }
 
     /**
@@ -368,7 +368,7 @@ class ConfigService
      * @return bool The sanitized value.
      * @throws ConfigException if the input value is invalid.
      */
-    private function isLandingPageEnabled(mixed $isLandingPageEnabled, int $nbJkaServers): bool
+    private function sanitizeIsLandingPageEnabled(mixed $isLandingPageEnabled, int $nbJkaServers): bool
     {
         if (!isset($isLandingPageEnabled)) {
             // By default, enable the landing page only when multiple JKA servers are declared

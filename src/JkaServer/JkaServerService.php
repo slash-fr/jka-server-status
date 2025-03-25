@@ -244,7 +244,7 @@ class JkaServerService
 
     /**
      * Returns the map-dependent (root-relative) background image URL.
-     * WITHOUT ConfigData::$rootUrl prefix.
+     * WITHOUT $asset_url prefix.
      * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
      * @return string e.g. "/levelshots/mp/ffa3.jpg"
      */

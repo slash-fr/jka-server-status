@@ -28,13 +28,13 @@ class StatusData
 
     /**
      * @var string $backgroundImageUrl Map-dependent background image URL. Root-relative.
-     * WITHOUT ConfigData::$rootUrl prefix.
+     * WITHOUT $asset_url prefix.
      * Please call asset() on it to get the correct path, with the cache busting query string.
      */
     public readonly string $backgroundImageUrl;
 
     /**
-     * @var string $default Default background image URL. Root-relative. WITHOUT ConfigData::$rootUrl prefix.
+     * @var string $default Default background image URL. Root-relative. WITHOUT $asset_url prefix.
      * Please call asset() on it to get the correct path, with the cache busting query string.
      */
     public readonly string $defaultBackgroundImageUrl;

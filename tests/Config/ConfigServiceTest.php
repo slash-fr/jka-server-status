@@ -21,7 +21,7 @@ class ConfigServiceTest extends TestCase
         // so we're basically just testing default values
         $this->assertSame(10, $config->cachingDelay);
         $this->assertSame(3, $config->timeoutDelay);
-        $this->assertSame('', $config->rootUrl);
+        $this->assertSame('', $config->assetUrl);
         $this->assertSame(false, $config->isLandingPageEnabled);
         $this->assertSame('/', $config->landingPageUri);
         $this->assertSame(false, $config->isAboutPageEnabled);
@@ -45,7 +45,7 @@ class ConfigServiceTest extends TestCase
 
         $this->assertSame(9, $config->cachingDelay);
         $this->assertSame(2, $config->timeoutDelay);
-        $this->assertSame('/prefix', $config->rootUrl);
+        $this->assertSame('/prefix', $config->assetUrl);
         $this->assertSame(false, $config->isLandingPageEnabled);
         $this->assertSame('/server-list', $config->landingPageUri);
         $this->assertSame(true, $config->isAboutPageEnabled);
@@ -73,7 +73,7 @@ class ConfigServiceTest extends TestCase
         yield [1, 'Config variable $caching_delay must be an int'];
         yield [2, 'Config variable $timeout_delay must be an int'];
         yield [3, 'Config variable $timeout_delay must be >= 1'];
-        yield [4, 'Config variable $root_url must be a string'];
+        yield [4, 'Config variable $asset_url must be a string'];
         yield [5, 'Config variable $jka_servers is required.'];
         yield [6, 'Config variable $jka_servers must be an array'];
         yield [7, 'Config variable $jka_servers must contain at least 1 server'];

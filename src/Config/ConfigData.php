@@ -25,9 +25,9 @@ class ConfigData
     public readonly int $timeoutDelay;
 
     /**
-     * @var string $rootUrl Prefix to prepend to asset URLs
+     * @var string $assetUrl Prefix to prepend to asset URLs (no trailing slash)
      */
-    public readonly string $rootUrl;
+    public readonly string $assetUrl;
 
     /**
      * @var bool $isLandingPageEnabled Enable the landing page? (List of JKA servers)
@@ -60,7 +60,7 @@ class ConfigData
     /**
      * @param int $cachingDelay Delay, in seconds, to cache the server-side response
      * @param int $timeoutDelay Delay, in seconds, to wait for the JKA server response
-     * @param string $rootUrl Prefix to prepend to asset URLs (no trailing slash)
+     * @param string $assetUrl Prefix to prepend to asset URLs (no trailing slash)
      * @param bool $isLandingPageEnabled Enable the landing page? (List of JKA servers)
      * @param string $landingPageUri URI of the landing page (e.g. '/')
      * @param bool $isAboutPageEnabled Is the "About" page enabled?
@@ -72,7 +72,7 @@ class ConfigData
     public function __construct(
         int $cachingDelay,
         int $timeoutDelay,
-        string $rootUrl,
+        string $assetUrl,
         bool $isLandingPageEnabled,
         string $landingPageUri,
         bool $isAboutPageEnabled,
@@ -83,7 +83,7 @@ class ConfigData
     ) {
         $this->cachingDelay = $cachingDelay;
         $this->timeoutDelay = $timeoutDelay;
-        $this->rootUrl = $rootUrl;
+        $this->assetUrl = $assetUrl;
         $this->isLandingPageEnabled = $isLandingPageEnabled;
         $this->landingPageUri = $landingPageUri;
         $this->isAboutPageEnabled = $isAboutPageEnabled;

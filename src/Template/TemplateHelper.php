@@ -33,9 +33,9 @@ class TemplateHelper
     }
 
     /**
-     * Builds the full URL for an asset.
+     * Builds the full URL for an asset (usually root-relative, depends on your $asset_url).
      * @param string $path Root-relative path to the asset (e.g. "/style.css")
-     * @return string Full root-relative URL (e.g. "/prefix/style.css?version=2025-02-09--18-59-42")
+     * @return string Full URL (e.g. "/prefix/style.css?version=2025-02-09--18-59-42")
      */
     public function asset(string $path): string
     {
@@ -43,7 +43,7 @@ class TemplateHelper
             $path = "/$path";
         }
 
-        $fullPath = $this->config->rootUrl . $path;
+        $fullPath = $this->config->assetUrl . $path;
 
         $separator = '?';
 

@@ -25,10 +25,10 @@ $timeout_delay = 3; // 3 seconds
 // Minimum value: 1 second
 // Defaults to 3 seconds if omitted.
 
-// Root URL, prepended to asset URLs
+// Prefix prepended to asset URLs (CSS, JS, images, ...)
 // e.g. "/server-status/" if you're hosting the script in a subfolder of your actual web root
 // Could also be your CDN's URL (e.g. "https://cdn.example.com/")
-$root_url = '/';
+$asset_url = '/';
 // Defaults to '/' if omitted.
 // The trailing slash is optional (will be added automatically).
 

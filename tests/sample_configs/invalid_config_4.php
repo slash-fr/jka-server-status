@@ -1,7 +1,7 @@
 <?php
 
 // Intentional mistake: should be a string (not an int)
-$root_url = 404;
+$asset_url = 404;
 
 $jka_servers = [
     [

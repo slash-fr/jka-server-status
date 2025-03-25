@@ -95,7 +95,7 @@ class JkaServerServiceTest extends TestCase
         $config = new ConfigData(
             10, // Caching delay
             3, // Timeout delay
-            '/prefix', // Root URL (prefix)
+            '/prefix', // Asset URL (prefix)
             true, // Enable the landing page
             '/home', // Landing page URL
             true, // Enable the "About" page
@@ -134,7 +134,7 @@ class JkaServerServiceTest extends TestCase
         $this->assertSame('Credits (and legal stuff)', $statusData->aboutPageTitle);
         $this->assertSame(self::CONFIG_SERVER_ADDRESS, $statusData->address);
         $this->assertSame('/levelshots/default.jpg', $statusData->defaultBackgroundImageUrl);
-        // The background image URIs are NOT prefixed by the "root URL" at this point.
+        // The background image URIs are NOT prefixed by the "asset URL" at this point.
         // The asset() function will do that in the templates.
         $this->assertIsArray($statusData->cvars);
     }
@@ -163,7 +163,7 @@ class JkaServerServiceTest extends TestCase
         $this->assertSame(0, count($statusData->players));
         // No map => default background
         $this->assertSame('/levelshots/default.jpg', $statusData->backgroundImageUrl);
-        // The background image URIs are NOT prefixed by the "root URL" at this point.
+        // The background image URIs are NOT prefixed by the "asset URL" at this point.
         // The asset() function will do that in the templates.
     }
 

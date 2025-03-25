@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Builds the full URL for an asset.
+ * Builds the full URL for an asset (usually root-relative, depends on your $asset_url).
  * @param string $path Root-relative path to the asset (e.g. "/style.css")
- * @return string Full root-relative URL (e.g. "/prefix/style.css?version=2025-02-09--18-59-42")
+ * @return string Full URL (e.g. "/prefix/style.css?version=2025-02-09--18-59-42")
  */
 function asset(string $path): string
 {
