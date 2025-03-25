@@ -40,9 +40,8 @@ autoRefreshSelect.addEventListener('change', function () {
     autoRefresh = Number.parseInt(autoRefreshSelect.value);
     if (!isNaN(autoRefresh)) {
         localStorage.setItem('jka-server-status_auto-refresh', autoRefresh);
-        const refreshedMinutes = Math.round((Date.now() - refreshedAt) / 1000) / 60;
-        if (autoRefresh > 0 && autoRefresh <= refreshedMinutes) {
-            autoRefresh = 0; // Don't call location.reload() multiple times, if the response takes more than 1 second.
+        const refreshedMinutesAgo = (Date.now() - refreshedAt) / 60000;
+        if (autoRefresh > 0 && autoRefresh <= refreshedMinutesAgo) {
             location.reload();
         }
         // See also: updateDuration()
@@ -151,6 +150,9 @@ backgroundColorInput.addEventListener('change', function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Handle "Updated X minutes ago" info + auto-refresh
 
+// The label hasn't been updated yet
+let nbMinutesInFooter = -1;
+
 let updateInterval;
 const updatedAtElement = document.getElementById('refreshed-footer');
 if (updatedAtElement) {
@@ -159,23 +161,22 @@ if (updatedAtElement) {
     updateDuration(); // Update it now
 }
 
-// TODO: use a variable to store the number of minutes of the label, and compare the current number of minutes to that.
-// You know, to avoid updating the DOM every second...
 function updateDuration() {
-    const nbSeconds = Math.round((Date.now() - refreshedAt) / 1000);
-    if (nbSeconds < 60) {
+    const nbMinutes = Math.floor((Date.now() - refreshedAt) / 60000);
+    if (nbMinutesInFooter >= nbMinutes) { // The footer is up to date
+        // Don't update anything
+        return;
+    }
+    if (nbMinutes < 1) {
         updatedAtElement.textContent = 'Updated just now';
-    } else if (nbSeconds < 120) {
+    } else if (nbMinutes < 2) {
         updatedAtElement.textContent = 'Updated a minute ago'
         if (autoRefresh === 1) {
-            autoRefresh = 0; // Don't call location.reload() multiple times, if the response takes more than 1 second.
             location.reload();
         }
-    } else if (nbSeconds < 3600) {
-        const nbMinutes = Math.floor(nbSeconds / 60);
+    } else if (nbMinutes < 60) {
         updatedAtElement.textContent = 'Updated ' + nbMinutes + ' minutes ago';
         if (autoRefresh > 0 && autoRefresh <= nbMinutes) {
-            autoRefresh = 0; // Don't call location.reload() multiple times, if the response takes more than 1 second.
             location.reload();
         }
     } else { // More than 1 hour?
@@ -183,14 +184,13 @@ function updateDuration() {
         updatedAtElement.classList.add('red');
         clearInterval(updateInterval);
         if (autoRefresh === 60) {
-            autoRefresh = 0; // Don't call location.reload() multiple times, if the response takes more than 1 second.
             location.reload();
         }
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Handle "Raw cvars"
+// Handle "Server info" (raw cvars)
 const cvarsElement = document.getElementById('cvars');
 const openCvarsButton = document.getElementById('open-cvars');
 if (openCvarsButton) {
