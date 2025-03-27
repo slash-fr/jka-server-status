@@ -258,27 +258,34 @@ class JkaServerServiceTest extends TestCase
         $playerData = [
             // Special characters (Windows-1252):
             ['score' => 12, 'ping' => 101, 'name' => iconv('UTF-8', 'Windows-1252//IGNORE', '^2§^0ÑØW^2§^0TØ®M^2¹')],
-            ['score' => 3, 'ping' => 248, 'name' => '^8J^7ake'], // Lower score than the previous player
-            ['score' => 3, 'ping' => 188, 'name' => '^7fi^1N^7t'], // Same score, lower ping
-            ['score' => 0, 'ping' => 98, 'name' => 'Padawan 3'], // Lower score
-            ['score' => 0, 'ping' => 42, 'name' => 'Padawan 1'], // Same score, lower ping
-            ['score' => 0, 'ping' => 42, 'name' => 'Padawan 2'], // Same score, same ping, higher alphabetical order
-            ['score' => 0, 'ping' => 0, 'name' => '^5M^7ystic^0-Bot'], // Same score, lower ping
-            ['name' => '^4S^7las^1h', 'score' => -2, 'ping' => 178], // Lower score (negative score, even)
+            ['score' => 3,  'ping' => 248, 'name' => '^8J^7ake'], // Lower score than the previous player
+            ['score' => 3,  'ping' => 188, 'name' => '^7fi^1N^7t'], // Same score
+            ['score' => 0,  'ping' => 0,   'name' => '^5M^7ystic^0-Bot'], // Lower score than the previous player
+            ['score' => 0,  'ping' => 42,  'name' => 'Padawan 1'], // Same score
+            ['score' => 0,  'ping' => 42,  'name' => 'Padawan 2'], // Same score
+            ['score' => 0,  'ping' => 98,  'name' => 'Padawan 3'], // Same score
+            ['score' => -2, 'ping' => 178, 'name' => '^4S^7las^1h'], // Lower score (negative score, even)
         ];
-        // In the end, players should be sorted by: score (desc), then ping (desc), then name (asc)
+        // In the end, players should be sorted by score (descending),
         // But the server typically sends them ordered by client ID
+        // So let's shuffle them a bit:
+        $serverOrder = [
+            3, // Mystic-Bot
+            1, // Jake
+            2, // fiNt
+            0, // Snow
+            4, // Padawan 1
+            5, // Padawan 2
+            7, // Slash
+            6, // Padawan 3
+        ];
         $response = "\xFF\xFF\xFF\xFFstatusResponse\n"
-            . self::getCvarLine() . "\n"
-            . $playerData[6]['score'] . ' ' . $playerData[6]['ping'] . ' "' . $playerData[6]['name'] . '"' . "\n" // Mystic-Bot
-            . $playerData[2]['score'] . ' ' . $playerData[2]['ping'] . ' "' . $playerData[2]['name'] . '"' . "\n" // fiNt
-            . $playerData[1]['score'] . ' ' . $playerData[1]['ping'] . ' "' . $playerData[1]['name'] . '"' . "\n" // Jake
-            . $playerData[0]['score'] . ' ' . $playerData[0]['ping'] . ' "' . $playerData[0]['name'] . '"' . "\n" // Snowstorm
-            . $playerData[7]['score'] . ' ' . $playerData[7]['ping'] . ' "' . $playerData[7]['name'] . '"' . "\n" // Slash
-            . $playerData[4]['score'] . ' ' . $playerData[4]['ping'] . ' "' . $playerData[4]['name'] . '"' . "\n" // Padawan 1
-            . $playerData[5]['score'] . ' ' . $playerData[5]['ping'] . ' "' . $playerData[5]['name'] . '"' . "\n" // Padawan 2
-            . $playerData[3]['score'] . ' ' . $playerData[3]['ping'] . ' "' . $playerData[3]['name'] . '"' . "\n" // Padawan 3
-        ;
+            . self::getCvarLine() . "\n";
+        foreach ($serverOrder as $index) {
+            $response .= $playerData[$index]['score']
+                . ' '  . $playerData[$index]['ping']
+                . ' "' . $playerData[$index]['name'] . '"' . "\n";
+        }
 
         // $response, $expectedNbPlayers, $expectedNbBots, $expectedNbHumans, $expectedPlayerData, $expectedWarnings
         yield [$response, 8, 1, 7, $playerData, []];
@@ -288,15 +295,17 @@ class JkaServerServiceTest extends TestCase
 
         $playerData = [
             ['score' => 0, 'ping' => 0, 'name' => '^3A^7ncient^0-Bot'],
-            // Color codes should be ignored when sorting in alphabetical order
-            ['score' => 0, 'ping' => 0, 'name' => '^2E^7arth^0-Bot'], // Same score/ping, higher alphabetical order
-            ['score' => 0, 'ping' => 0, 'name' => '^5M^7ystic^0-Bot'], // Same score/ping, higher alphabetical order
+            ['score' => 0, 'ping' => 0, 'name' => '^2E^7arth^0-Bot'],
+            ['score' => 0, 'ping' => 0, 'name' => '^5M^7ystic^0-Bot'],
         ];
         $response = "\xFF\xFF\xFF\xFFstatusResponse\n"
-            . self::getCvarLine() . "\n"
-            . $playerData[1]['score'] . ' ' . $playerData[1]['ping'] . ' "' . $playerData[1]['name'] . '"' . "\n" // Earth-Bot
-            . $playerData[0]['score'] . ' ' . $playerData[0]['ping'] . ' "' . $playerData[0]['name'] . '"' . "\n" // Ancient-Bot
-            . $playerData[2]['score'] . ' ' . $playerData[2]['ping'] . ' "' . $playerData[2]['name'] . '"'; // Mystic-Bot
+            . self::getCvarLine() . "\n";
+        foreach ($playerData as $player) {
+            $response .= $player['score']
+                . ' '  . $player['ping']
+                . ' "' . $player['name'] . '"' . "\n";
+        }
+        $response = rtrim($response, "\n");
         // Does not end with "\n"
         // Not sure it's valid, but we'll accept it anyway.
 
@@ -308,16 +317,16 @@ class JkaServerServiceTest extends TestCase
         // buildStatusData() should still work for the other players, and the cvars, but it should generate warnings
 
         $playerData = [
+            ['score' => 1, 'ping' => 42, 'name' => 'Padawan 1'],
             ['score' => 1, 'ping' => 98, 'name' => 'Padawan 2'],
-            ['score' => 1, 'ping' => 42, 'name' => 'Padawan 1'], // Same score, lower ping
         ];
         $response = "\xFF\xFF\xFF\xFFstatusResponse\n"
             . self::getCvarLine() . "\n"
-            . $playerData[1]['score'] . ' ' . $playerData[1]['ping'] . ' "' . $playerData[1]['name'] . '"' . "\n" // Padawan 1
+            . $playerData[0]['score'] . ' ' . $playerData[0]['ping'] . ' "' . $playerData[0]['name'] . '"' . "\n" // Padawan 1
             . '"Padawan 3"' . "\n" // No score and no ping => should generate a warning
             . '10 "Padawan 4"' . "\n" // No score (or no ping) => should generate a warning
             . '10 148' . "\n" // No name => should generate a warning
-            . $playerData[0]['score'] . ' ' . $playerData[0]['ping'] . ' "' . $playerData[0]['name'] . '"' . "\n" // Padawan 2
+            . $playerData[1]['score'] . ' ' . $playerData[1]['ping'] . ' "' . $playerData[1]['name'] . '"' . "\n" // Padawan 2
         ;
 
         $expectedWarnings = [

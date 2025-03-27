@@ -295,23 +295,8 @@ class JkaServerService
         }
 
         usort($players, function (PlayerData $player1, PlayerData $player2) {
-            // Sort by score (descending), then by ping (descending), then by name (alphabetical)
-            if ((int)$player1->score > (int)$player2->score) {
-                return -1;
-            } else if ((int)$player1->score < (int)$player2->score) {
-                return 1;
-            }
-            // Same score => Sort by ping
-            if ((int)$player1->ping > (int)$player2->ping) {
-                return -1;
-            } else if ((int)$player1->ping < (int)$player2->ping) {
-                return 1;
-            }
-            // Same score, same ping => Sort by name (case insensitive)
-            return strcasecmp(
-                $this->templateHelper->stripColors($player1->name),
-                $this->templateHelper->stripColors($player2->name),
-            );
+            // Sort by score (descending)
+            return (int)$player2->score <=> (int)$player1->score;
         });
 
         return $players;
