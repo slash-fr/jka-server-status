@@ -214,8 +214,8 @@
                 </h2>
                 <div id="cvar-grid">
                     <?php foreach ($data->cvars as $cvar_name => $cvar_value): ?>
-                        <label><?= htmlspecialchars($cvar_name) ?></label>
-                        <span><?= format_name($cvar_value) ?></span>
+                        <label class="cvar-name"><?= htmlspecialchars($cvar_name) ?></label>
+                        <span class="cvar-value"><?= format_name($cvar_value) ?></span>
                     <?php endforeach; ?>
                 </div>
                 <button id="close-cvars">

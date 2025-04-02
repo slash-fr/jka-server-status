@@ -252,7 +252,7 @@ footer {
     margin: 0 5px 15px;
 }
 
-#setting-grid, #cvar-grid {
+#setting-grid {
     display: grid;
     grid-template-columns: auto; /* Only 1 column in mobile view */
     grid-gap: 5px;
@@ -262,7 +262,8 @@ footer {
 }
 
 #cvar-grid {
-    text-align: center;
+    display: grid;
+    grid-template-columns: auto auto; /* 2 columns */
     max-height: calc(100vh - 220px);
     overflow-y: scroll;
     background-color: rgba(0, 0, 0, 0.67);
@@ -270,6 +271,27 @@ footer {
     border-right: 0;
     border-radius: 5px;
     padding-right: 10px;
+    text-align: left;
+}
+
+#cvar-grid .cvar-name {
+    text-align: left;
+    font-weight: 600;
+    padding: 5px;
+}
+
+#cvar-grid .cvar-value {
+    padding: 5px;
+    word-break: break-word;
+    min-width: 90px;
+}
+
+#cvar-grid .cvar-name:nth-child(4n + 1){
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#cvar-grid .cvar-value:nth-child(4n + 2){
+    background: rgba(255, 255, 255, 0.1);
 }
 
 #cvars {
@@ -293,11 +315,6 @@ label strong {
 .background-image-tweak label {
     font-weight: normal; /* Sub-labels don't use a bold font */
     padding-left: 5px;
-}
-
-#cvar-grid label {
-    margin-top: 14px;
-    text-align: center;
 }
 
 .background-image-tweak input[type=radio] {
@@ -445,7 +462,7 @@ body.about-page #main-content a {
         margin-bottom: 2em;
     }
 
-    #setting-grid, #cvar-grid {
+    #setting-grid {
         grid-template-columns: auto auto;
         grid-gap: 10px;
     }
@@ -462,13 +479,7 @@ body.about-page #main-content a {
     }
 
     #cvar-grid {
-        text-align: left;
         max-height: calc(100vh - 230px); /* 10px shorter in desktop mode */
-    }
-
-    #cvar-grid label {
-        margin-top: 0;
-        text-align: left;
     }
 }
 
