@@ -212,11 +212,15 @@
                          width="24" height="24" alt="" aria-hidden="true"/>
                     Server info
                 </h2>
-                <div id="cvar-grid">
-                    <?php foreach ($data->cvars as $cvar_name => $cvar_value): ?>
-                        <label class="cvar-name"><?= htmlspecialchars($cvar_name) ?></label>
-                        <span class="cvar-value"><?= format_name($cvar_value) ?></span>
-                    <?php endforeach; ?>
+                <div id="cvar-container">
+                    <table id="cvar-table">
+                        <?php foreach ($data->cvars as $cvar_name => $cvar_value): ?>
+                            <tr>
+                                <th><?= htmlspecialchars($cvar_name) ?></th>
+                                <td><?= format_name($cvar_value) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
                 </div>
                 <button id="close-cvars">
                     <img src="<?= asset('/close-circle.svg') ?>"

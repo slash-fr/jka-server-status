@@ -261,9 +261,7 @@ footer {
     margin: auto;
 }
 
-#cvar-grid {
-    display: grid;
-    grid-template-columns: auto auto; /* 2 columns */
+#cvar-container {
     max-height: calc(100vh - 220px);
     overflow-y: scroll;
     background-color: rgba(0, 0, 0, 0.67);
@@ -271,26 +269,28 @@ footer {
     border-right: 0;
     border-radius: 5px;
     padding-right: 10px;
-    text-align: left;
 }
 
-#cvar-grid .cvar-name {
+#cvar-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#cvar-table th {
     text-align: left;
+    font-size: 14px;
     font-weight: 600;
     padding: 5px;
 }
 
-#cvar-grid .cvar-value {
+#cvar-table td {
+    text-align: left;
     padding: 5px;
     word-break: break-word;
     min-width: 90px;
 }
 
-#cvar-grid .cvar-name:nth-child(4n + 1){
-    background: rgba(255, 255, 255, 0.1);
-}
-
-#cvar-grid .cvar-value:nth-child(4n + 2){
+#cvar-table tr:nth-child(odd) th, #cvar-table tr:nth-child(odd) td {
     background: rgba(255, 255, 255, 0.1);
 }
 
@@ -478,7 +478,7 @@ body.about-page #main-content a {
         margin-left: 20px;
     }
 
-    #cvar-grid {
+    #cvar-table {
         max-height: calc(100vh - 230px); /* 10px shorter in desktop mode */
     }
 }
@@ -487,7 +487,7 @@ body.about-page #main-content a {
 /* Print CSS */
 /*************/
 @media print {
-    body, body.page-not-found, #background-image, #cvar-grid {
+    body, body.page-not-found, #background-image, #cvar-container {
         background-image: none !important;
         background-color: white !important;
     }
@@ -526,8 +526,12 @@ body.about-page #main-content a {
         filter: invert(100%);
     }
 
-    #cvar-grid {
+    #cvar-container {
         max-height: none;
         overflow-y: visible;
+    }
+
+    #cvar-table th {
+        font-size: 16px;
     }
 }
