@@ -9,7 +9,7 @@ $log_level = LOG_INFO;
 // 0 => No logging
 // LOG_INFO => Logs LOG_INFO messages and higher levels (LOG_WARNING and LOG_ERR)
 // LOG_WARNING => Logs LOG_WARNING messages and higher levels (LOG_ERR)
-// LOG_ERR => Only logs LOG_ERR messages
+// LOG_ERR => Only logs LOG_ERR messages (i.e. error messages)
 // Default value if omitted: LOG_INFO
 
 // Cache JKA server responses for a few seconds, to avoid sending an excessive amount of requests
@@ -42,7 +42,7 @@ $enable_about_page = false; // Defaults to false
 // If you enable the "About" page:
 // - Copy: "templates/_config_page_content.default.php"
 //     To: "templates/_config_page_content.php" (keep the leading underscore)
-// - Write valid HTML. Don't worry, you actually don't need to know PHP.
+// - Write valid HTML. Don't worry, you don't really need to know PHP.
 $about_page_uri = '/about'; // Defaults to '/about'
 $about_page_title = 'About'; // Title of the "About" page (and "About" link). Defaults to 'About'.
 // Depending on your jurisdiction, you may be required by law to host a "Legal notice" / "Impressum"
@@ -85,4 +85,52 @@ $jka_servers = [
     ],
 
     // Other JKA servers...
+];
+
+// Blur radius per background image (i.e. per map) - if the user has their settings on "Auto"
+// Usually 5px, but some images look better with different settings.
+$background_blur_radius = [
+    // Allowed range: [0-10]
+    'default' => 0, // "default.jpg" (defaults to 0 if omitted)
+    'mp/ctf1' => 7, // "mp/ctf1" defaults to 7 if omitted
+    'mp/ctf3' => 7, // "mp/ctf3" defaults to 7 if omitted
+    'mp/ffa5' => 7, // "mp/ffa5" defaults to 7 if omitted
+    'mp/siege_hoth' => 7, // "mp/siege_hoth" defaults to 7 if omitted
+    'mp/siege_korriban' => 7, // "mp/siege_korriban" defaults to 7 if omitted
+    't3_hevil' => 7, // "t3_hevil" defaults to 7 if omitted
+    't3_rift' => 7, // "t3_rift" defaults to 7 if omitted
+    't3_stamp' => 7, // "t3_stamp" defaults to 7 if omitted
+    'vjun2' => 7, // "vjun2" defaults to 7 if omitted
+    'yavin1' => 7, // "yavin1" defaults to 7 if omitted
+    'yavin1b' => 7, // "yavin1b" defaults to 7 if omitted
+    // Other levelshots default to 5
+];
+
+// Opacity per background image (i.e. per map) - if the user has their settings on "Auto"
+// Usually 50%, but some images are brighter, or have more contrast, which hurts readability.
+$background_opacity = [
+    // Allowed range: [0-100]
+    'mp/ctf2' => 40, // "mp/ctf2" defaults to 40 if omitted
+    'mp/ctf5' => 40, // "mp/ctf5" defaults to 40 if omitted
+    'mp/duel6' => 40, // "mp/duel6" defaults to 40 if omitted
+    'mp/duel9' => 40, // "mp/duel9" defaults to 40 if omitted
+    'mp/ffa5' => 40, // "mp/ffa5" defaults to 40 if omitted
+    'mp/siege_desert' => 40, // "mp/siege_desert" defaults to 40 if omitted
+    'mp/siege_hoth' => 40, // "mp/siege_hoth" defaults to 40 if omitted
+    'mp/siege_korriban' => 30, // "mp/siege_korriban" defaults to 30 if omitted
+    'academy3' => 30, // "academy3" defaults to 30 if omitted
+    'academy4' => 30, // "academy4" defaults to 30 if omitted
+    'hoth2' => 40, // "hoth2" defaults to 40 if omitted
+    'kor2' => 40, // "kor2" defaults to 40 if omitted
+    't1_sour' => 40, // "t1_sour" default to 40 if omitted
+    't1_surprise' => 40, // "t1_surprise" default to 40 if omitted
+    't2_dpred' => 40, // "t2_dpred" defaults to 40 if omitted
+    't2_trip' => 40, // "t2_trip" defaults to 40 if omitted
+    't2_wedge' => 40, // "t2_wedge" defaults to 40 if omitted
+    't3_hevil' => 40, // "t3_hevil" defaults to 40 if omitted
+    'taspir2' => 40, // "taspir2" defaults to 40 if omitted
+    'vjun2' => 40, // "vjun2" defaults to 40 if omitted
+    'yavin1' => 40, // "yavin1" defaults to 40 if omitted
+    'yavin1b' => 40, // "yavin1b" defaults to 40 if omitted
+    // Other levelshots default to 50
 ];

@@ -43,7 +43,7 @@ $jka_servers = [
 ];
 ```
 - You will get a "landing page" (server list) on the root URL (`/`), and the two servers on the specified URIs.
-- PHP allows trailing commas (`,`) on the last element of each array. They are of course optional.
+- PHP allows trailing commas (`,`) even on the last element of each array.
 
 ## Specifying a server name
 Specifying a server name is recommended.

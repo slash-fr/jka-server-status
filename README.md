@@ -26,8 +26,9 @@ as well as the player list.
 
 ## Installation
 1. Clone (or copy the content of) this repository onto your server,
-2. Copy `config.sample.php` to `config.php` and edit the configuration to suit your needs,  
-   For more basic examples, see: [**Basic `config.php` examples**](doc/basic-config-php-examples.md).
+2. Create a `config.php` file:
+   1. Read: [**Basic `config.php` examples**](doc/basic-config-php-examples.md).
+   2. For the full list of options, see: [`config.sample.php`](config.sample.php)
 3. Make sure PHP has write access to the `var/cache` and `var/log` folders,
 4. Setup your web server to point to the `public` folder,
 5. Let the web server serve static files, and pass all other requests to `index.php`.
@@ -51,6 +52,7 @@ There are a few automated tests for PHP developers, in the `tests` directory.
 wget -O phpunit.phar https://phar.phpunit.de/phpunit-12.phar
 php phpunit.phar --bootstrap src/autoload.php tests
 ```
+It's recommended to run them on your development machine, **not** on your production server.
 
 ## License
 The code in this repository is released under the [MIT License](LICENSE.txt).

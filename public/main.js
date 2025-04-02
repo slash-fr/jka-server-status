@@ -18,23 +18,55 @@ openSettingsButton.addEventListener('click', function () {
     });
 });
 
+// Load settings from localStorage (or initialize them to their default value)
+
+let autoRefresh = Number.parseInt(localStorage.getItem('jka-server-status_auto-refresh'));
+if (isNaN(autoRefresh) || autoRefresh < 0) {
+    autoRefresh = 0;
+}
+
+let backgroundImage = localStorage.getItem('jka-server-status_background-image');
+if (['disabled', 'always-default', 'map-dependent'].includes(backgroundImage) === false) {
+    backgroundImage = 'map-dependent';
+}
+
+let autoOrCustomBlurAndOpacity = localStorage.getItem('jka-server-status_background-image-blur-and-opacity');
+if (autoOrCustomBlurAndOpacity !== 'auto' && autoOrCustomBlurAndOpacity !== 'custom') {
+    autoOrCustomBlurAndOpacity = 'auto';
+}
+
+let backgroundImageBlur = Number.parseInt(localStorage.getItem('jka-server-status_background-image-blur'));
+if (isNaN(backgroundImageBlur) || backgroundImageBlur < 0 || backgroundImageBlur > 10) {
+    backgroundImageBlur = 5; // Default: 5px
+}
+
+let backgroundImageOpacity = Number.parseInt(localStorage.getItem('jka-server-status_background-image-opacity'));
+if (isNaN(backgroundImageOpacity) || backgroundImageOpacity < 0 || backgroundImageOpacity > 100) {
+    backgroundImageOpacity = 50; // Default: 50%
+}
+
+let backgroundColor = localStorage.getItem('jka-server-status_background-color');
+if (backgroundColor === null) {
+    backgroundColor = '#000000';
+}
+
+// Now, let's take care of the UI
+
 // DOM Elements
 const autoRefreshSelect = document.getElementById('auto-refresh-select');
 const backgroundDiv = document.createElement('div');
 backgroundDiv.id = 'background-image';
 document.body.prepend(backgroundDiv);
-const currentBackgroundImage = document.getElementById('current-background-image').value;
+const mapBackgroundImage = document.getElementById('map-background-image').value;
 const defaultBackgroundImage = document.getElementById('default-background-image').value;
 const backgroundImageSelect = document.getElementById('background-image-select');
+const autoBlurAndOpacityRadioButton = document.getElementById('auto-blur-and-opacity');
+const customBlurAndOpacityRadioButton = document.getElementById('custom-blur-and-opacity');
 const backgroundImageBlurSlider = document.getElementById('background-image-blur-slider');
 const backgroundImageOpacitySlider = document.getElementById('background-image-opacity-slider');
 const backgroundColorInput = document.getElementById('background-color-input');
 
 // Auto-refresh
-let autoRefresh = Number.parseInt(localStorage.getItem('jka-server-status_auto-refresh'));
-if (isNaN(autoRefresh) || autoRefresh < 0) {
-    autoRefresh = 0;
-}
 autoRefreshSelect.value = autoRefresh;
 autoRefreshSelect.addEventListener('change', function () {
     autoRefresh = Number.parseInt(autoRefreshSelect.value);
@@ -48,68 +80,114 @@ autoRefreshSelect.addEventListener('change', function () {
     }
 });
 
+/**
+ * Requires up to date variables:
+ * - autoOrCustomBlurAndOpacity
+ * - backgroundImageBlur
+ * - backgroundImageOpacity
+ * - backgroundImage
+ */
+function applyBackgroundBlurAndOpacity() {
+    if (autoOrCustomBlurAndOpacity === 'custom') {
+        backgroundDiv.style.filter = 'blur(' + backgroundImageBlur + 'px)';
+        backgroundDiv.style.opacity = backgroundImageOpacity + '%';
+        return;
+    }
+
+    // "Blur and opacity" is set to "Auto"
+
+    if (backgroundImage === 'always-default') {
+        backgroundDiv.style.filter = 'blur('
+            + document.getElementById('default-background-image-blur-radius').value
+            + 'px)';
+        backgroundDiv.style.opacity = document.getElementById('default-background-image-opacity').value + '%';
+        return;
+    }
+
+    // "Background image" is set to "Map-dependent"
+    backgroundDiv.style.filter = 'blur(' + document.getElementById('map-background-image-blur-radius').value + 'px)';
+    backgroundDiv.style.opacity = document.getElementById('map-background-image-opacity').value + '%';
+}
+applyBackgroundBlurAndOpacity(); // Apply blur and opacity settings on load
+
 // Background image
-let backgroundImage = localStorage.getItem('jka-server-status_background-image');
 if (backgroundImage === 'disabled') {
     backgroundImageSelect.value = 'disabled';
 } else if (backgroundImage === 'always-default') {
     backgroundImageSelect.value = 'always-default';
-} else { // if (backgroundImage === 'map-dependent') {
+} else { // 'map-dependent' (or invalid)
     backgroundImageSelect.value = 'map-dependent';
 }
 function updateBackgroundImage() {
-    if (backgroundImageSelect.value === 'disabled') {
-        localStorage.setItem('jka-server-status_background-image', 'disabled');
+    backgroundImage = backgroundImageSelect.value;
+    localStorage.setItem('jka-server-status_background-image', backgroundImage);
+    if (backgroundImage === 'disabled') {
         backgroundDiv.style.display = 'none';
         disableImageTweaks();
-    } else if (backgroundImageSelect.value === 'always-default') {
-        localStorage.setItem('jka-server-status_background-image', 'always-default');
-        backgroundDiv.style.backgroundImage = 'url(' + defaultBackgroundImage + ')';
-        backgroundDiv.style.display = 'block';
-        enableImageTweaks();
-    } else { //if (backgroundImageSelect.value === 'map-dependent') {
-        localStorage.setItem('jka-server-status_background-image', 'map-dependent');
-        backgroundDiv.style.backgroundImage = 'url(' + currentBackgroundImage + ')';
-        backgroundDiv.style.display = 'block';
-        enableImageTweaks();
+        return;
     }
+    
+    if (backgroundImage === 'always-default') {
+        backgroundDiv.style.backgroundImage = 'url(' + defaultBackgroundImage + ')';
+    } else { // 'map-dependent' (or invalid)
+        backgroundDiv.style.backgroundImage = 'url(' + mapBackgroundImage + ')';
+    }
+
+    applyBackgroundBlurAndOpacity();
+    backgroundDiv.style.display = 'block';
+    enableImageTweaks();
 }
 updateBackgroundImage(); // Apply background image settings on load
 backgroundImageSelect.addEventListener('change', updateBackgroundImage);
 
-// Background image blur
-let backgroundImageBlur = Number.parseInt(localStorage.getItem('jka-server-status_background-image-blur'));
-if (isNaN(backgroundImageBlur) || backgroundImageBlur < 0 || backgroundImageBlur > 10) {
-    backgroundImageBlur = 5; // Default: 5px
+// Blur and opacity: Auto / Custom
+if (autoOrCustomBlurAndOpacity === 'custom') {
+    customBlurAndOpacityRadioButton.setAttribute('checked', '');
+} else { // 'auto' (or invalid)
+    autoBlurAndOpacityRadioButton.setAttribute('checked', '');
 }
+function updateAutoOrCustomBlurAndOpacity() {
+    if (customBlurAndOpacityRadioButton.checked) { // Custom
+        autoOrCustomBlurAndOpacity = 'custom';
+        enableCustomImageTweaks();
+    } else { // Auto
+        autoOrCustomBlurAndOpacity = 'auto';
+        disableCustomImageTweaks();
+    }
+    localStorage.setItem('jka-server-status_background-image-blur-and-opacity', autoOrCustomBlurAndOpacity);
+    applyBackgroundBlurAndOpacity();
+}
+updateAutoOrCustomBlurAndOpacity(); // Apply the Auto / Custom choice on load
+autoBlurAndOpacityRadioButton.addEventListener('change', updateAutoOrCustomBlurAndOpacity);
+customBlurAndOpacityRadioButton.addEventListener('change', updateAutoOrCustomBlurAndOpacity);
+
+// Background image blur
 backgroundImageBlurSlider.value = backgroundImageBlur;
 function updateBlur() {
     if (
         !isNaN(backgroundImageBlurSlider.value)
         && backgroundImageBlurSlider.value >= 0 && backgroundImageBlurSlider.value <= 10
     ) {
-        backgroundDiv.style.filter = 'blur(' + backgroundImageBlurSlider.value + 'px)';
-        document.getElementById('background-image-blur-radius').textContent = backgroundImageBlurSlider.value + ' px';
-        localStorage.setItem('jka-server-status_background-image-blur', backgroundImageBlurSlider.value);
+        backgroundImageBlur = backgroundImageBlurSlider.value;
+        document.getElementById('background-image-blur-radius').textContent = backgroundImageBlur + ' px';
+        localStorage.setItem('jka-server-status_background-image-blur', backgroundImageBlur);
+        applyBackgroundBlurAndOpacity();
     }
 }
 updateBlur(); // Apply blur settings on load
 backgroundImageBlurSlider.addEventListener('input', updateBlur);
 
 // Background image opacity
-let backgroundImageOpacity = Number.parseInt(localStorage.getItem('jka-server-status_background-image-opacity'));
-if (isNaN(backgroundImageOpacity) || backgroundImageOpacity < 0 || backgroundImageOpacity > 100) {
-    backgroundImageOpacity = 50; // Default: 50%
-}
 backgroundImageOpacitySlider.value = backgroundImageOpacity;
 function updateOpacity() {
     if (
         !isNaN(backgroundImageOpacitySlider.value)
         && backgroundImageOpacitySlider.value >= 0 && backgroundImageOpacitySlider.value <= 100
     ) {
-        backgroundDiv.style.opacity = backgroundImageOpacitySlider.value + '%';
-        document.getElementById('background-image-opacity-percentage').textContent = backgroundImageOpacitySlider.value + '%';
-        localStorage.setItem('jka-server-status_background-image-opacity', backgroundImageOpacitySlider.value);
+        backgroundImageOpacity = backgroundImageOpacitySlider.value;
+        document.getElementById('background-image-opacity-percentage').textContent = backgroundImageOpacity + '%';
+        localStorage.setItem('jka-server-status_background-image-opacity', backgroundImageOpacity);
+        applyBackgroundBlurAndOpacity();
     }
 }
 updateOpacity(); // Apply opacity settings on load
@@ -117,6 +195,15 @@ backgroundImageOpacitySlider.addEventListener('input', updateOpacity);
 
 function disableImageTweaks() {
     document.querySelectorAll('.background-image-tweak').forEach(function(element) {
+        element.classList.add('disabled');
+    });
+    autoBlurAndOpacityRadioButton.setAttribute('disabled', '');
+    customBlurAndOpacityRadioButton.setAttribute('disabled', '');
+    disableCustomImageTweaks();
+}
+
+function disableCustomImageTweaks() {
+    document.querySelectorAll('.background-image-custom-tweak').forEach(function(element) {
         element.classList.add('disabled');
     });
     backgroundImageBlurSlider.setAttribute('disabled', '');
@@ -127,15 +214,22 @@ function enableImageTweaks() {
     document.querySelectorAll('.background-image-tweak').forEach(function(element) {
         element.classList.remove('disabled');
     });
+    autoBlurAndOpacityRadioButton.removeAttribute('disabled');
+    customBlurAndOpacityRadioButton.removeAttribute('disabled');
+    if (autoOrCustomBlurAndOpacity === 'custom') {
+        enableCustomImageTweaks();
+    }
+}
+
+function enableCustomImageTweaks() {
+    document.querySelectorAll('.background-image-custom-tweak').forEach(function(element) {
+        element.classList.remove('disabled');
+    });
     backgroundImageBlurSlider.removeAttribute('disabled');
     backgroundImageOpacitySlider.removeAttribute('disabled');
 }
 
 // Background color
-let backgroundColor = localStorage.getItem('jka-server-status_background-color');
-if (backgroundColor === null) {
-    backgroundColor = '#000000';
-}
 backgroundColorInput.value = backgroundColor;
 function updateBackgroundColor() {
     document.body.style.backgroundColor = backgroundColorInput.value;

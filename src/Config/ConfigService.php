@@ -39,6 +39,8 @@ class ConfigService
         $isAboutPageEnabled = $this->sanitizeIsAboutPageEnabled($enable_about_page ?? null);
         $aboutPageUri = $this->sanitizeAboutPageUri($about_page_uri ?? null);
         $aboutPageTitle = $this->sanitizeAboutPageTitle($about_page_title ?? null);
+        $blurRadiusPerMap = $this->sanitizeBackgroundBlurRadius($background_blur_radius ?? null);
+        $opacityPerMap = $this->sanitizeBackgroundOpacity($background_opacity ?? null);
         $this->validateUniqueURIs(
             $jkaServers,
             $isLandingPageEnabled ? $landingPageUri : null,
@@ -55,6 +57,8 @@ class ConfigService
             $aboutPageUri,
             $aboutPageTitle,
             $jkaServers,
+            $blurRadiusPerMap,
+            $opacityPerMap,
             __DIR__ . '/../..',
         );
     }
@@ -474,6 +478,90 @@ class ConfigService
         }
 
         return $aboutPageTitle;
+    }
+
+    private function sanitizeBackgroundBlurRadius(mixed $backgroundBlurRadius): array
+    {
+        if (!isset($backgroundBlurRadius)) {
+            return ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP;
+        }
+
+        if (!is_array($backgroundBlurRadius)) {
+            $message = 'Config variable $background_blur_radius must be an array '
+                . '(got: ' . gettype($backgroundBlurRadius) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
+        }
+
+        foreach ($backgroundBlurRadius as $key => $value) {
+            if (!is_string($key)) {
+                $message = 'Config variable $background_blur_radius must be an indexed array, with string keys '
+                    . '(got: ' . gettype($key) . ' - $background_blur_radius[' . var_export($key, true) . ']).';
+                $this->logger->error($message);
+                throw new ConfigException($message);
+            }
+
+            if (!is_int($value)) {
+                $message = 'Config variable $background_blur_radius must be an indexed array, with integer values '
+                    . '(got: ' . gettype($value) . ' for $background_blur_radius[' . var_export($key, true) . ']).';
+                $this->logger->error($message);
+                throw new ConfigException($message);
+            }
+
+            if ($value < 0 || $value > 10) {
+                $message = 'Config variable $background_blur_radius must contain values between 0 and 10 '
+                    . '(got: ' . var_export($value, true) . ' for $background_blur_radius[' . var_export($key, true) . ']).';
+                $this->logger->error($message);
+                throw new ConfigException($message);
+            }
+        }
+
+        // Use our default values if config.php doesn't specify them all
+        $backgroundBlurRadius = array_merge(ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP, $backgroundBlurRadius);
+
+        return $backgroundBlurRadius;
+    }
+
+    private function sanitizeBackgroundOpacity(mixed $backgroundOpacity): array
+    {
+        if (!isset($backgroundOpacity)) {
+            return ConfigData::DEFAULT_BACKGROUND_OPACITY_PER_MAP;
+        }
+
+        if (!is_array($backgroundOpacity)) {
+            $message = 'Config variable $background_opacity must be an array '
+                . '(got: ' . gettype($backgroundOpacity) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
+        }
+
+        foreach ($backgroundOpacity as $key => $value) {
+            if (!is_string($key)) {
+                $message = 'Config variable $background_opacity must be an indexed array, with string keys '
+                    . '(got: ' . gettype($key) . ' - $background_opacity[' . var_export($key, true) . ']).';
+                $this->logger->error($message);
+                throw new ConfigException($message);
+            }
+
+            if (!is_int($value)) {
+                $message = 'Config variable $background_opacity must be an indexed array, with integer values '
+                    . '(got: ' . gettype($value) . ' for $background_opacity[' . var_export($key, true) . ']).';
+                $this->logger->error($message);
+                throw new ConfigException($message);
+            }
+
+            if ($value < 0 || $value > 100) {
+                $message = 'Config variable $background_opacity must contain values between 0 and 100 '
+                    . '(got: ' . var_export($value, true) . ' for $background_opacity[' . var_export($key, true) . ']).';
+                $this->logger->error($message);
+                throw new ConfigException($message);
+            }
+        }
+
+        // Use our default values if config.php doesn't specify them all
+        $backgroundOpacity = array_merge(ConfigData::DEFAULT_BACKGROUND_OPACITY_PER_MAP, $backgroundOpacity);
+
+        return $backgroundOpacity;
     }
 
     /**

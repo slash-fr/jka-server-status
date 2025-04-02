@@ -7,16 +7,27 @@
     </head>
     <body>
         <noscript>
-            <!-- If JavaScript is enabled, let main.js add the background image, -->
-            <!-- to avoid fetching an image that might not get displayed (depending on the user's settings). -->
+            <?php /* If JavaScript is enabled, let main.js add the background image, */ ?>
+            <?php /* to avoid fetching an image that might not get displayed (depending on the user's settings). */ ?>
             <div id="background-image"
-                 style="background-image: url(<?= asset($data->backgroundImageUrl) ?>)" />
+                 style="<?= 'background-image: url(' . asset($data->backgroundImageUrl) . '); '
+                          . 'filter: blur(' . (int)$data->backgroundImageBlurRadius . 'px); '
+                          . 'opacity: ' . (int)$data->backgroundImageOpacity . '%; '
+                        ?>" >
             </div>
         </noscript>
-        <input type="hidden" id="current-background-image"
+        <input type="hidden" id="map-background-image"
                value="<?= htmlspecialchars(asset($data->backgroundImageUrl)) ?>" />
+        <input type="hidden" id="map-background-image-blur-radius"
+               value="<?= (int)$data->backgroundImageBlurRadius ?>" />
+        <input type="hidden" id="map-background-image-opacity"
+               value="<?= (int)$data->backgroundImageOpacity ?>" />
         <input type="hidden" id="default-background-image"
                value="<?= htmlspecialchars(asset($data->defaultBackgroundImageUrl)) ?>" />
+        <input type="hidden" id="default-background-image-blur-radius"
+               value="<?= (int)$data->defaultBackgroundImageBlurRadius ?>" />
+        <input type="hidden" id="default-background-image-opacity"
+               value="<?= (int)$data->defaultBackgroundImageOpacity ?>" />
 
         <div id="content">
             <header>
@@ -161,14 +172,25 @@
                     <option value="always-default">Always use "default.jpg"</option>
                 </select>
                 
-                <label for="background-image-blur-slider" class="background-image-tweak">Image blur:</label>
-                <span class="slider-container background-image-tweak">
+                <label class="background-image-tweak">Blur and opacity:</label>
+                <span class="background-image-tweak">
+                    <input type="radio" name="blur-and-opacity" id="auto-blur-and-opacity" value="Auto"/>
+                    <label for="auto-blur-and-opacity">Auto</label>
+                    <input type="radio" name="blur-and-opacity" id="custom-blur-and-opacity" value="Custom"/>
+                    <label for="custom-blur-and-opacity">Custom</label>
+                </span>
+
+                <label for="background-image-blur-slider" class="background-image-tweak background-image-custom-tweak">
+                    Image blur radius:
+                </label>
+                <span class="slider-container background-image-tweak background-image-custom-tweak">
                     <input id="background-image-blur-slider" type="range" min="0" max="10" />
                     <span id="background-image-blur-radius"></span>
                 </span>
                 
-                <label for="background-image-opacity-slider" class="background-image-tweak">Image opacity:</label>
-                <span class="slider-container background-image-tweak">
+                <label for="background-image-opacity-slider"
+                       class="background-image-tweak background-image-custom-tweak">Image opacity:</label>
+                <span class="slider-container background-image-tweak background-image-custom-tweak">
                     <input id="background-image-opacity-slider" type="range" min="0" max="100" />
                     <span id="background-image-opacity-percentage"></span>
                 </span>

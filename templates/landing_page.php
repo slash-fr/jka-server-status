@@ -4,9 +4,16 @@
         <?php require_once __DIR__ . '/_head.php'; ?>
     </head>
     <body class="landing-page">
+        <?php /** @var \JkaServerStatus\Config\ConfigData $config */ ?>
+
         <div id="background-image"
-             style="background-image: url(<?= htmlspecialchars(asset('/levelshots/default.jpg')) ?>)" >
+             style="<?= 'background-image: url(' . asset('/levelshots/default.jpg') . '); '
+                      . 'filter: blur(' . (int)$config->getBackgroundBlurRadius('default') . 'px); '
+                      . 'opacity: ' . (int)$config->getBackgroundOpacity('default') . '%; '
+                    ?>" >
+            <?php /* User settings for opacity and blur don't apply to the landing page. */ ?>
         </div>
+        
         <div id="content">
             <header></header>
 
@@ -17,7 +24,6 @@
                     <span class="white">JKA Server Status</span>
                 </h1>
 
-                <?php /** @var \JkaServerStatus\Config\ConfigData $config */ ?>
                 <?php foreach ($config->jkaServers as $jkaServer): ?>
                     <?php /** @var \JkaServerStatus\Config\JkaServerConfigData $jkaServer */  ?>
                     <a class="button" href="<?= htmlspecialchars($jkaServer->uri); ?>">

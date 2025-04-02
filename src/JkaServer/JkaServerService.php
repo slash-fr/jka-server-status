@@ -98,7 +98,9 @@ class JkaServerService
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
-                $statusMessage
+                $statusMessage,
+                $this->config->getBackgroundBlurRadius('default'),
+                $this->config->getBackgroundOpacity('default'),
             );
         }
 
@@ -114,7 +116,9 @@ class JkaServerService
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
-                $statusMessage
+                $statusMessage,
+                $this->config->getBackgroundBlurRadius('default'),
+                $this->config->getBackgroundOpacity('default'),
             );
         }
 
@@ -140,7 +144,9 @@ class JkaServerService
                 $jkaServerConfig->name,
                 $jkaServerConfig->address,
                 false, // isUp
-                $statusMessage
+                $statusMessage,
+                $this->config->getBackgroundBlurRadius('default'),
+                $this->config->getBackgroundOpacity('default'),
             );
         }
 
@@ -159,6 +165,16 @@ class JkaServerService
         $nbPlayers = $nbBots = $nbHumans = 0;
         $this->countPlayers($players, $nbPlayers, $nbBots, $nbHumans);
 
+        $backgroundImageUrl = '';
+        $backgroundImageBlurRadius = 5;
+        $backgroundImageOpacity = 50;
+        $this->initializeBackgroundImageSettings(
+            $cvars, // Input parameter
+            $backgroundImageUrl, // Output parameter
+            $backgroundImageBlurRadius, // Output parameter
+            $backgroundImageOpacity, // Output parameter
+        );
+
         return new StatusData(
             $this->config->isLandingPageEnabled,
             $this->config->landingPageUri,
@@ -169,7 +185,11 @@ class JkaServerService
             $jkaServerConfig->address,
             true, // isUp
             'Up',
-            $this->getBackgroundImageUrl($cvars),
+            $this->config->getBackgroundBlurRadius('default'),
+            $this->config->getBackgroundOpacity('default'),
+            $backgroundImageBlurRadius,
+            $backgroundImageOpacity,
+            $backgroundImageUrl,
             $cvars['mapname'] ?? null,
             $this->getGameType($cvars),
             $cvars['gamename'] ?? null,
@@ -243,23 +263,38 @@ class JkaServerService
     }
 
     /**
-     * Returns the map-dependent (root-relative) background image URL.
-     * WITHOUT $asset_url prefix.
+     * Initializes the background image settings from the map name (if present in the cvars).
      * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
-     * @return string e.g. "/levelshots/mp/ffa3.jpg"
+     * @param string $backgroundImageUrl Output parameter. The map-dependent (root-relative) background image URL
+     *                                   WITHOUT $asset_url prefix (e.g. "/levelshots/mp/ffa3.jpg")
+     * @param int $backgroundImageBlurRadius Output parameter. The blur radius, in pixels,
+     *                                       to apply to the background image (e.g. 5)
+     * @param int $backgroundImageOpacity Output parameter. The opacity percentage to apply to the background image
+     *                                    (e.g. 50)
      */
-    private function getBackgroundImageUrl(array $cvars): string
+    private function initializeBackgroundImageSettings(
+        array $cvars,
+        string &$backgroundImageUrl,
+        int &$backgroundImageBlurRadius,
+        int &$backgroundImageOpacity,
+    ): void
     {
-        $backgroundImageUrl = StatusData::DEFAULT_BACKGROUND_IMAGE_URL;
         $mapName = strtolower($cvars['mapname'] ?? 'default');
         if (
             preg_match('/^[a-zA-z_0-9\/]+$/', $mapName) // If the file name is safe (no "..", no weird characters)
             && file_exists($this->config->projectDir . '/public/levelshots/' . $mapName . '.jpg') // and the file exists
         ) {
             $backgroundImageUrl = '/levelshots/' . $mapName . '.jpg';
+            $backgroundImageBlurRadius = $this->config->getBackgroundBlurRadius($mapName);
+            $backgroundImageOpacity = $this->config->getBackgroundOpacity($mapName);
+            return;
         }
 
-        return $backgroundImageUrl;
+        // Otherwise, we can't use the map name as a filename
+        $this->logger->warning('Could not find levelshot for "' . $mapName . '". Using "default.jpg".');
+        $backgroundImageUrl = StatusData::DEFAULT_BACKGROUND_IMAGE_URL;
+        $backgroundImageBlurRadius = $this->config->getBackgroundBlurRadius('default');
+        $backgroundImageOpacity = $this->config->getBackgroundOpacity('default');
     }
 
     /**

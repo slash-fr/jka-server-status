@@ -2,6 +2,7 @@
 
 namespace JkaServerStatus\Tests\Config;
 
+use JkaServerStatus\Config\ConfigData;
 use JkaServerStatus\Config\ConfigException;
 use JkaServerStatus\Config\ConfigService;
 use JkaServerStatus\Log\Logger;
@@ -33,6 +34,39 @@ class ConfigServiceTest extends TestCase
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->name ?? null);
         $this->assertSame('Windows-1252', $config->jkaServers[0]->charset ?? null);
 
+        ////////////////////////////////////////////////////////////////////////
+        // Background blur radius
+        foreach (ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP as $mapName => $blurRadius) {
+            /** @var string $mapName */
+            $this->assertSame($blurRadius, $config->getBackgroundBlurRadius($mapName));
+        }
+
+        // Test the blur radius for a map that does NOT have a default value
+        $this->assertSame(ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS, $config->getBackgroundBlurRadius('mp/ffa3'));
+
+        // Test the blur radius for a map that does not exist
+        $this->assertSame(
+            ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS,
+            $config->getBackgroundBlurRadius('map/that/does/not/exist')
+        );
+
+        ////////////////////////////////////////////////////////////////////////
+        // Background opacity
+        foreach (ConfigData::DEFAULT_BACKGROUND_OPACITY_PER_MAP as $mapName => $opacity) {
+            /** @var string $mapName */
+            $this->assertSame($opacity, $config->getBackgroundOpacity($mapName));
+        }
+
+        // Test the opacity for a map that does NOT have a default value
+        $this->assertSame(ConfigData::DEFAULT_BACKGROUND_OPACITY, $config->getBackgroundOpacity('mp/ffa3'));
+
+        // Test the opacity for a map that does not exist
+        $this->assertSame(
+            ConfigData::DEFAULT_BACKGROUND_OPACITY,
+            $config->getBackgroundOpacity('map/that/does/not/exist')
+        );
+
+        ////////////////////////////////////////////////////////////////////////
         // A valid config file shouldn't generate errors nor warnings
         $this->assertCount(0, $logger->getMessages([Logger::ERROR, Logger::WARNING]));
     }
@@ -62,6 +96,35 @@ class ConfigServiceTest extends TestCase
         $this->assertSame('^3Secondary ^7Server', $config->jkaServers[1]->name ?? null);
         $this->assertSame('Server location: Earth', $config->jkaServers[1]->subtitle ?? null);
         $this->assertSame('UTF-8', $config->jkaServers[1]->charset ?? null);
+
+        ////////////////////////////////////////////////////////////////////////
+        // Background blur radius
+        // Test the blur radius for a map that does NOT have a default value + IS specified in the config file
+        $this->assertSame(10, $config->getBackgroundBlurRadius('academy3'));
+        // Test the blur radius for maps that DO have a default value + ARE specified in the config file
+        $this->assertSame(2, $config->getBackgroundBlurRadius('default'));
+        $this->assertSame(0, $config->getBackgroundBlurRadius('vjun2'));
+        // Test the blur radius for a map that DO have a default value + is NOT specified in the config file
+        $this->assertSame(
+            ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP['yavin1'],
+            $config->getBackgroundBlurRadius('yavin1')
+        );
+        // Test the blur radius for maps that do NOT have a default value + are NOT specified in the config file
+        $this->assertSame(ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS, $config->getBackgroundBlurRadius('mp/ffa3'));
+        $this->assertSame(ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS, $config->getBackgroundBlurRadius('yavin2'));
+
+        ////////////////////////////////////////////////////////////////////////
+        // Background opacity
+        // Test the opacity for maps that DO have a default value + ARE specified in the config file
+        $this->assertSame(30, $config->getBackgroundOpacity('mp/ffa5'));
+        $this->assertSame(100, $config->getBackgroundOpacity('hoth2'));
+        // Test the opacity for a map that does NOT have a default value + IS specified in the config file
+        $this->assertSame(0, $config->getBackgroundOpacity('academy6'));
+        // Test the opacity for a map that DOES have a default value + is NOT specified in the config file
+        $this->assertSame(40, $config->getBackgroundOpacity('yavin1b'));
+        // Test the opacity for maps that do NOT have a default value + are NOT specified in the config file
+        $this->assertSame(ConfigData::DEFAULT_BACKGROUND_OPACITY, $config->getBackgroundOpacity('mp/ffa3'));
+        $this->assertSame(ConfigData::DEFAULT_BACKGROUND_OPACITY, $config->getBackgroundOpacity('yavin2'));
 
         // A valid config file shouldn't generate errors nor warnings
         $this->assertCount(0, $logger->getMessages([Logger::ERROR, Logger::WARNING]));
@@ -96,6 +159,16 @@ class ConfigServiceTest extends TestCase
         yield [24, 'Config variable $about_page_title must be a string'];
         yield [25, 'Config variable $about_page_uri conflicts with the landing page URI'];
         yield [26, '$jka_servers[0]["uri"] conflicts with the "About" page URI'];
+        yield [27, 'Config variable $background_blur_radius must be an array'];
+        yield [28, 'Config variable $background_blur_radius must be an indexed array, with string keys'];
+        yield [29, 'Config variable $background_blur_radius must be an indexed array, with integer values'];
+        yield [30, 'Config variable $background_blur_radius must contain values between 0 and 10'];
+        yield [31, 'Config variable $background_blur_radius must contain values between 0 and 10'];
+        yield [32, 'Config variable $background_opacity must be an array'];
+        yield [33, 'Config variable $background_opacity must be an indexed array, with string keys'];
+        yield [34, 'Config variable $background_opacity must be an indexed array, with integer values'];
+        yield [35, 'Config variable $background_opacity must contain values between 0 and 100'];
+        yield [36, 'Config variable $background_opacity must contain values between 0 and 100'];
     }
 
     #[DataProvider('invalidConfigDataProvider')]

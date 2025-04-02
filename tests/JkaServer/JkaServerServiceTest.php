@@ -78,6 +78,7 @@ class JkaServerServiceTest extends TestCase
 
     private readonly MockLogger $logger;
     private readonly JkaServerConfigData $jkaServerConfig;
+    private readonly ConfigData $config;
     private readonly JkaServerService $jkaServerService;
 
     public function setUp(): void
@@ -92,7 +93,7 @@ class JkaServerServiceTest extends TestCase
             self::CONFIG_SERVER_CHARSET,
         );
 
-        $config = new ConfigData(
+        $this->config = new ConfigData(
             10, // Caching delay
             3, // Timeout delay
             '/prefix', // Asset URL (prefix)
@@ -107,9 +108,9 @@ class JkaServerServiceTest extends TestCase
         $this->logger = new MockLogger();
 
         $this->jkaServerService = new JkaServerService(
-            $config,
+            $this->config,
             $this->logger,
-            new TemplateHelper($config, $this->logger)
+            new TemplateHelper($this->config, $this->logger)
         );
     }
 
@@ -134,6 +135,8 @@ class JkaServerServiceTest extends TestCase
         $this->assertSame('Credits (and legal stuff)', $statusData->aboutPageTitle);
         $this->assertSame(self::CONFIG_SERVER_ADDRESS, $statusData->address);
         $this->assertSame('/levelshots/default.jpg', $statusData->defaultBackgroundImageUrl);
+        $this->assertSame(0, $statusData->defaultBackgroundImageBlurRadius);
+        $this->assertSame(50, $statusData->defaultBackgroundImageOpacity);
         // The background image URIs are NOT prefixed by the "asset URL" at this point.
         // The asset() function will do that in the templates.
         $this->assertIsArray($statusData->cvars);
@@ -163,6 +166,8 @@ class JkaServerServiceTest extends TestCase
         $this->assertSame(0, count($statusData->players));
         // No map => default background
         $this->assertSame('/levelshots/default.jpg', $statusData->backgroundImageUrl);
+        $this->assertSame(0, $statusData->backgroundImageBlurRadius);
+        $this->assertSame(50, $statusData->backgroundImageOpacity);
         // The background image URIs are NOT prefixed by the "asset URL" at this point.
         // The asset() function will do that in the templates.
     }
@@ -364,7 +369,16 @@ class JkaServerServiceTest extends TestCase
 
         // buildStatusData should strip the leading "\x80" characters
         $this->assertSame('^5M^7ystic^5F^7orces^5.net - ^5M^7ystic ^5L^7ugormod', $statusData->serverName);
+
         $this->assertSame('/levelshots/' . self::CVARS['mapname'] . '.jpg', $statusData->backgroundImageUrl);
+        $this->assertSame(
+            $this->config->getBackgroundBlurRadius(self::CVARS['mapname']),
+            $statusData->backgroundImageBlurRadius
+        );
+        $this->assertSame(
+            $this->config->getBackgroundOpacity(self::CVARS['mapname']),
+            $statusData->backgroundImageOpacity
+        );
         
         // cvars
         $this->assertSame(count(self::CVARS), count($statusData->cvars));
@@ -403,6 +417,51 @@ class JkaServerServiceTest extends TestCase
         foreach ($expectedWarnings as $index => $expectedWarningMessage) {
             $this->assertStringStartsWith($expectedWarningMessage, $warningMessages[$index]);
         }
+    }
+
+    public function testBuildDataWithUnknownMap(): void
+    {
+        $jkaServerResponse = new JkaServerResponse(
+            JkaServerResponseStatus::Success, // Successful network request
+            "\xFF\xFF\xFF\xFFstatusResponse\n"
+            . "\\mapname\\this_is_not_the_map_youre_looking_for\n" // Only 1 cvar
+            // No players
+        );
+
+        $statusData = $this->jkaServerService->buildStatusData($this->jkaServerConfig, $jkaServerResponse);
+
+        $this->assertTrue($statusData->isUp);
+        $this->assertSame('Up', $statusData->status);
+
+        // Do NOT call assertBasicStatusDataIsValid() because we aren't using the same cvars as in the other tests
+
+        // Background image URL = "default.jpg", because we don't have a map with the specified name
+        $this->assertSame('/levelshots/default.jpg', $statusData->backgroundImageUrl);
+
+        // Background image blur = 0, because it corresponds to "default.jpg",
+        // and it's NOT the implicit default value (5) for levelshots that don't have an explicit default.
+        $this->assertSame(0, $statusData->backgroundImageBlurRadius);
+
+        // Background opacity = 50, because it corresponds to "default.jpg" (but it's the default value anyway)
+        $this->assertSame(50, $statusData->backgroundImageOpacity);
+        
+        // cvars
+        $this->assertSame('this_is_not_the_map_youre_looking_for', $statusData->mapName);
+        
+        // Player data
+        $this->assertSame(0, $statusData->nbBots);
+        $this->assertSame(0, $statusData->nbHumans);
+        $this->assertSame(0, $statusData->nbPlayers);
+        $this->assertIsArray($statusData->players);
+        $this->assertSame(0, count($statusData->players));
+        
+        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR]));
+        $warningMessages = $this->logger->getMessages([Logger::WARNING]);
+        $this->assertCount(1, $warningMessages);
+        $this->assertStringStartsWith(
+            'Could not find levelshot for "this_is_not_the_map_youre_looking_for"',
+            $warningMessages[0]
+        );
     }
 
     /**

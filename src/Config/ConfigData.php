@@ -10,6 +10,64 @@ use JkaServerStatus\Config\JkaServerConfigData;
 class ConfigData
 {
     /**
+     * @var int Blur radius to use when no other value is set. Radius in pixels [0-10].
+     */
+    public const DEFAULT_BACKGROUND_BLUR_RADIUS = 5;
+
+    /**
+     * @var int[] Blur radius per map / background image. Radius in pixels [0-10].
+     */
+    public const DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP = [
+        'default' => 0, // "default.jpg"
+        'mp/ctf1' => 7,
+        'mp/ctf3' => 7,
+        'mp/ffa5' => 7,
+        'mp/siege_hoth' => 7,
+        'mp/siege_korriban' => 7,
+        't3_hevil' => 7,
+        't3_rift' => 7,
+        't3_stamp' => 7,
+        'vjun2' => 7,
+        'yavin1' => 7,
+        'yavin1b' => 7,
+        // Other levelshots default to ConfigData::DEFAULT_BACKGROUND_BLUR
+    ];
+
+    /**
+     * @var int Background opacity to use when no other value is set. Percentage [0-100].
+     */
+    public const DEFAULT_BACKGROUND_OPACITY = 50;
+
+    /**
+     * @var int[] Background opacity per map / background image. Percentage [0-100].
+     */
+    public const DEFAULT_BACKGROUND_OPACITY_PER_MAP = [
+        'mp/ctf2' => 40,
+        'mp/ctf5' => 40,
+        'mp/duel6' => 40,
+        'mp/duel9' => 40,
+        'mp/ffa5' => 40,
+        'mp/siege_desert' => 40,
+        'mp/siege_hoth' => 40,
+        'mp/siege_korriban' => 30,
+        'academy3' => 30,
+        'academy4' => 30,
+        'hoth2' => 40,
+        'kor2' => 40,
+        't1_sour' => 40,
+        't1_surprise' => 40,
+        't2_dpred' => 40,
+        't2_trip' => 40,
+        't2_wedge' => 40,
+        't3_hevil' => 40,
+        'taspir2' => 40,
+        'vjun2' => 40,
+        'yavin1' => 40,
+        'yavin1b' => 40,
+        // Other levelshots default to ConfigData::DEFAULT_BACKGROUND_OPACITY
+    ];
+
+    /**
      * Root of the project (e.g. '/var/www/jka-server-status')
      */
     public readonly string $projectDir;
@@ -55,7 +113,17 @@ class ConfigData
     public readonly string $aboutPageTitle;
 
     /** @var JkaServerConfigData[] $jkaServers */
-    public readonly array $jkaServers; // []
+    public readonly array $jkaServers;
+
+    /**
+     *  @var int[] $blurRadiusPerMap Blur radius in pixels (int [0-10]) by image name.
+     */
+    private readonly array $blurRadiusPerMap;
+
+    /**
+     * @var int[] $opacityPerMap Opacity percentage (int [0-100]) by image name.
+     */
+    private readonly array $opacityPerMap;
 
     /**
      * @param int $cachingDelay Delay, in seconds, to cache the server-side response
@@ -67,6 +135,14 @@ class ConfigData
      * @param string $aboutPageUri URI of the "About" page (e.g. '/about')
      * @param string $aboutPageTitle Title of the "About" page, and "About" link (e.g. 'About')
      * @param JkaServerConfigData[] $jkaServers
+     * @param int[] $blurRadiusPerMap Indexed array. Blur radius in pixels (int [0-10]) by image name.
+     *                                E.g. "mp/siege_korriban" => 5 (= 5px for "mp/siege_korriban.jpg"),
+     *                                or "default" => 0 (= 0px for "default.jpg").
+     *                                Any map missing from the array will default to ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS.
+     * @param int[] $opacityPerMap Indexed array. Opacity percentage (int [0-100]) by image name.
+     *                             E.g. "mp/siege_korriban" => 30 (= 30% for "mp/siege_korriban.jpg"),
+     *                             or "default" => 50 (= 50% for "default.jpg").
+     *                             Any map missing from the array will default to ConfigData::DEFAULT_BACKGROUND_OPACITY.
      * @param string $projectDir Root path of the project (filesystem path, not URI)
      */
     public function __construct(
@@ -79,6 +155,8 @@ class ConfigData
         string $aboutPageUri,
         string $aboutPageTitle,
         array $jkaServers,
+        array $blurRadiusPerMap = self::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP,
+        array $opacityPerMap = self::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
         string $projectDir = __DIR__ . '/../..',
     ) {
         $this->cachingDelay = $cachingDelay;
@@ -90,6 +168,30 @@ class ConfigData
         $this->aboutPageUri = $aboutPageUri;
         $this->aboutPageTitle = $aboutPageTitle;
         $this->jkaServers = $jkaServers;
+        $this->blurRadiusPerMap = $blurRadiusPerMap;
+        $this->opacityPerMap = $opacityPerMap;
         $this->projectDir = $projectDir;
+    }
+
+    /**
+     * Returns the blur radius, in pixels [0-10], to apply to the specified background image.
+     * @param string $mapName The name of the image, without the extension (.jpg), relative to the "levelshots" folder.
+     *                        Typically, the map name (e.g. "mp/ffa3") or "default" for "default.jpg".
+     * @return int The blur radius to apply, in pixels
+     */
+    public function getBackgroundBlurRadius(string $mapName): int
+    {
+        return $this->blurRadiusPerMap[$mapName] ?? self::DEFAULT_BACKGROUND_BLUR_RADIUS;
+    }
+
+    /**
+     * Returns the opacity percentage [0-100], to apply to the specified background image.
+     * @param string $mapName The name of the image, without the extension (.jpg), relative to the "levelshots" folder.
+     *                        Typically, the map name (e.g. "mp/ffa3") or "default" for "default.jpg".
+     * @return int The opacity percentage to apply [0-100]
+     */
+    public function getBackgroundOpacity(string $mapName): int
+    {
+        return $this->opacityPerMap[$mapName] ?? self::DEFAULT_BACKGROUND_OPACITY;
     }
 }
