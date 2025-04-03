@@ -261,25 +261,36 @@ function updateDuration() {
         // Don't update anything
         return;
     }
+
+    nbMinutesInFooter = nbMinutes;
+
     if (nbMinutes < 1) {
         updatedAtElement.textContent = 'Updated just now';
-    } else if (nbMinutes < 2) {
+        return;
+    }
+    
+    if (nbMinutes < 2) {
         updatedAtElement.textContent = 'Updated a minute ago'
         if (autoRefresh === 1) {
             location.reload();
         }
-    } else if (nbMinutes < 60) {
+        return;
+    }
+    
+    if (nbMinutes < 60) {
         updatedAtElement.textContent = 'Updated ' + nbMinutes + ' minutes ago';
         if (autoRefresh > 0 && autoRefresh <= nbMinutes) {
             location.reload();
         }
-    } else { // More than 1 hour?
-        updatedAtElement.textContent = 'Updated over an hour ago';
-        updatedAtElement.classList.add('red');
-        clearInterval(updateInterval);
-        if (autoRefresh === 60) {
-            location.reload();
-        }
+        return;
+    }
+    
+    // More than 1 hour
+    updatedAtElement.textContent = 'Updated over an hour ago';
+    updatedAtElement.classList.add('red');
+    clearInterval(updateInterval); // Stop refreshing the "Updated X minutes ago" message
+    if (autoRefresh === 60) {
+        location.reload();
     }
 }
 
