@@ -2,11 +2,11 @@
 This tool can send requests to a **Jedi Academy** server, to retrieve some basic server info,
 as well as the player list.
 
-[![Screenshot thumbnail](doc/screenshot-thumbnail.jpg)](doc/screenshot.jpg)
+[![Player list screenshot (desktop)](doc/desktop-screenshot-thumbnail.jpg)](doc/screenshots.md)
 
 ## Features
 - Retrieves some basic server info, as well as the player list,
-- Can also display all `cvars` received from the server,
+- Can also display all `cvars` received from the server (**Server info** button),
 - Caches responses for 10 seconds (server-side, configurable delay)
 - Uses backgrounds from my [**Widescreen levelshots**](https://jkhub.org/files/file/4179-widescreen-levelshots/) pack
     - 1920x1080 resolution, available in JPG + AVIF formats,
@@ -15,10 +15,6 @@ as well as the player list.
     - You can add your own backgrounds in the `levelshots` folder, and they should be automatically detected
 - Responsive layout
 - Optional auto-refresh (user-configurable)
-
-[![Settings screenshot thumbnail](doc/settings-thumbnail.jpg)](doc/settings.jpg)
-
-[![Raw cvars screenshot thumbnail](doc/raw-cvars-thumbnail.jpg)](doc/raw-cvars.jpg)
 
 ## Requirements
 - A **web server** (Nginx, Apache, ...)
