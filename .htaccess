@@ -1,0 +1,48 @@
+# If possible, you should setup a proper VirtualHost, rather than relying on this ".htaccess" file.
+# See: doc/01-web-server-configuration.md
+
+# The web root is the "public" directory
+RewriteEngine on
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule .* /public/$0 [L]
+
+# Redirect every request that doesn't match an existing file to "index.php"
+FallbackResource /public/index.php
+
+# If the browser accepts AVIF images,
+RewriteCond %{HTTP_ACCEPT} image/avif
+# and the AVIF file exists (e.g. "/levelshots/mp/ffa3.jpg.avif"),
+RewriteCond %{REQUEST_FILENAME}.avif -f
+# Serve the AVIF version:
+RewriteRule ^(.+(\.jpg|\.jpeg)$)$ $1.avif [T=image/avif,END]
+# Do not move this RewriteRule to the "jpeg" FilesMatch (the order of execution of RewriteRules is not intuitive)
+
+<IfModule mod_deflate.c>
+    # Enable gzip compression
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml image/ico image/x-icon
+    # Don't compress formats that are already compressed such as JPG, AVIF, PNG, ...
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch \.php$>
+        # Force revalidation
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+
+    <FilesMatch "\.(jpg|jpeg|avif)$">
+        # Cache the image for a year
+        Header set Cache-Control "public, max-age=31536000, immutable"
+        # If the content of the image changes, you can use a query string for cache busting purposes (e.g. "?version=2")
+        # Note: The query string will be automatically added by the asset() function (see: src/template_functions.php)
+
+        # Don't use the cached version anymore if the "Accept" header changes (e.g. "image/avif" is added/removed)
+        Header set Vary "accept"
+    </FilesMatch>
+
+    <FilesMatch "\.(css|js|png|ico|svg|webmanifest)$">
+        # Cache the file for a year
+        Header set Cache-Control "public, max-age=31536000, immutable"
+        # If the content of the file changes, you can use a query string for cache busting purposes (e.g. "?version=2")
+        # Note: The query string will be automatically added by the asset() function (see: src/template_functions.php)
+    </FilesMatch>
+</IfModule>

@@ -1,8 +1,8 @@
-# JKA Server Status - PHP Script
+# JKA Server Status - (PHP)
 This tool can send requests to a **Jedi Academy** server, to retrieve some basic server info,
 as well as the player list.
 
-[![Player list screenshot (desktop)](doc/desktop-screenshot-thumbnail.jpg)](doc/screenshots.md)
+[![Player list screenshot (desktop)](doc/screenshots/desktop-player-list-thumbnail.jpg)](doc/screenshots/screenshots.md)
 
 ## Features
 - Retrieves some basic server info, as well as the player list,
@@ -18,29 +18,21 @@ as well as the player list.
 
 ## Requirements
 - A **web server** (Nginx, Apache, ...)
+  - with URL rewriting capabilities
 - **PHP 8.1** or newer
+  - with enough permissions to send outgoing UDP packets  
+    (not necessarily the case on shared hosts)
+
+There are no other dependencies.
 
 ## Installation
 1. Clone (or copy the content of) this repository onto your server,
-2. Create a `config.php` file:
-   1. Read: [**Basic `config.php` examples**](doc/basic-config-php-examples.md).
-   2. For the full list of options, see: [`config.sample.php`](config.sample.php)
+2. Setup your web server. → See: [**Web server configuration**](doc/01-web-server-configuration.md),
 3. Make sure PHP has write access to the `var/cache` and `var/log` folders,
-4. Setup your web server to point to the `public` folder,
-5. Let the web server serve static files, and pass all other requests to `index.php`.
+4. Create a `config.php` file:
+   1. Read: [**Basic `config.php` examples**](doc/02-basic-config-php-examples.md)
+   2. For the full list of options, see: [`config.sample.php`](config.sample.php).
 
-## Sample Nginx config
-Have a look at [`nginx.sample.conf`](doc/nginx.sample.conf) for an example of:
-- Conditional JPEG / AVIF serving
-- HTML / CSS / JS compression
-- Caching strategy
-- Forwarding requests to PHP
-
-Minimum required packages on Debian 12:
-```sh
-sudo apt install nginx-light
-sudo apt install php-fpm
-```
 
 ## PHPUnit
 There are a few automated tests for PHP developers, in the `tests` directory.
@@ -51,7 +43,7 @@ php phpunit.phar --bootstrap src/autoload.php tests
 It's recommended to run them on your development machine, **not** on your production server.
 
 ## License
-The code in this repository is released under the [MIT License](LICENSE.txt).
+The code in this repository is released under the terms of the [MIT License](LICENSE.txt).
 
 ## Credits
 - PHP / HTML / CSS / JS / Levelshots by [**Slash**](https://github.com/slash-fr)

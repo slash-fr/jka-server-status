@@ -1,4 +1,4 @@
-# Basic `config.php` examples
+# Basic `config.php` examples - JKA Server Status
 
 When installing **JKA Server Status**, you need to create a `config.php` file at the root of the project
 (next to `config.sample.php`).
