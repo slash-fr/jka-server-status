@@ -180,7 +180,7 @@ class ConfigServiceTest extends TestCase
         $gotException = false;
 
         try {
-            $configService->getConfig(__DIR__ . "/../sample_configs/invalid_config_$i.php");
+            @$configService->getConfig(__DIR__ . "/../sample_configs/invalid_config_$i.php");
         } catch (ConfigException $exception) {
             $gotException = true;
             $this->assertStringStartsWith($errorMessageStart, $exception->getMessage());

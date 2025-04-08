@@ -14,6 +14,6 @@ class Charset
     {
         // You could swap iconv() for mb_convert_encoding() if you prefer.
         // That's why it's a good idea to centralize charset conversion.
-        return @iconv($fromEncoding, 'UTF-8//IGNORE', $string);
+        return iconv($fromEncoding, 'UTF-8//IGNORE', $string);
     }
 }

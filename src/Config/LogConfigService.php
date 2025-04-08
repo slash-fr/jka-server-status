@@ -89,7 +89,7 @@ class LogConfigService
         //    return;
         //}
 
-        $handle = @fopen($logFile, 'a'); // Append mode
+        $handle = fopen($logFile, 'a'); // Append mode
         // Using fopen() rather than is_writable(), because the log file might not exist yet.
         if ($handle === false) {
             fclose($handle);

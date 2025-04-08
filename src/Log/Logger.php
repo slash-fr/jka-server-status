@@ -66,7 +66,7 @@ final class Logger implements LoggerInterface
 
         $formattedMessage = date('Y-m-d H:i:s') . " - $levelName - $message\n";
 
-        $bytesWritten = @file_put_contents(
+        $bytesWritten = file_put_contents(
             $this->logFile,
             $formattedMessage,
             FILE_APPEND,

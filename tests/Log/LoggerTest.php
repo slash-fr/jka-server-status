@@ -33,12 +33,13 @@ final class LoggerTest extends TestCase
         $logger = new Logger($tempFile, LOG_INFO);
 
         // Disable error_log() temporarily - it's used as backup by the Logger, when it can't write to the log file
+        // When in a unit test, it would just clutter the console output.
         $isWindows = (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0);
         $nullLogFile = $isWindows ? 'NUL' : '/dev/null';
         $previousErrorLogValue = ini_set('error_log', $nullLogFile);
 
         // Try writing to the read-only file
-        $logger->error(__METHOD__);
+        @$logger->error(__METHOD__);
         
         // Reset "error_log"
         ini_set('error_log', $previousErrorLogValue);

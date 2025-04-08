@@ -50,17 +50,21 @@ class JkaServerService
         $url = self::buildFullUdpUrl($host);
     
         // 3 second timeout for the connect() system call (shouldn't be a problem for a UDP socket)
-        $socket = @stream_socket_client($url, $error_code, $error_message, 3.0);
+        $socket = stream_socket_client($url, $error_code, $error_message, 3.0);
         if (!$socket) {
-            $this->logger->error("$host - Error code: $error_code - Error message: $error_message");
+            $this->logger->error("$host - Socket error - Error code: $error_code - Error message: $error_message");
             return new JkaServerResponse(JkaServerResponseStatus::NetworkError);
         }
     
         // Timeout for reading over the socket
         stream_set_timeout($socket, $this->config->timeoutDelay);
     
-        @fwrite($socket, "\xFF\xFF\xFF\xFFgetstatus\n");
-        $response = @fread($socket, 65535);
+        if (!fwrite($socket, "\xFF\xFF\xFF\xFFgetstatus\n")) {
+            $this->logger->error("$host - Could not write to the UDP socket.");
+            return new JkaServerResponse(JkaServerResponseStatus::NetworkError);
+        }
+
+        $response = fread($socket, 65535);
         if (!$response) {
             $metadata = stream_get_meta_data($socket);
             fclose($socket);
