@@ -11,7 +11,10 @@ use JkaServerStatus\Log\LoggerInterface;
 class MockLogger implements LoggerInterface
 {
     /**
-     * @var string[] $messages
+     * @var array[] $messages e.g. [
+     *                  ['level' => 'ERROR', 'message' => 'Log message 1'],
+     *                  ['level' => 'INFO', 'message' => 'Log message 2'],
+     *              ]
      */
     private array $messages = [];
 
@@ -43,9 +46,8 @@ class MockLogger implements LoggerInterface
         $messages = [];
         foreach ($this->messages as $message) {
             foreach ($levels as $level) {
-                $prefix = "$level - ";
-                if (str_starts_with($message, $prefix)) {
-                    $messages[] = substr($message, strlen($prefix));
+                if ($message['level'] === $level) {
+                    $messages[] = $message['message'];
                 }
             }
         }
@@ -58,9 +60,6 @@ class MockLogger implements LoggerInterface
     private function log(string $levelName, string $message): void
     {
         // Just store the message in memory (don't append it to a file)
-        $this->messages[] = "$levelName - $message";
-        // Not prefixed by the date/time, because:
-        // - Unit tests usually run in less than 1 second,
-        // - It would make it more difficult to "parse" the message (to verify its validity).
+        $this->messages[] = ['level' => $levelName, 'message' => $message];
     }
 }
