@@ -5,7 +5,7 @@ namespace JkaServerStatus\Tests\Util;
 use JkaServerStatus\Tests\TestCase;
 use JkaServerStatus\Util\Charset;
 
-class CharsetTest extends TestCase
+final class CharsetTest extends TestCase
 {
     public function testValidWindows1252(): void
     {

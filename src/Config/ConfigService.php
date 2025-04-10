@@ -2,9 +2,9 @@
 
 namespace JkaServerStatus\Config;
 
-use JkaServerStatus\JkaServer\JkaServerService;
 use JkaServerStatus\Log\LoggerInterface;
 use JkaServerStatus\Util\Charset;
+use JkaServerStatus\Util\Url;
 
 class ConfigService
 {
@@ -259,7 +259,7 @@ class ConfigService
         $invalidAddressMessage = 'Invalid JKA server address: "' . $address . '" '
             . 'for $jka_servers[' . var_export($index, true) . '].';
 
-        $fullUdpUrl = JkaServerService::buildFullUdpUrl($address);
+        $fullUdpUrl = Url::buildFullUdpUrl($address);
         if (!filter_var($fullUdpUrl, FILTER_VALIDATE_URL)) {
             $this->logger->error($invalidAddressMessage);
             throw new ConfigException($invalidAddressMessage);

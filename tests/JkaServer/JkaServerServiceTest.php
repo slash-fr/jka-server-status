@@ -9,12 +9,11 @@ use JkaServerStatus\JkaServer\JkaServerResponseStatus;
 use JkaServerStatus\JkaServer\JkaServerService;
 use JkaServerStatus\JkaServer\StatusData;
 use JkaServerStatus\Log\Logger;
-use JkaServerStatus\Template\TemplateHelper;
 use JkaServerStatus\Tests\Log\MockLogger;
 use JkaServerStatus\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class JkaServerServiceTest extends TestCase
+final class JkaServerServiceTest extends TestCase
 {
     // Actually valid cvars, found in the wild
     // Array of strings (no int, or anything else)
@@ -109,17 +108,8 @@ class JkaServerServiceTest extends TestCase
 
         $this->jkaServerService = new JkaServerService(
             $this->config,
-            $this->logger,
-            new TemplateHelper($this->config, $this->logger)
+            $this->logger
         );
-    }
-
-    public function testBuildFullUdpUrl(): void
-    {
-        $this->assertSame('udp://192.0.2.1:29070', JkaServerService::buildFullUdpUrl('192.0.2.1'));
-        $this->assertSame('udp://192.0.2.1:29071', JkaServerService::buildFullUdpUrl('192.0.2.1:29071'));
-        $this->assertSame('udp://jka.example.com:29070', JkaServerService::buildFullUdpUrl('jka.example.com'));
-        $this->assertSame('udp://jka.example.com:29071', JkaServerService::buildFullUdpUrl('jka.example.com:29071'));
     }
 
     /**

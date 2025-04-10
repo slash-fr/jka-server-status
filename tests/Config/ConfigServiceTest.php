@@ -10,7 +10,7 @@ use JkaServerStatus\Tests\Log\MockLogger;
 use JkaServerStatus\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class ConfigServiceTest extends TestCase
+final class ConfigServiceTest extends TestCase
 {
     public function testValidConfig1(): void
     {

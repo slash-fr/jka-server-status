@@ -5,10 +5,10 @@ namespace JkaServerStatus\JkaServer;
 use JkaServerStatus\Config\ConfigData;
 use JkaServerStatus\Config\JkaServerConfigData;
 use JkaServerStatus\Log\LoggerInterface;
-use JkaServerStatus\Template\TemplateHelper;
 use JkaServerStatus\Util\Charset;
+use JkaServerStatus\Util\Url;
 
-class JkaServerService
+final class JkaServerService implements JkaServerServiceInterface
 {
     private const GAME_TYPES = [
         0 => 'FFA',
@@ -25,14 +25,15 @@ class JkaServerService
 
     private readonly ConfigData $config;
     private readonly LoggerInterface $logger;
-    private readonly TemplateHelper $templateHelper;
 
-    public function __construct(ConfigData $config, LoggerInterface $logger, TemplateHelper $templateHelper) {
+    public function __construct(ConfigData $config, LoggerInterface $logger) {
         $this->config = $config;
         $this->logger = $logger;
-        $this->templateHelper = $templateHelper;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getStatusData(JkaServerConfigData $jkaServerConfig): StatusData
     {
         $jkaServerResponse = $this->queryJkaServer($jkaServerConfig->address);
@@ -47,7 +48,7 @@ class JkaServerService
     */
     private function queryJkaServer(string $host): JkaServerResponse
     {
-        $url = self::buildFullUdpUrl($host);
+        $url = Url::buildFullUdpUrl($host);
     
         // 3 second timeout for the connect() system call (shouldn't be a problem for a UDP socket)
         $socket = stream_socket_client($url, $error_code, $error_message, 3.0);
@@ -83,10 +84,10 @@ class JkaServerService
     }
 
     /**
-     * Parse the server response, and build the StatusData object
+     * @inheritdoc
      */
     public function buildStatusData(
-        jkaServerConfigData $jkaServerConfig,
+        JkaServerConfigData $jkaServerConfig,
         JkaServerResponse $jkaServerResponse,
     ): StatusData
     {
@@ -376,22 +377,5 @@ class JkaServerService
         }
 
         return $maxPlayers;
-    }
-
-    /**
-     * Builds the full UDP URL from the JKA server IP address or domain, with optional port (defaults to 29070).
-     * Does not check whether it's valid.
-     * @param string $jkaServerAddress IP address or domain name, with optional port (e.g. "192.0.2.1" or "jka.example.com:29071")
-     * @return string URL with scheme and port (defaults to 29070) (e.g. "udp://192.0.2.1:29070")
-     */
-    public static function buildFullUdpUrl(string $jkaServerAddress): string
-    {
-        $url = 'udp://' . $jkaServerAddress;
-        if (!preg_match('/\:[0-9]{1,5}$/', $url)) {
-            // The URL doesn't end with the port number
-            $url .= ':29070'; // Add the default port
-        }
-
-        return $url;
     }
 }

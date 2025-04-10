@@ -6,7 +6,7 @@ use JkaServerStatus\Config\ConfigFileException;
 use JkaServerStatus\Config\ConfigFileService;
 use JkaServerStatus\Tests\TestCase;
 
-class ConfigFileServiceTest extends TestCase
+final class ConfigFileServiceTest extends TestCase
 {
     public function testNonExistingFile(): void
     {

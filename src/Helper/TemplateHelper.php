@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace JkaServerStatus\Template;
+namespace JkaServerStatus\Helper;
 
 use JkaServerStatus\Config\ConfigData;
 use JkaServerStatus\Log\LoggerInterface;

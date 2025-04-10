@@ -8,10 +8,10 @@ use JkaServerStatus\Config\ConfigFileService;
 use JkaServerStatus\Config\ConfigService;
 use JkaServerStatus\Config\LogConfigException;
 use JkaServerStatus\Config\LogConfigService;
-use JkaServerStatus\Controller\StatusController;
 use JkaServerStatus\JkaServer\JkaServerService;
 use JkaServerStatus\Log\Logger;
-use JkaServerStatus\Template\TemplateHelper;
+use JkaServerStatus\Helper\TemplateHelper;
+use JkaServerStatus\JkaServer\StatusController;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize the config

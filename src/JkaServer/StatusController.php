@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace JkaServerStatus\Controller;
+namespace JkaServerStatus\JkaServer;
 
 use JkaServerStatus\Config\ConfigData;
 use JkaServerStatus\Config\JkaServerConfigData;
-use JkaServerStatus\JkaServer\JkaServerService;
+use JkaServerStatus\JkaServer\JkaServerServiceInterface;
 use JkaServerStatus\JkaServer\StatusData;
 use JkaServerStatus\Log\LoggerInterface;
-use JkaServerStatus\Template\TemplateHelper;
+use JkaServerStatus\Helper\TemplateHelper;
 use RuntimeException;
 
 /**
@@ -15,13 +15,13 @@ use RuntimeException;
  */
 class StatusController
 {
-    private readonly JkaServerService $jkaServerService;
+    private readonly JkaServerServiceInterface $jkaServerService;
     private readonly ConfigData $config;
     private readonly LoggerInterface $logger;
     private readonly TemplateHelper $templateHelper;
 
     public function __construct(
-        JkaServerService $jkaServerService,
+        JkaServerServiceInterface $jkaServerService,
         ConfigData $config,
         LoggerInterface $logger,
         TemplateHelper $templateHelper

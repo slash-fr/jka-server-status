@@ -1,13 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace JkaServerStatus\Template;
+namespace JkaServerStatus\Tests\Template;
 
 use JkaServerStatus\Config\ConfigData;
+use JkaServerStatus\Helper\TemplateHelper;
 use JkaServerStatus\Log\Logger;
 use JkaServerStatus\Tests\Log\MockLogger;
 use JkaServerStatus\Tests\TestCase;
 
-class TemplateHelperTest extends TestCase
+final class TemplateHelperTest extends TestCase
 {
     public function testAsset(): void
     {

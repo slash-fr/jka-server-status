@@ -6,7 +6,7 @@ use JkaServerStatus\Config\LogConfigException;
 use JkaServerStatus\Config\LogConfigService;
 use JkaServerStatus\Tests\TestCase;
 
-class LogConfigTest extends TestCase
+final class LogConfigTest extends TestCase
 {
     public function testInvalidLogLevel(): void
     {

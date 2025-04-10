@@ -8,7 +8,7 @@ use JkaServerStatus\Log\LoggerInterface;
 /**
  * Logger that does not write anything to disk
  */
-class MockLogger implements LoggerInterface
+final class MockLogger implements LoggerInterface
 {
     /**
      * @var array[] $messages e.g. [
