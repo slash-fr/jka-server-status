@@ -5,6 +5,7 @@ namespace JkaServerStatus\Tests\Config;
 use JkaServerStatus\Config\ConfigData;
 use JkaServerStatus\Config\ConfigException;
 use JkaServerStatus\Config\ConfigService;
+use JkaServerStatus\Config\JkaServerConfigData;
 use JkaServerStatus\Log\Logger;
 use JkaServerStatus\Tests\Log\MockLogger;
 use JkaServerStatus\Tests\TestCase;
@@ -20,19 +21,19 @@ final class ConfigServiceTest extends TestCase
 
         // "test_config_1.php" is mostly empty, apart from one server, with only the required "address" field,
         // so we're basically just testing default values
-        $this->assertSame(10, $config->cachingDelay);
-        $this->assertSame(3, $config->timeoutDelay);
-        $this->assertSame('', $config->assetUrl);
+        $this->assertSame(ConfigData::DEFAULT_CACHING_DELAY, $config->cachingDelay);
+        $this->assertSame(ConfigData::DEFAULT_TIMEOUT_DELAY, $config->timeoutDelay);
+        $this->assertSame(ConfigData::DEFAULT_ASSET_URL, $config->assetUrl);
         $this->assertSame(false, $config->isLandingPageEnabled);
-        $this->assertSame('/', $config->landingPageUri);
-        $this->assertSame(false, $config->isAboutPageEnabled);
-        $this->assertSame('/about', $config->aboutPageUri);
-        $this->assertSame('About', $config->aboutPageTitle);
+        $this->assertSame(ConfigData::DEFAULT_LANDING_PAGE_URI, $config->landingPageUri);
+        $this->assertSame(ConfigData::DEFAULT_IS_ABOUT_PAGE_ENABLED, $config->isAboutPageEnabled);
+        $this->assertSame(ConfigData::DEFAULT_ABOUT_PAGE_URI, $config->aboutPageUri);
+        $this->assertSame(ConfigData::DEFAULT_ABOUT_PAGE_TITLE, $config->aboutPageTitle);
         $this->assertSame(1, count($config->jkaServers));
         $this->assertSame('/', $config->jkaServers[0]->uri ?? null);
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->address ?? null);
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->name ?? null);
-        $this->assertSame('Windows-1252', $config->jkaServers[0]->charset ?? null);
+        $this->assertSame(JkaServerConfigData::DEFAULT_CHARSET, $config->jkaServers[0]->charset ?? null);
 
         ////////////////////////////////////////////////////////////////////////
         // Background blur radius
@@ -90,7 +91,7 @@ final class ConfigServiceTest extends TestCase
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->address ?? null);
         $this->assertSame('^5M^7ain ^5S^7erver', $config->jkaServers[0]->name ?? null);
         $this->assertSame('', $config->jkaServers[0]->subtitle ?? null);
-        $this->assertSame('Windows-1252', $config->jkaServers[0]->charset ?? null);
+        $this->assertSame(JkaServerConfigData::DEFAULT_CHARSET, $config->jkaServers[0]->charset ?? null);
         $this->assertSame('/secondary-server', $config->jkaServers[1]->uri ?? null);
         $this->assertSame('jka.example.com:29071', $config->jkaServers[1]->address ?? null);
         $this->assertSame('^3Secondary ^7Server', $config->jkaServers[1]->name ?? null);

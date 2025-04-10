@@ -10,6 +10,41 @@ use JkaServerStatus\Config\JkaServerConfigData;
 class ConfigData
 {
     /**
+     * @var int Default caching delay, in seconds.
+     */
+    public const DEFAULT_CACHING_DELAY = 10;
+
+    /**
+     * @var int Default timeout delay, in seconds.
+     */
+    public const DEFAULT_TIMEOUT_DELAY = 3;
+
+    /**
+     * @var string Default URL prefix for the assets (without trailing slash)
+     */
+    public const DEFAULT_ASSET_URL = '';
+
+    /**
+     * @var string Default landing page URI (if enabled)
+     */
+    public const DEFAULT_LANDING_PAGE_URI = '/';
+
+    /**
+     * @var bool Default status of the "About" page (enabled/disabled)
+     */
+    public const DEFAULT_IS_ABOUT_PAGE_ENABLED = false;
+
+    /**
+     * @var string Default URI for the "About" page (if enabled)
+     */
+    public const DEFAULT_ABOUT_PAGE_URI = '/about';
+
+    /**
+     * @var string Default title for the "About" page (and "About" link)
+     */
+    public const DEFAULT_ABOUT_PAGE_TITLE = 'About';
+
+    /**
      * @var int Blur radius to use when no other value is set. Radius in pixels [0-10].
      */
     public const DEFAULT_BACKGROUND_BLUR_RADIUS = 5;
@@ -146,15 +181,15 @@ class ConfigData
      * @param string $projectDir Root path of the project (filesystem path, not URI)
      */
     public function __construct(
-        int $cachingDelay,
-        int $timeoutDelay,
-        string $assetUrl,
-        bool $isLandingPageEnabled,
-        string $landingPageUri,
-        bool $isAboutPageEnabled,
-        string $aboutPageUri,
-        string $aboutPageTitle,
-        array $jkaServers,
+        int $cachingDelay = self::DEFAULT_CACHING_DELAY,
+        int $timeoutDelay = self::DEFAULT_TIMEOUT_DELAY,
+        string $assetUrl = self::DEFAULT_ASSET_URL,
+        bool $isLandingPageEnabled = false,
+        string $landingPageUri = self::DEFAULT_LANDING_PAGE_URI,
+        bool $isAboutPageEnabled = self::DEFAULT_IS_ABOUT_PAGE_ENABLED,
+        string $aboutPageUri = self::DEFAULT_ABOUT_PAGE_URI,
+        string $aboutPageTitle = self::DEFAULT_ABOUT_PAGE_TITLE,
+        array $jkaServers = [],
         array $blurRadiusPerMap = self::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP,
         array $opacityPerMap = self::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
         string $projectDir = __DIR__ . '/../..',

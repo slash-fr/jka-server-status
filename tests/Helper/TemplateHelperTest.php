@@ -26,20 +26,7 @@ final class TemplateHelperTest extends TestCase
         touch($testJsFile, $testJsUpdatedAt);
 
         // Create the objects we need
-        $config = new ConfigData(
-            10,
-            3,
-            '',
-            false,
-            '/',
-            false,
-            '',
-            '',
-            [],
-            ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP,
-            ConfigData::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
-            $tempDir
-        );
+        $config = new ConfigData(projectDir: $tempDir);
         $logger = new MockLogger();
         $templateHelper = new TemplateHelper($config, $logger);
 
@@ -68,20 +55,7 @@ final class TemplateHelperTest extends TestCase
         touch($testCssFile, $testCssUpdatedAt);
 
         // Create the objects we need
-        $config = new ConfigData(
-            10,
-            3,
-            '',
-            false,
-            '/',
-            false,
-            '',
-            '',
-            [],
-            ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP,
-            ConfigData::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
-            $tempDir
-        );
+        $config = new ConfigData(projectDir: $tempDir);
         $logger = new MockLogger();
         $templateHelper = new TemplateHelper($config, $logger);
 
@@ -113,20 +87,7 @@ final class TemplateHelperTest extends TestCase
         touch($testFile, $testFileUpdatedAt);
 
         // Create the objects we need
-        $config = new ConfigData(
-            10,
-            3,
-            '/prefix',
-            false,
-            '/',
-            false,
-            '',
-            '',
-            [],
-            ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP,
-            ConfigData::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
-            $tempDir
-        );
+        $config = new ConfigData(assetUrl: '/prefix', projectDir: $tempDir);
         $logger = new MockLogger();
         $templateHelper = new TemplateHelper($config, $logger);
 
@@ -140,7 +101,7 @@ final class TemplateHelperTest extends TestCase
 
     public function testFormatName(): void
     {
-        $config = new ConfigData(10, 3, '', false, '/', false, '', '', []);
+        $config = new ConfigData();
         $logger = new MockLogger();
         $templateHelper = new TemplateHelper($config, $logger);
 
@@ -176,7 +137,7 @@ final class TemplateHelperTest extends TestCase
 
     public function testStripColors(): void
     {
-        $config = new ConfigData(10, 3, '', false, '/', false, '', '', []);
+        $config = new ConfigData();
         $logger = new MockLogger();
         $templateHelper = new TemplateHelper($config, $logger);
 

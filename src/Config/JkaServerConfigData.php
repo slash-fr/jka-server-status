@@ -4,6 +4,11 @@ namespace JkaServerStatus\Config;
 
 class JkaServerConfigData
 {
+    /**
+     * @var string Default charset to use to parse the JKA server's response
+     */
+    public const DEFAULT_CHARSET = 'Windows-1252';
+
     /** @var string $uri Status page URI */
     public readonly string $uri;
 
@@ -25,8 +30,13 @@ class JkaServerConfigData
      * @param string $name JKA Server Name (supports colors)
      * @param string $charset Charset to use when parsing the response
      */
-    public function __construct(string $uri, string $address, string $name, string $subtitle, string $charset)
-    {
+    public function __construct(
+        string $uri,
+        string $address,
+        string $name,
+        string $subtitle,
+        string $charset = self::DEFAULT_CHARSET
+    ) {
         $this->uri = $uri;
         $this->address = $address;
         $this->name = $name;

@@ -93,15 +93,13 @@ final class JkaServerServiceTest extends TestCase
         );
 
         $this->config = new ConfigData(
-            10, // Caching delay
-            3, // Timeout delay
-            '/prefix', // Asset URL (prefix)
-            true, // Enable the landing page
-            '/home', // Landing page URL
-            true, // Enable the "About" page
-            '/tell-me-about-it', // "About" page URI
-            'Credits (and legal stuff)', // "About" page title
-            [$this->jkaServerConfig]
+            assetUrl: '/prefix',
+            isLandingPageEnabled: true,
+            landingPageUri: '/home',
+            isAboutPageEnabled: true,
+            aboutPageUri: '/tell-me-about-it',
+            aboutPageTitle: 'Credits (and legal stuff)',
+            jkaServers: [$this->jkaServerConfig]
         );
 
         $this->logger = new MockLogger();

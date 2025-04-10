@@ -73,7 +73,7 @@ class ConfigService
     private function sanitizeCachingDelay(mixed $cachingDelay): int
     {
         if (!isset($cachingDelay)) {
-            return 10; // Default value: 10 seconds
+            return ConfigData::DEFAULT_CACHING_DELAY;
         }
 
         if (!is_int($cachingDelay)) {
@@ -95,7 +95,7 @@ class ConfigService
     private function sanitizeTimeoutDelay(mixed $timeoutDelay): int
     {
         if (!isset($timeoutDelay)) {
-            return 3; // Default value: 3 seconds
+            return ConfigData::DEFAULT_TIMEOUT_DELAY;
         }
 
         if (!is_int($timeoutDelay)) {
@@ -122,7 +122,7 @@ class ConfigService
     private function sanitizeAssetUrl(mixed $assetUrl): string
     {
         if (!isset($assetUrl)) {
-            return '';
+            return ConfigData::DEFAULT_ASSET_URL;
         }
 
         if (!is_string($assetUrl)) {
@@ -217,6 +217,7 @@ class ConfigService
             $this->logger->error($message);
             throw new ConfigException($message);
         }
+
         $uri = '/';
         if (isset($jkaServer['uri'])) {
             $uri = $jkaServer['uri'];
@@ -338,7 +339,7 @@ class ConfigService
      */
     private function sanitizeServerCharset(array $jkaServer, string|int $index): string
     {
-        $charset = 'Windows-1252';
+        $charset = JkaServerConfigData::DEFAULT_CHARSET;
 
         if (isset($jkaServer['charset'])) {
             $charset = $jkaServer['charset'];
@@ -399,7 +400,7 @@ class ConfigService
     private function sanitizeLandingPageUri(mixed $landingPageUri): string
     {
         if (!isset($landingPageUri)) {
-            return '/'; // Default value
+            return ConfigData::DEFAULT_LANDING_PAGE_URI; // Default value
         }
         
         if (!is_string($landingPageUri)) {
@@ -421,7 +422,7 @@ class ConfigService
     private function sanitizeIsAboutPageEnabled(mixed $isAboutPageEnabled): bool
     {
         if (!isset($isAboutPageEnabled)) {
-            return false; // Disabled by default
+            return ConfigData::DEFAULT_IS_ABOUT_PAGE_ENABLED;
         }
 
         if (!is_bool($isAboutPageEnabled)) {
@@ -444,7 +445,7 @@ class ConfigService
     public function sanitizeAboutPageUri(mixed $aboutPageUri): string
     {
         if (!isset($aboutPageUri)) {
-            return '/about';
+            return ConfigData::DEFAULT_ABOUT_PAGE_URI;
         }
 
         if (!is_string($aboutPageUri)) {
@@ -467,7 +468,7 @@ class ConfigService
     public function sanitizeAboutPageTitle(mixed $aboutPageTitle): string
     {
         if (!isset($aboutPageTitle)) {
-            return 'About';
+            return ConfigData::DEFAULT_ABOUT_PAGE_TITLE;
         }
 
         if (!is_string($aboutPageTitle)) {
