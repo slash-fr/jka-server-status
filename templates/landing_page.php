@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <?php // Required variables: ?>
+        <?php /** @var \JkaServerStatus\Config\ConfigData $config */ ?>
+        <?php /** @var \JkaServerStatus\Helper\TemplateHelper $templateHelper */ ?>
+
         <?php require_once __DIR__ . '/_head.php'; ?>
     </head>
     <body class="landing-page">
-        <?php /** @var \JkaServerStatus\Config\ConfigData $config */ ?>
-
+        
         <div id="background-image"
-             style="<?= 'background-image: url(' . asset('/levelshots/default.jpg') . '); '
+             style="<?= 'background-image: url(' . $templateHelper->asset('/levelshots/default.jpg') . '); '
                       . 'filter: blur(' . (int)$config->getBackgroundBlurRadius('default') . 'px); '
                       . 'opacity: ' . (int)$config->getBackgroundOpacity('default') . '%; '
                     ?>" >
@@ -19,7 +22,7 @@
 
             <article id="main-content">
                 <h1>
-                    <img src="<?= htmlspecialchars(asset('/favicon.svg')) ?>"
+                    <img src="<?= htmlspecialchars($templateHelper->asset('/favicon.svg')) ?>"
                         width="16" height="16" alt="" aria-hidden="true" />
                     <span class="white">JKA Server Status</span>
                 </h1>
@@ -27,7 +30,7 @@
                 <?php foreach ($config->jkaServers as $jkaServer): ?>
                     <?php /** @var \JkaServerStatus\Config\JkaServerConfigData $jkaServer */  ?>
                     <a class="button" href="<?= htmlspecialchars($jkaServer->uri); ?>">
-                        <?= format_name($jkaServer->name); ?>
+                        <?= $templateHelper->formatName($jkaServer->name); ?>
                         <?php if($jkaServer->subtitle): ?>
                             <br/><span class="subtitle"><?= htmlspecialchars($jkaServer->subtitle) ?></span>
                         <?php endif; ?>

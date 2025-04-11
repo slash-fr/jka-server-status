@@ -65,9 +65,7 @@ try {
     );
 }
 
-// Template functions
 $templateHelper = new TemplateHelper($config, $logger);
-require_once $config->projectDir . '/src/template_functions.php';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Front controller: Try to match the REQUEST_URI
@@ -77,12 +75,14 @@ $urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Try to match the landing page
 if ($config->isLandingPageEnabled && $urlPath === $config->landingPageUri) {
+    // "landing_page.php" needs the $config and $templateHelper variables
     require_once $config->projectDir . '/templates/landing_page.php';
     exit;
 }
 
 // Try to match the "About" page
 if ($config->isAboutPageEnabled && $urlPath === $config->aboutPageUri) {
+    // "about.php" needs the $config and $templateHelper variables
     require_once $config->projectDir . '/templates/about.php';
     exit;
 }
@@ -104,4 +104,5 @@ foreach ($config->jkaServers as $jkaServer) {
 
 // Did not match anything => 404 Error
 http_response_code(404);
+// "404.php" needs the $templateHelper variable
 require_once $config->projectDir . '/templates/404.php';

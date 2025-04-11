@@ -33,7 +33,7 @@ RewriteRule ^(.+(\.jpg|\.jpeg)$)$ $1.avif [T=image/avif,END]
         # Cache the image for a year
         Header set Cache-Control "public, max-age=31536000, immutable"
         # If the content of the image changes, you can use a query string for cache busting purposes (e.g. "?version=2")
-        # Note: The query string will be automatically added by the asset() function (see: src/template_functions.php)
+        # Note: The query string will be automatically added by the TemplateHelper::asset() method.
 
         # Don't use the cached version anymore if the "Accept" header changes (e.g. "image/avif" is added/removed)
         Header set Vary "accept"
@@ -43,6 +43,6 @@ RewriteRule ^(.+(\.jpg|\.jpeg)$)$ $1.avif [T=image/avif,END]
         # Cache the file for a year
         Header set Cache-Control "public, max-age=31536000, immutable"
         # If the content of the file changes, you can use a query string for cache busting purposes (e.g. "?version=2")
-        # Note: The query string will be automatically added by the asset() function (see: src/template_functions.php)
+        # Note: The query string will be automatically added by the TemplateHelper::asset() method.
     </FilesMatch>
 </IfModule>

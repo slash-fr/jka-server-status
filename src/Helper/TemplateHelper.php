@@ -66,8 +66,8 @@ class TemplateHelper
 
         if (!$updatedAt) {
             $this->logger->warning(
-                'Could not read the file modification time, to build the query string for asset("' . $path . '"). '
-                . ' Defaulting to "?version=1"'
+                'Could not read the file modification time, to build the query string for '
+                . 'TemplateHelper::asset("' . $path . '"). Defaulting to "?version=1".'
             );
             return '1';
         }

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <?php // Required variables: ?>
         <?php /** @var \JkaServerStatus\Config\ConfigData $config */ ?>
+        <?php /** @var \JkaServerStatus\Helper\TemplateHelper $templateHelper */ ?>
+
         <?php $title = $config->aboutPageTitle; ?>
         <?php require_once __DIR__ . '/_head.php'; ?>
     </head>
@@ -12,7 +15,7 @@
                     <a href="<?= htmlspecialchars($config->landingPageUri); ?>"
                        id="home-button" class="button" title="Go back to the server list">
 
-                        <img src="<?= asset('/favicon.svg') ?>"
+                        <img src="<?= $templateHelper->asset('/favicon.svg') ?>"
                              width="16" height="16" alt="" aria-hidden="true" />
                         Server list
                     </a>
@@ -21,7 +24,7 @@
 
             <article id="main-content">
                 <h1>
-                    <img src="<?= htmlspecialchars(asset('/favicon.svg')) ?>"
+                    <img src="<?= htmlspecialchars($templateHelper->asset('/favicon.svg')) ?>"
                         width="16" height="16" alt="" aria-hidden="true" />
                     <span class="white"><?= $title ?></span>
                 </h1>

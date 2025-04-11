@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <?php // Required variables: ?>
         <?php /** @var \JkaServerStatus\JkaServer\StatusData $data */ ?>
-        <?php $title = strip_colors($data->serverName); ?>
+        <?php /** @var \JkaServerStatus\JkaServer\TemplateHelper $templateHelper */ ?>
+
+        <?php $title = $templateHelper->stripColors($data->serverName); ?>
         <?php require_once __DIR__ . '/_head.php'; ?>
     </head>
     <body>
@@ -10,20 +13,20 @@
             <?php /* If JavaScript is enabled, let main.js add the background image, */ ?>
             <?php /* to avoid fetching an image that might not get displayed (depending on the user's settings). */ ?>
             <div id="background-image"
-                 style="<?= 'background-image: url(' . asset($data->backgroundImageUrl) . '); '
+                 style="<?= 'background-image: url(' . $templateHelper->asset($data->backgroundImageUrl) . '); '
                           . 'filter: blur(' . (int)$data->backgroundImageBlurRadius . 'px); '
                           . 'opacity: ' . (int)$data->backgroundImageOpacity . '%; '
                         ?>" >
             </div>
         </noscript>
         <input type="hidden" id="map-background-image"
-               value="<?= htmlspecialchars(asset($data->backgroundImageUrl)) ?>" />
+               value="<?= htmlspecialchars($templateHelper->asset($data->backgroundImageUrl)) ?>" />
         <input type="hidden" id="map-background-image-blur-radius"
                value="<?= (int)$data->backgroundImageBlurRadius ?>" />
         <input type="hidden" id="map-background-image-opacity"
                value="<?= (int)$data->backgroundImageOpacity ?>" />
         <input type="hidden" id="default-background-image"
-               value="<?= htmlspecialchars(asset($data->defaultBackgroundImageUrl)) ?>" />
+               value="<?= htmlspecialchars($templateHelper->asset($data->defaultBackgroundImageUrl)) ?>" />
         <input type="hidden" id="default-background-image-blur-radius"
                value="<?= (int)$data->defaultBackgroundImageBlurRadius ?>" />
         <input type="hidden" id="default-background-image-opacity"
@@ -35,7 +38,7 @@
                     <a href="<?= htmlspecialchars($data->landingPageUri); ?>"
                        id="home-button" class="button" title="Go back to the server list">
 
-                        <img src="<?= asset('/favicon.svg') ?>"
+                        <img src="<?= $templateHelper->asset('/favicon.svg') ?>"
                              width="16" height="16" alt="" aria-hidden="true" />
                         Server list
                     </a>
@@ -43,7 +46,7 @@
             </header>
 
             <article id="main-content">
-                <h1><?= format_name($data->serverName); ?></h1>
+                <h1><?= $templateHelper->formatName($data->serverName); ?></h1>
                 
                 <p class="info"> 
                     <label><strong>Address:</strong></label>
@@ -52,10 +55,10 @@
                     <label><strong>Status:</strong></label>
                     <span class="status">
                         <?php if ($data->isUp): ?>
-                            <img src="<?= asset('/checkmark-circle.svg') ?>"
+                            <img src="<?= $templateHelper->asset('/checkmark-circle.svg') ?>"
                                  width="20" height="20" alt="" aria-hidden="true"/>
                         <?php else: ?>
-                            <img src="<?= asset('/alert-circle.svg') ?>"
+                            <img src="<?= $templateHelper->asset('/alert-circle.svg') ?>"
                                  width="20" height="20" alt="" aria-hidden="true"/>
                         <?php endif; ?>
                         <?= htmlspecialchars($data->status); ?>
@@ -74,7 +77,7 @@
 
                     <?php if (isset($data->gameName)): ?>
                         <label><strong>Mod name:</strong></label>
-                        <span><?= format_name($data->gameName); ?><br/></span>
+                        <span><?= $templateHelper->formatName($data->gameName); ?><br/></span>
                     <?php endif; ?>
 
                     <?php if (isset($data->nbPlayers)): ?>
@@ -102,7 +105,7 @@
                         <tbody>
                             <?php foreach ($data->players as $player): ?>
                                 <tr>
-                                    <td><?= format_name($player->name); ?></td>
+                                    <td><?= $templateHelper->formatName($player->name); ?></td>
                                     <td><?= htmlspecialchars($player->score); ?></td>
                                     <td><?= htmlspecialchars($player->ping); ?></td>
                                 </tr>
@@ -117,20 +120,20 @@
 
                 <p id="settings-footer">
                     <button id="refresh-button" onclick="location.reload()">
-                        <img src="<?= asset('/refresh.svg') ?>"
+                        <img src="<?= $templateHelper->asset('/refresh.svg') ?>"
                              width="20" height="20" alt="" aria-hidden="true"/>
                         Refresh
                     </button>
                     <?php if ($data->cvars): ?>
                         <button id="open-cvars">
-                            <img src="<?= asset('/terminal-20x20.png') ?>"
-                                 srcset="<?= asset('/terminal-40x40.png') ?> 2x"
+                            <img src="<?= $templateHelper->asset('/terminal-20x20.png') ?>"
+                                 srcset="<?= $templateHelper->asset('/terminal-40x40.png') ?> 2x"
                                  width="20" height="20" alt="" aria-hidden="true"/>
                             Server info
                         </button>
                     <?php endif; ?>
                     <button id="open-settings">
-                        <img src="<?= asset('/settings-sharp.svg') ?>"
+                        <img src="<?= $templateHelper->asset('/settings-sharp.svg') ?>"
                              width="20" height="20" alt="" aria-hidden="true"/>
                         Settings
                     </button>
@@ -148,7 +151,7 @@
 
         <div id="settings" style="display: none;">
             <h2>
-                <img src="<?= asset('/settings-sharp.svg') ?>"
+                <img src="<?= $templateHelper->asset('/settings-sharp.svg') ?>"
                      width="24" height="24" alt="" aria-hidden="true"/>
                 Settings
             </h2>
@@ -199,7 +202,7 @@
                 <input id="background-color-input" type="color" />
             </p>
             <button id="close-settings">
-                <img src="<?= asset('/close-circle.svg') ?>"
+                <img src="<?= $templateHelper->asset('/close-circle.svg') ?>"
                      width="20" height="20" alt="" aria-hidden="true"/>
                 Close settings
             </button>
@@ -208,7 +211,7 @@
         <?php if ($data->cvars): ?>
             <div id="cvars" style="display: none;">
                 <h2>
-                    <img src="<?= asset('/terminal-sharp.svg') ?>"
+                    <img src="<?= $templateHelper->asset('/terminal-sharp.svg') ?>"
                          width="24" height="24" alt="" aria-hidden="true"/>
                     Server info
                 </h2>
@@ -217,19 +220,19 @@
                         <?php foreach ($data->cvars as $cvar_name => $cvar_value): ?>
                             <tr>
                                 <th><?= htmlspecialchars($cvar_name) ?></th>
-                                <td><?= format_name($cvar_value) ?></td>
+                                <td><?= $templateHelper->formatName($cvar_value) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </table>
                 </div>
                 <button id="close-cvars">
-                    <img src="<?= asset('/close-circle.svg') ?>"
+                    <img src="<?= $templateHelper->asset('/close-circle.svg') ?>"
                          width="20" height="20" alt="" aria-hidden="true"/>
                     Close server info
                 </button>
             </div>
         <?php endif; ?>
 
-        <script src="<?= asset('/main.js') ?>"></script>
+        <script src="<?= $templateHelper->asset('/main.js') ?>"></script>
     </body>
 </html>

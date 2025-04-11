@@ -136,6 +136,7 @@ class StatusController
             throw new RuntimeException($message);
         }
 
+        $templateHelper = $this->templateHelper; // Required by "status.php"
         // "status.php" needs the $data variable
         require_once $this->config->projectDir . '/templates/status.php';
 
