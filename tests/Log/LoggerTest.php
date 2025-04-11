@@ -7,11 +7,6 @@ use JkaServerStatus\Tests\TestCase;
 
 final class LoggerTest extends TestCase
 {
-    public function setUp(): void
-    {
-        error_reporting(E_ALL);
-    }
-
     public function testEmptyLogFile(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'JKA');

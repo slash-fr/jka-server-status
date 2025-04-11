@@ -43,7 +43,7 @@ final class ConfigFileServiceTest extends TestCase
         // Problem: chmod 000 does not work on Windows
         $isWindows = (strcasecmp(PHP_OS_FAMILY, 'Windows') === 0);
         if ($isWindows) {
-            echo "\nWARNING: chmod 000 does not work on Windows. Skipping " . __METHOD__ . "().\n";
+            echo "\nNOTICE: chmod 000 does not work on Windows. Skipping " . __METHOD__ . "().\n";
             return;
         }
 

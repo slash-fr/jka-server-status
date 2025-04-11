@@ -80,7 +80,7 @@ final class JkaServerServiceTest extends TestCase
     private readonly ConfigData $config;
     private readonly JkaServerService $jkaServerService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -126,7 +126,7 @@ final class JkaServerServiceTest extends TestCase
         $this->assertSame(0, $statusData->defaultBackgroundImageBlurRadius);
         $this->assertSame(50, $statusData->defaultBackgroundImageOpacity);
         // The background image URIs are NOT prefixed by the "asset URL" at this point.
-        // The asset() function will do that in the templates.
+        // The TemplateHelper::asset() method will do that in the templates.
         $this->assertIsArray($statusData->cvars);
     }
 
@@ -157,7 +157,7 @@ final class JkaServerServiceTest extends TestCase
         $this->assertSame(0, $statusData->backgroundImageBlurRadius);
         $this->assertSame(50, $statusData->backgroundImageOpacity);
         // The background image URIs are NOT prefixed by the "asset URL" at this point.
-        // The asset() function will do that in the templates.
+        // The TemplateHelper::asset() method will do that in the templates.
     }
 
     public function testBuildStatusDataWithTimeout(): void
