@@ -103,6 +103,16 @@ class ConfigData
     ];
 
     /**
+     * @var string Default root directory of the project
+     */
+    public const DEFAULT_PROJECT_DIR = __DIR__ . '/../..';
+
+    /**
+     * @var string Default cache directory
+     */
+    public const DEFAULT_CACHE_DIR = self::DEFAULT_PROJECT_DIR . '/var/cache';
+
+    /**
      * Root of the project (e.g. '/var/www/jka-server-status')
      */
     public readonly string $projectDir;
@@ -151,6 +161,11 @@ class ConfigData
     public readonly array $jkaServers;
 
     /**
+     * @var string $cacheDir Directory where the cached HTML versions of status pages are stored
+     */
+    public readonly string $cacheDir;
+
+    /**
      *  @var int[] $blurRadiusPerMap Blur radius in pixels (int [0-10]) by image name.
      */
     private readonly array $blurRadiusPerMap;
@@ -192,7 +207,8 @@ class ConfigData
         array $jkaServers = [],
         array $blurRadiusPerMap = self::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP,
         array $opacityPerMap = self::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
-        string $projectDir = __DIR__ . '/../..',
+        string $projectDir = self::DEFAULT_PROJECT_DIR,
+        string $cacheDir = self::DEFAULT_CACHE_DIR,
     ) {
         $this->cachingDelay = $cachingDelay;
         $this->timeoutDelay = $timeoutDelay;
@@ -206,6 +222,7 @@ class ConfigData
         $this->blurRadiusPerMap = $blurRadiusPerMap;
         $this->opacityPerMap = $opacityPerMap;
         $this->projectDir = $projectDir;
+        $this->cacheDir = $cacheDir;
     }
 
     /**

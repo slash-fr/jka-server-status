@@ -13,7 +13,7 @@ use RuntimeException;
 /**
  * Controller that handles the "status" page
  */
-class StatusController
+final class StatusController
 {
     private readonly JkaServerServiceInterface $jkaServerService;
     private readonly ConfigData $config;
@@ -96,7 +96,6 @@ class StatusController
         }
 
         // The cached version is still fresh
-        $this->logger->info($jkaServerAddress . ' - from cache');
         $htmlStatus = file_get_contents($cachedFilename);
         if (!$htmlStatus) {
             // file_get_contents() didn't work
@@ -106,6 +105,7 @@ class StatusController
             return false;
         }
 
+        $this->logger->info($jkaServerAddress . ' - From cache');
         return $htmlStatus; // Return the cached HTML
     }
 
@@ -117,16 +117,16 @@ class StatusController
      * 
      * @return string The HTML version of the status page.
      */
-    private function renderAndCacheHtml(string $jkaServerAddress, StatusData $data): string
+    private function renderAndCacheHtml(string $jkaServerAddress, StatusData $statusData): string
     {
         $this->logger->info(
             $jkaServerAddress . ' - Generating HTML'
-            . ' - Status: ' . $data->status
-            . ' - Name: "' . $this->templateHelper->stripColors($data->serverName) . '"'
-            . ' - Map: "' . ($data->mapName ?? '?') . '"'
-            . ' - Game type: ' . ($data->cvars['g_gametype'] ?? '?') . ' (' . ($data->gameType ?? '?') . ')'
-            . ' - Players: ' . ($data->nbPlayers ?? '?') . ' / ' . ($data->maxPlayers ?? '?')
-            . ' - ' . ($data->nbHumans ?? '?') . ' human(s) + ' . ($data->nbBots ?? '?') . ' bot(s)'
+            . ' - Status: ' . $statusData->status
+            . ' - Name: "' . $this->templateHelper->stripColors($statusData->serverName) . '"'
+            . ' - Map: "' . ($statusData->mapName ?? '?') . '"'
+            . ' - Game type: ' . ($statusData->cvars['g_gametype'] ?? '?') . ' (' . ($statusData->gameType ?? '?') . ')'
+            . ' - Players: ' . ($statusData->nbPlayers ?? '?') . ' / ' . ($statusData->maxPlayers ?? '?')
+            . ' - ' . ($statusData->nbHumans ?? '?') . ' human(s) + ' . ($statusData->nbBots ?? '?') . ' bot(s)'
         );
 
         // Enable output buffering
@@ -137,8 +137,9 @@ class StatusController
         }
 
         $templateHelper = $this->templateHelper; // Required by "status.php"
-        // "status.php" needs the $data variable
-        require_once $this->config->projectDir . '/templates/status.php';
+        $data = $statusData; // Required by "status.php"
+        require $this->config->projectDir . '/templates/status.php';
+        // Not "require_once", or StatusControllerTest will stop working ;)
 
         // Get the content of the buffer
         $htmlStatus = ob_get_clean();
@@ -151,7 +152,7 @@ class StatusController
         if ($this->config->cachingDelay > 0) {
             $cachedFilename = $this->getCachedFilename($jkaServerAddress);
             if (!file_put_contents($cachedFilename, $htmlStatus)) {
-                $this->logger->error($jkaServerAddress . ' - could not cache the HTML ("' . $cachedFilename . '").');
+                $this->logger->error($jkaServerAddress . ' - Could not cache the HTML ("' . $cachedFilename . '").');
             }
         }
         
@@ -168,7 +169,9 @@ class StatusController
     private function getCachedFilename(string $jkaServerAddress): string
     {
         // Sanitize the host for use as a filename:
-        return $this->config->projectDir . '/var/cache/'
-            . preg_replace('/[^a-z0-9]/', '-', strtolower($jkaServerAddress)) . '.html';
+        $sanitizedFilename = preg_replace('/[^a-z0-9]/', '-', strtolower($jkaServerAddress)) . '.html';
+
+        // Return the full path to the file
+        return $this->config->cacheDir . '/' . $sanitizedFilename;
     }
 }
