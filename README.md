@@ -5,16 +5,15 @@ as well as the player list.
 [![Player list screenshot (desktop)](doc/screenshots/desktop-player-list-thumbnail.jpg)](doc/screenshots/screenshots.md)
 
 ## Features
-- Retrieves some basic server info, as well as the player list,
-- Can also display all `cvars` received from the server (**Server info** button),
-- Caches responses for 10 seconds (server-side, configurable delay)
-- Uses backgrounds from my [**Widescreen levelshots**](https://jkhub.org/files/file/4179-widescreen-levelshots/) pack
-    - 1920x1080 resolution, available in JPG + AVIF formats,
-    - User-configurable blur and opacity, to improve the readability,
-    - Uses `default.jpg` when the map name doesn't match a known levelshot
-    - You can add your own backgrounds in the `levelshots` folder, and they should be automatically detected
-- Responsive layout
-- Optional auto-refresh (user-configurable)
+- **Server status** info,
+- **Player list**,
+- List of `cvars` (**Server info** button),
+- **Background images** from my [**Widescreen levelshots**](https://jkhub.org/files/file/4179-widescreen-levelshots/)
+  pack,
+- User-configurable background **blur** and **opacity**, to improve the readability,
+- Optional **auto-refresh** (user-configurable),
+- **Responsive** layout,
+- **Server-side caching** (configurable, 10 seconds by default).
 
 ## Requirements
 - A **web server** (Nginx, Apache, ...)
@@ -27,11 +26,9 @@ There are no other dependencies.
 
 ## Installation
 1. Clone (or copy the content of) this repository onto your server,
-2. Setup your web server. → See: [**Web server configuration**](doc/01-web-server-configuration.md),
+2. Setup your web server → See: [**Web server configuration**](doc/01-web-server-configuration.md),
 3. Make sure PHP has write access to the `var/cache` and `var/log` folders,
-4. Create a `config.php` file:
-   1. Read: [**Basic `config.php` examples**](doc/02-basic-config-php-examples.md)
-   2. For the full list of options, see: [`config.sample.php`](config.sample.php).
+4. Create a `config.php` file → Read: [**Basic `config.php` examples**](doc/02-basic-config-php-examples.md).
 
 
 ## PHPUnit
