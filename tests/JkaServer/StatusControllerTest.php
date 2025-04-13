@@ -57,7 +57,8 @@ final class StatusControllerTest extends TestCase
         $this->assertStringContainsString('Could not cache the HTML', $errorMessages[1]);
 
         // Not expecting any warning messages, though
-        $this->assertCount(0, $this->logger->getMessages([Logger::WARNING]));
+        $warningMessages = $this->logger->getMessages([Logger::WARNING]);
+        $this->assertCount(0, $warningMessages, '$warningMessages = ' . print_r($warningMessages, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
@@ -65,6 +66,39 @@ final class StatusControllerTest extends TestCase
 
         // Clean up
         rmdir($cacheFile);
+        unlink($cacheFile . '.lock');
+    }
+
+    public function testErrorWhenLockFileIsReadOnly(): void
+    {
+        $jkaServerAddress = 'example.com';
+        $cacheFile = $this->cacheDir . '/example-com.html'; 
+
+        // Create a file with the same name as the expected lock file
+        $lockFile = $cacheFile . '.lock';
+        $this->assertTrue(touch($lockFile));
+        $this->assertTrue(chmod($lockFile, 0444)); // Make it read-only
+
+        // Rendering should work...
+        $this->performRenderWithUpStatus($jkaServerAddress, 10);
+
+        // ...but caching shouldn't work
+        $errorMessages = $this->logger->getMessages([Logger::ERROR]);
+        $this->assertCount(1, $errorMessages, '$errorMessages = ' . print_r($errorMessages, true));
+        $this->assertStringContainsString('Could not open the cache lock file', $errorMessages[0]);
+
+        // Not expecting any warning messages, though
+        $warningMessages = $this->logger->getMessages([Logger::WARNING]);
+        $this->assertCount(0, $warningMessages, '$warningMessages = ' . print_r($warningMessages, true));
+
+        // Expecting an INFO message
+        $this->assertGotInfoMessage('Generating HTML');
+        $this->assertDidNotGetInfoMessage('From cache');
+
+        // Clean up
+        unlink($cacheFile);
+        chmod($lockFile, 0666); // Read + write
+        unlink($lockFile);
     }
 
     public function testErrorWhenCachedFileIsReadonly(): void
@@ -80,7 +114,8 @@ final class StatusControllerTest extends TestCase
         $this->assertTrue(file_exists($cacheFile));
 
         // Not expecting any ERROR nor WARNING messages
-        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR, Logger::WARNING]));
+        $errorsAndWarnings = $this->logger->getMessages([Logger::ERROR, Logger::WARNING]);
+        $this->assertCount(0, $errorsAndWarnings, '$errorsAndWarnings = ' . print_r($errorsAndWarnings, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
@@ -97,11 +132,12 @@ final class StatusControllerTest extends TestCase
 
         // ...but caching shouldn't work
         $errorMessages = $this->logger->getMessages([Logger::ERROR]);
-        $this->assertCount(1, $errorMessages);
+        $this->assertCount(1, $errorMessages, '$errorMessages = ' . print_r($errorMessages, true));
         $this->assertStringContainsString('Could not cache the HTML', $errorMessages[0]);
 
         // Not expecting any warning messages, though
-        $this->assertCount(0, $this->logger->getMessages([Logger::WARNING]));
+        $warningMessages = $this->logger->getMessages([Logger::WARNING]);
+        $this->assertCount(0, $warningMessages, '$warningMessages = ' . print_r($warningMessages, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
@@ -110,6 +146,7 @@ final class StatusControllerTest extends TestCase
         // Clean up
         chmod($cacheFile, 0666);
         unlink($cacheFile);
+        unlink($cacheFile . '.lock');
     }
 
     public function testSuccessCachedFileIsStillFresh(): void
@@ -125,7 +162,8 @@ final class StatusControllerTest extends TestCase
         $this->assertTrue(file_exists($cacheFile));
 
         // Not expecting any ERROR nor WARNING messages
-        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR, Logger::WARNING]));
+        $errorsAndWarnings = $this->logger->getMessages([Logger::ERROR, Logger::WARNING]);
+        $this->assertCount(0, $errorsAndWarnings, '$errorsAndWarnings = ' . print_r($errorsAndWarnings, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
@@ -139,13 +177,15 @@ final class StatusControllerTest extends TestCase
         $this->performRenderWithTimeoutStatus($jkaServerAddress, 10);
         
         // Not expecting any ERROR nor WARNING messages
-        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR, Logger::WARNING]));
+        $errorsAndWarnings = $this->logger->getMessages([Logger::ERROR, Logger::WARNING]);
+        $this->assertCount(0, $errorsAndWarnings, '$errorsAndWarnings = ' . print_r($errorsAndWarnings, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('From cache');
         $this->assertDidNotGetInfoMessage('Generating HTML');
 
         unlink($cacheFile);
+        unlink($cacheFile . '.lock');
     }
 
     public function testSuccessWhenCachedFileIsOutdated(): void
@@ -165,7 +205,8 @@ final class StatusControllerTest extends TestCase
         $this->assertTrue(touch($cacheFile, $firstRenderTime - 11));
 
         // Not expecting any ERROR nor WARNING messages
-        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR, Logger::WARNING]));
+        $errorsAndWarnings = $this->logger->getMessages([Logger::ERROR, Logger::WARNING]);
+        $this->assertCount(0, $errorsAndWarnings, '$errorsAndWarnings = ' . print_r($errorsAndWarnings, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
@@ -181,13 +222,15 @@ final class StatusControllerTest extends TestCase
         $this->assertGreaterThanOrEqual($firstRenderTime, filemtime($cacheFile), 'The cache file was NOT refreshed');
 
         // Not expecting any ERROR nor WARNING messages
-        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR, Logger::WARNING]));
+        $errorsAndWarnings = $this->logger->getMessages([Logger::ERROR, Logger::WARNING]);
+        $this->assertCount(0, $errorsAndWarnings, '$errorsAndWarnings = ' . print_r($errorsAndWarnings, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
         $this->assertDidNotGetInfoMessage('From cache');
 
         unlink($cacheFile);
+        unlink($cacheFile . '.lock');
     }
 
     public function testSuccessWhenCacheIsDisabled(): void
@@ -202,7 +245,8 @@ final class StatusControllerTest extends TestCase
         $this->assertFalse(file_exists($cacheFile));
 
         // Not expecting any ERROR nor WARNING messages
-        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR, Logger::WARNING]));
+        $errorsAndWarnings = $this->logger->getMessages([Logger::ERROR, Logger::WARNING]);
+        $this->assertCount(0, $errorsAndWarnings, '$errorsAndWarnings = ' . print_r($errorsAndWarnings, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
@@ -215,13 +259,15 @@ final class StatusControllerTest extends TestCase
         $this->performRenderWithTimeoutStatus('192.0.2.1');
 
         // Not expecting any ERROR nor WARNING messages
-        $this->assertCount(0, $this->logger->getMessages([Logger::ERROR, Logger::WARNING]));
+        $errorsAndWarnings = $this->logger->getMessages([Logger::ERROR, Logger::WARNING]);
+        $this->assertCount(0, $errorsAndWarnings, '$errorsAndWarnings = ' . print_r($errorsAndWarnings, true));
 
         // Expecting an INFO message
         $this->assertGotInfoMessage('Generating HTML');
         $this->assertDidNotGetInfoMessage('From cache');
 
         unlink($cacheFile);
+        unlink($cacheFile . '.lock');
     }
 
     ////////////////////////////////////////////////////////////////////////////

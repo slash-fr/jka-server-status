@@ -37,16 +37,57 @@ final class StatusController
      */
     public function getHtmlStatus(JkaServerConfigData $jkaServerConfig): string
     {
+        // Try to get a lock
+        $lockFileHandle = $this->getCacheLock($jkaServerConfig->address);
+        // The purpose of this lock is to avoid sending multiple UDP requests to the JKA server
+        // in case multiple web requests arrive AFTER the cache has expired and BEFORE it gets refreshed.
+
         // Return the cached version, if available (and still fresh)
         $cachedHtml = $this->getCachedHtml($jkaServerConfig->address);
         if ($cachedHtml) {
             return $cachedHtml;
         }
-        
+
         // Otherwise, query the JKA server and parse its response
         $data = $this->jkaServerService->getStatusData($jkaServerConfig);
 
-        return $this->renderAndCacheHtml($jkaServerConfig->address, $data);
+        $html = $this->renderAndCacheHtml($jkaServerConfig->address, $data);
+
+        // Release the Kraken! Er... the lock.
+        if ($lockFileHandle) {
+            fclose($lockFileHandle);
+        }
+
+        return $html;
+    }
+
+    /**
+     * Returns a file handle, with an exclusive lock, for the specified JKA server address.
+     * @param string $jkaServerAddress IP address or domain name of the JKA Server, with optional port
+     *                                 (e.g. "192.0.2.1")
+     * 
+     * @return false|resource The file pointer if successful, false otherwise
+     */
+    private function getCacheLock(string $jkaServerAddress): mixed
+    {
+        if ($this->config->cachingDelay < 1) { // If caching is disabled
+            return false; // Don't do anything
+        }
+
+        $lockFilename = $this->getCachedFilename($jkaServerAddress) . '.lock';
+        $lockFileHandle = fopen($lockFilename, 'c'); // Create it if it doesn't exist, open it if it already exists
+        if (!$lockFileHandle) {
+            $this->logger->error($jkaServerAddress . ' - Could not open the cache lock file.');
+            return false;
+        }
+
+        if (!flock($lockFileHandle, LOCK_EX)) { // Try to get an exclusive lock (writer)
+            $this->logger->error($jkaServerAddress . ' - Could not acquire a cache lock.');
+            return false;
+        }
+
+        // At this point, we've got a lock
+        return $lockFileHandle;
     }
 
     /**
@@ -58,6 +99,10 @@ final class StatusController
      */
     private function getCachedHtml(string $jkaServerAddress): string|false
     {
+        if ($this->config->cachingDelay < 1) { // If caching is disabled
+            return false; // Don't do anything
+        }
+
         $cachedFilename = $this->getCachedFilename($jkaServerAddress);
         if (!file_exists($cachedFilename)) {
             // The file hasn't been created yet
@@ -149,7 +194,7 @@ final class StatusController
             throw new RuntimeException($message);
         }
 
-        if ($this->config->cachingDelay > 0) {
+        if ($this->config->cachingDelay > 0) { // If caching is enabled
             $cachedFilename = $this->getCachedFilename($jkaServerAddress);
             if (!file_put_contents($cachedFilename, $htmlStatus)) {
                 $this->logger->error($jkaServerAddress . ' - Could not cache the HTML ("' . $cachedFilename . '").');
