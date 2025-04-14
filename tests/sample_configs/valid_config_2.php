@@ -10,6 +10,7 @@ $landing_page_uri = '/server-list';
 $enable_about_page = true;
 $about_page_uri = '/tell-me-about-it';
 $about_page_title = 'Credits (and legal stuff)';
+$canonical_url = 'https://example.com/';
 
 $jka_servers = [
     [

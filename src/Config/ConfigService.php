@@ -41,6 +41,7 @@ class ConfigService
         $aboutPageTitle = $this->sanitizeAboutPageTitle($about_page_title ?? null);
         $blurRadiusPerMap = $this->sanitizeBackgroundBlurRadius($background_blur_radius ?? null);
         $opacityPerMap = $this->sanitizeBackgroundOpacity($background_opacity ?? null);
+        $canonicalUrl = $this->sanitizeCanonicalUrl($canonical_url ?? null);
         $this->validateUniqueURIs(
             $jkaServers,
             $isLandingPageEnabled ? $landingPageUri : null,
@@ -59,7 +60,9 @@ class ConfigService
             $jkaServers,
             $blurRadiusPerMap,
             $opacityPerMap,
-            __DIR__ . '/../..',
+            ConfigData::DEFAULT_PROJECT_DIR,
+            ConfigData::DEFAULT_CACHE_DIR,
+            $canonicalUrl,
         );
     }
 
@@ -563,6 +566,41 @@ class ConfigService
         $backgroundOpacity = array_merge(ConfigData::DEFAULT_BACKGROUND_OPACITY_PER_MAP, $backgroundOpacity);
 
         return $backgroundOpacity;
+    }
+
+    /**
+     * Returns the sanitized canonical URL.
+     * @param mixed $canonicalUrl Value of the $canonical_url variable from "config.php".
+     *                            Should be a string (or null if not set).
+     * 
+     * @return string The sanitized URL.
+     * @throws ConfigException if the input value is invalid.
+     */
+    private function sanitizeCanonicalUrl(mixed $canonicalUrl): ?string
+    {
+        if (!isset($canonicalUrl)) {
+            return null;
+        }
+
+        if (!is_string($canonicalUrl)) {
+            $message = 'Config variable $canonical_url must be a string ' . '(got: ' . gettype($canonicalUrl) . ').';
+            $this->logger->error($message);
+            throw new ConfigException($message);
+        }
+
+        if (!str_starts_with($canonicalUrl, 'http://') && !str_starts_with($canonicalUrl, 'https://')) {
+            $message = 'Config variable $canonical_url must start with either "http://" or "https://".';
+            $this->logger->error($message);
+            throw new ConfigException($message);
+        }
+
+        if (!filter_var($canonicalUrl, FILTER_VALIDATE_URL)) {
+            $message = 'Config variable $canonical_url must be a valid URL.';
+            $this->logger->error($message);
+            throw new ConfigException($message);
+        }
+
+        return rtrim($canonicalUrl, '/'); // Remove the trailing slash
     }
 
     /**

@@ -166,6 +166,11 @@ class ConfigData
     public readonly string $cacheDir;
 
     /**
+     * @var string|null $canonicalUrl Base URL to use for OpenGraph meta tags (e.g. "og:url") - without trailing slash.
+     */
+    public readonly ?string $canonicalUrl;
+
+    /**
      *  @var int[] $blurRadiusPerMap Blur radius in pixels (int [0-10]) by image name.
      */
     private readonly array $blurRadiusPerMap;
@@ -194,6 +199,8 @@ class ConfigData
      *                             or "default" => 50 (= 50% for "default.jpg").
      *                             Any map missing from the array will default to ConfigData::DEFAULT_BACKGROUND_OPACITY.
      * @param string $projectDir Root path of the project (filesystem path, not URI)
+     * @param string|null $canonicalUrl Base URL to use for OpenGraph meta tags (e.g. "og:url")
+     *                                  - without trailing slash.
      */
     public function __construct(
         int $cachingDelay = self::DEFAULT_CACHING_DELAY,
@@ -209,6 +216,7 @@ class ConfigData
         array $opacityPerMap = self::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
         string $projectDir = self::DEFAULT_PROJECT_DIR,
         string $cacheDir = self::DEFAULT_CACHE_DIR,
+        ?string $canonicalUrl = null,
     ) {
         $this->cachingDelay = $cachingDelay;
         $this->timeoutDelay = $timeoutDelay;
@@ -223,6 +231,7 @@ class ConfigData
         $this->opacityPerMap = $opacityPerMap;
         $this->projectDir = $projectDir;
         $this->cacheDir = $cacheDir;
+        $this->canonicalUrl = $canonicalUrl;
     }
 
     /**

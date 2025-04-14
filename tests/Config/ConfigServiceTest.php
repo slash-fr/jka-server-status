@@ -29,6 +29,7 @@ final class ConfigServiceTest extends TestCase
         $this->assertSame(ConfigData::DEFAULT_IS_ABOUT_PAGE_ENABLED, $config->isAboutPageEnabled);
         $this->assertSame(ConfigData::DEFAULT_ABOUT_PAGE_URI, $config->aboutPageUri);
         $this->assertSame(ConfigData::DEFAULT_ABOUT_PAGE_TITLE, $config->aboutPageTitle);
+        $this->assertSame(null, $config->canonicalUrl);
         $this->assertSame(1, count($config->jkaServers));
         $this->assertSame('/', $config->jkaServers[0]->uri ?? null);
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->address ?? null);
@@ -86,6 +87,8 @@ final class ConfigServiceTest extends TestCase
         $this->assertSame(true, $config->isAboutPageEnabled);
         $this->assertSame('/tell-me-about-it', $config->aboutPageUri);
         $this->assertSame('Credits (and legal stuff)', $config->aboutPageTitle);
+        // Note: the trailing slash was removed from the canonical URL:
+        $this->assertSame('https://example.com', $config->canonicalUrl);
         $this->assertSame(2, count($config->jkaServers));
         $this->assertSame('/main-server', $config->jkaServers[0]->uri ?? null);
         $this->assertSame('192.0.2.1', $config->jkaServers[0]->address ?? null);
@@ -170,6 +173,9 @@ final class ConfigServiceTest extends TestCase
         yield [34, 'Config variable $background_opacity must be an indexed array, with integer values'];
         yield [35, 'Config variable $background_opacity must contain values between 0 and 100'];
         yield [36, 'Config variable $background_opacity must contain values between 0 and 100'];
+        yield [37, 'Config variable $canonical_url must be a string'];
+        yield [38, 'Config variable $canonical_url must start with either "http://" or "https://"'];
+        yield [39, 'Config variable $canonical_url must be a valid URL'];
     }
 
     #[DataProvider('invalidConfigDataProvider')]

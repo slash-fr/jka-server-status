@@ -281,10 +281,15 @@ final class StatusControllerTest extends TestCase
     private function performRenderWithUpStatus(string $jkaServerAddress, int $cachingDelay = 10): void
     {
         $jkaServerConfig = new JkaServerConfigData('/', $jkaServerAddress, 'Example Name', '');
+
+        $canonicalUrl = 'https://example.com';
+        $_SERVER['REQUEST_URI'] = '/test';
+
         $config = new ConfigData(
             jkaServers: [$jkaServerConfig],
             cacheDir: $this->cacheDir,
-            cachingDelay: $cachingDelay
+            cachingDelay: $cachingDelay,
+            canonicalUrl: $canonicalUrl,
         );
         $templateHelper = new TemplateHelper($config, $this->logger);
 
@@ -392,9 +397,44 @@ final class StatusControllerTest extends TestCase
         $this->assertMatchesRegularExpression("/$nbPlayers\s*\/\s*$maxNbPlayers/", $html); // e.g. "13 / 32"
         $this->assertStringContainsString("$nbHumans human", $html);
 
+        /////////////////
+        // OpenGraph tags
+
+        $this->assertStringContainsString('property="og:title"', $html);
+        $this->assertStringContainsString('property="og:type"', $html);
+
+        // TODO: Parse the HTML properly (not with a regex...)
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote('<meta') . '.*' . preg_quote('property="og:url"') . '.*'
+                . preg_quote(
+                    'content="' . htmlspecialchars($canonicalUrl) . $_SERVER['REQUEST_URI'] . '"',
+                    '/' // Also escape the '/' delimiter
+                )
+                . '/s', // /s = dot also matches newlines
+            $html
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote('<meta') . '.*' . preg_quote('property="og:image"') . '.*'
+                . preg_quote(
+                    'content="' . htmlspecialchars($canonicalUrl) . '/og-image.jpg',
+                    '/' // Also escape the '/' delimiter
+                ) . '/s',
+                // /s = dot also matches newlines
+                // No closing double quote for the "content" attribute, because the URL may have a query string
+            $html
+        );
+
+        ///////////////////////////////////////
+        // Background images and blur / opacity
+
         $this->assertMatchesRegularExpression(
             '/' . preg_quote('<input') . '.*' . preg_quote('id="map-background-image"') . '.*'
-                . preg_quote('value="' . $backgroundImageUrl, '/') . '/s', // s = dot also matches newlines
+                . preg_quote(
+                    'value="' . htmlspecialchars($backgroundImageUrl),
+                    '/' // Also escape the '/' delimiter
+                ) . '/s',
+                // /s = dot also matches newlines
                 // No closing double quote for the "value" attribute, because the URL may have a query string
             $html
         );
@@ -413,7 +453,11 @@ final class StatusControllerTest extends TestCase
 
         $this->assertMatchesRegularExpression(
             '/' . preg_quote('<input') . '.*' . preg_quote('id="default-background-image"') . '.*'
-                . preg_quote('value="' . StatusData::DEFAULT_BACKGROUND_IMAGE_URL , '/') . '/s',
+                . preg_quote(
+                    'value="' . htmlspecialchars(StatusData::DEFAULT_BACKGROUND_IMAGE_URL),
+                    '/' // Also escape the '/' delimiter
+                )
+                . '/s',
                 // No closing double quote for the "value" attribute, because the URL may have a query string
             $html
         );
@@ -429,6 +473,9 @@ final class StatusControllerTest extends TestCase
                 . preg_quote('value="' . $defaultOpacity . '"') . '/s', // s = dot also matches newlines
             $html
         );
+
+        ////////////////////
+        // Players and cvars
 
         $this->assertStringContainsString('<table class="player-list">', $html); // There are players
         
@@ -505,6 +552,9 @@ final class StatusControllerTest extends TestCase
         );
 
         $this->assertStringNotContainsString('<table class="player-list">', $html); // No players
+
+        // No OpenGraph tags (because we haven't specified a "canonical URL" in the config data)
+        $this->assertStringNotContainsString('property="og:title"', $html);
     }
 
     /**

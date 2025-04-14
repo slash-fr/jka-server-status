@@ -49,6 +49,10 @@ $about_page_title = 'About'; // Title of the "About" page (and "About" link). De
 // (or similar) section on your website.
 // The "About" page can be a good place to put it.
 
+// Canonical (root) URL, used for OpenGraph tags (e.g. "og:url" and "og:image")
+//$canonical_url = 'https://example.com/';
+// Not set by default => OG tags are disabled by default
+
 // JKA Server(s) (required)
 $jka_servers = [
     // First JKA server

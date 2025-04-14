@@ -6,7 +6,7 @@
         <?php /** @var \JkaServerStatus\Helper\TemplateHelper $templateHelper */ ?>
 
         <?php $title = $config->aboutPageTitle; ?>
-        <?php require_once __DIR__ . '/_head.php'; ?>
+        <?php require __DIR__ . '/_head.php'; ?>
     </head>
     <body class="about-page">
         <div id="content">

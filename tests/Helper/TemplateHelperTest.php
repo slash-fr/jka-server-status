@@ -151,4 +151,50 @@ final class TemplateHelperTest extends TestCase
         $this->assertSame('§ÑØW§TØ®M¹', $templateHelper->stripColors('^2§^0ÑØW^2§^0TØ®M^2¹'));
         $this->assertCount(0, $logger->getMessages([Logger::ERROR, Logger::WARNING]));
     }
+
+    public function testOpenGraphDisabled(): void
+    {
+        $config = new ConfigData();
+        $logger = new MockLogger();
+        $templateHelper = new TemplateHelper($config, $logger);
+
+        $this->assertFalse($templateHelper->isOpenGraphEnabled());
+        $this->assertCount(0, $logger->getMessages([Logger::ERROR, Logger::WARNING]));
+    }
+
+    public function testOpenGraphOnRootUrl(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/';
+
+        $config = new ConfigData(canonicalUrl: 'https://example.com');
+        $logger = new MockLogger();
+        $templateHelper = new TemplateHelper($config, $logger);
+
+        $this->assertTrue($templateHelper->isOpenGraphEnabled());
+
+        $this->assertSame('https://example.com/', $templateHelper->getOgUrl());
+
+        $this->assertStringStartsWith('https://example.com/og-image.jpg', $templateHelper->getOgImageUrl());
+        // Starts with, because there may be a query string (for cache busting purposes).
+
+        $this->assertCount(0, $logger->getMessages([Logger::ERROR, Logger::WARNING]));
+    }
+
+    public function testOpenGraphOnSubPath(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/test';
+        
+        $config = new ConfigData(canonicalUrl: 'https://status.example.com');
+        $logger = new MockLogger();
+        $templateHelper = new TemplateHelper($config, $logger);
+
+        $this->assertTrue($templateHelper->isOpenGraphEnabled());
+
+        $this->assertSame('https://status.example.com/test', $templateHelper->getOgUrl());
+
+        $this->assertStringStartsWith('https://status.example.com/og-image.jpg', $templateHelper->getOgImageUrl());
+        // Starts with, because there may be a query string (for cache busting purposes).
+
+        $this->assertCount(0, $logger->getMessages([Logger::ERROR, Logger::WARNING]));
+    }
 }

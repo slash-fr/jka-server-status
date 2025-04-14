@@ -5,7 +5,7 @@
         <?php /** @var \JkaServerStatus\Helper\TemplateHelper $templateHelper */ ?>
 
         <?php $title = '404 Not Found'; ?>
-        <?php require_once __DIR__ . '/_head.php'; ?>
+        <?php require __DIR__ . '/_head.php'; ?>
     </head>
     <body class="page-not-found">
         <h1><span class="white">404 Not Found</span></h1>

@@ -4,6 +4,7 @@ namespace JkaServerStatus\Helper;
 
 use JkaServerStatus\Config\ConfigData;
 use JkaServerStatus\Log\LoggerInterface;
+use RuntimeException;
 
 /**
  * Template-related methods
@@ -98,5 +99,53 @@ class TemplateHelper
     {
         $name = str_replace(array_keys(self::COLOR_REPLACEMENTS), '', $name);
         return $name;
+    }
+
+    /**
+     * @return bool True if OpenGraph tags are enabled, false otherwise
+     */
+    public function isOpenGraphEnabled(): bool
+    {
+        return isset($this->config->canonicalUrl);
+    }
+
+    /**
+     * @return string The value for the "content" attribute of the "og:url" tag.
+     * 
+     * @throws RuntimeException if this method is called when OpenGraph tags are disabled / not configured.
+     */
+    public function getOgUrl(): string
+    {
+        if (!$this->isOpenGraphEnabled()) {
+            throw new RuntimeException(
+                __METHOD__ . ' must not be called when OpenGraph tags are disabled / not configured.'
+            );
+        }
+
+        return $this->config->canonicalUrl . $_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * @return string The value for the "content" attribute of the "og:image" tag.
+     * 
+     * @throws RuntimeException if this method is called when OpenGraph tags are disabled / not configured.
+     */
+    public function getOgImageUrl(): string
+    {
+        if (!$this->isOpenGraphEnabled()) {
+            throw new RuntimeException(
+                __METHOD__ . ' must not be called when OpenGraph tags are disabled / not configured.'
+            );
+        }
+
+        $ogImageAssetUrl = $this->asset('/og-image.jpg');
+        
+        if (str_starts_with($ogImageAssetUrl, 'https://') || str_starts_with($ogImageAssetUrl, 'http://')) {
+            // The $asset_url prefix may contain an absolute URL (might be a CDN, for instance)
+            return $ogImageAssetUrl;
+        }
+
+        // If not, prefix the image URL by the canonical URL
+        return $this->config->canonicalUrl . $ogImageAssetUrl;
     }
 }

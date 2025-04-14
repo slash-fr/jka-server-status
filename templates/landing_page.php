@@ -5,7 +5,7 @@
         <?php /** @var \JkaServerStatus\Config\ConfigData $config */ ?>
         <?php /** @var \JkaServerStatus\Helper\TemplateHelper $templateHelper */ ?>
 
-        <?php require_once __DIR__ . '/_head.php'; ?>
+        <?php require __DIR__ . '/_head.php'; ?>
     </head>
     <body class="landing-page">
         

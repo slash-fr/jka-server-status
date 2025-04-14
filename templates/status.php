@@ -6,7 +6,7 @@
         <?php /** @var \JkaServerStatus\JkaServer\TemplateHelper $templateHelper */ ?>
 
         <?php $title = $templateHelper->stripColors($data->serverName); ?>
-        <?php require_once __DIR__ . '/_head.php'; ?>
+        <?php require __DIR__ . '/_head.php'; ?>
     </head>
     <body>
         <noscript>
