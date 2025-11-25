@@ -50,8 +50,12 @@ final class JkaServerService implements JkaServerServiceInterface
     {
         $url = Url::buildFullUdpUrl($host);
     
+        $context = stream_context_create([
+            'socket' => ['bindto' => '0:0'], // Make sure we're using IPv4 (not IPv6)
+        ]);
+        
         // 3 second timeout for the connect() system call (shouldn't be a problem for a UDP socket)
-        $socket = stream_socket_client($url, $error_code, $error_message, 3.0);
+        $socket = stream_socket_client($url, $error_code, $error_message, 3.0, STREAM_CLIENT_CONNECT, $context);
         if (!$socket) {
             $this->logger->error("$host - Socket error - Error code: $error_code - Error message: $error_message");
             return new JkaServerResponse(JkaServerResponseStatus::NetworkError);
