@@ -11,7 +11,6 @@
         
         <div id="background-image"
              style="<?= 'background-image: url(' . $templateHelper->asset('/levelshots/default.jpg') . '); '
-                      . 'filter: blur(' . (int)$config->getBackgroundBlurRadius('default') . 'px); '
                       . 'opacity: ' . (int)$config->getBackgroundOpacity('default') . '%; '
                     ?>" >
         </div>

@@ -28,13 +28,6 @@ $jka_servers = [
     ],
 ];
 
-$background_blur_radius = [
-    'academy3' => 10, // Specify a value for a map that does NOT have a default value + test max value
-    'default' => 2, // Override a map that DOES have a default (0)
-    'vjun2' => 0, // Override (was: 7) + test minimum value
-    // Several values aren't overridden and should stay to their default value (e.g. 'yavin1b' => 7)
-];
-
 $background_opacity = [
     'mp/ffa5' => 30, // Override a map that DOES have a default value (40)
     'academy6' => 0, // Specify a value for a map that does NOT have a default value + test min value

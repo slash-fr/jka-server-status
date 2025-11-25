@@ -304,7 +304,6 @@ final class StatusControllerTest extends TestCase
         $nbHumans = 11;
         $nbBots = 2;
 
-        $backgroundBlurRadius = 7;
         $backgroundOpacity = 40;
 
         $players = [
@@ -344,7 +343,6 @@ final class StatusControllerTest extends TestCase
             $jkaServerConfig->address,
             true, // Is up?
             $statusText,
-            $backgroundBlurRadius,
             $backgroundOpacity,
             $backgroundImageUrl,
             $mapName,
@@ -463,8 +461,7 @@ final class StatusControllerTest extends TestCase
             $jkaServerConfig->address,
             false, // Is up?
             'Timeout', // Status
-            0, // Background blur radius
-            50, // Background blur radius
+            50, // Background opacity
         );
 
         // Don't let the JkaServerService send UDP data, return the desired StatusData immediately

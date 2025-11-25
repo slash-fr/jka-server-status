@@ -104,7 +104,6 @@ final class JkaServerService implements JkaServerServiceInterface
                 $jkaServerConfig->address,
                 false, // isUp
                 $statusMessage,
-                $this->config->getBackgroundBlurRadius('default'),
                 $this->config->getBackgroundOpacity('default'),
             );
         }
@@ -122,7 +121,6 @@ final class JkaServerService implements JkaServerServiceInterface
                 $jkaServerConfig->address,
                 false, // isUp
                 $statusMessage,
-                $this->config->getBackgroundBlurRadius('default'),
                 $this->config->getBackgroundOpacity('default'),
             );
         }
@@ -150,7 +148,6 @@ final class JkaServerService implements JkaServerServiceInterface
                 $jkaServerConfig->address,
                 false, // isUp
                 $statusMessage,
-                $this->config->getBackgroundBlurRadius('default'),
                 $this->config->getBackgroundOpacity('default'),
             );
         }
@@ -171,12 +168,10 @@ final class JkaServerService implements JkaServerServiceInterface
         $this->countPlayers($players, $nbPlayers, $nbBots, $nbHumans);
 
         $backgroundImageUrl = '';
-        $backgroundImageBlurRadius = ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS;
         $backgroundImageOpacity = ConfigData::DEFAULT_BACKGROUND_OPACITY;
         $this->initializeBackgroundImageSettings(
             $cvars, // Input parameter
             $backgroundImageUrl, // Output parameter
-            $backgroundImageBlurRadius, // Output parameter
             $backgroundImageOpacity, // Output parameter
         );
 
@@ -190,7 +185,6 @@ final class JkaServerService implements JkaServerServiceInterface
             $jkaServerConfig->address,
             true, // isUp
             'Up',
-            $backgroundImageBlurRadius,
             $backgroundImageOpacity,
             $backgroundImageUrl,
             $cvars['mapname'] ?? null,
@@ -270,15 +264,12 @@ final class JkaServerService implements JkaServerServiceInterface
      * @param array $cvars e.g. ["g_gametype" => "0", "mapname" => "mp/ffa3", "sv_hostname" => "Mystic Lugormod"]
      * @param string $backgroundImageUrl Output parameter. The map-dependent (root-relative) background image URL
      *                                   WITHOUT $asset_url prefix (e.g. "/levelshots/mp/ffa3.jpg")
-     * @param int $backgroundImageBlurRadius Output parameter. The blur radius, in pixels,
-     *                                       to apply to the background image (e.g. 5)
      * @param int $backgroundImageOpacity Output parameter. The opacity percentage to apply to the background image
      *                                    (e.g. 50)
      */
     private function initializeBackgroundImageSettings(
         array $cvars,
         string &$backgroundImageUrl,
-        int &$backgroundImageBlurRadius,
         int &$backgroundImageOpacity,
     ): void
     {
@@ -288,7 +279,6 @@ final class JkaServerService implements JkaServerServiceInterface
             && file_exists($this->config->projectDir . '/public/levelshots/' . $mapName . '.jpg') // and the file exists
         ) {
             $backgroundImageUrl = '/levelshots/' . $mapName . '.jpg';
-            $backgroundImageBlurRadius = $this->config->getBackgroundBlurRadius($mapName);
             $backgroundImageOpacity = $this->config->getBackgroundOpacity($mapName);
             return;
         }
@@ -296,7 +286,6 @@ final class JkaServerService implements JkaServerServiceInterface
         // Otherwise, we can't use the map name as a filename
         $this->logger->warning('Could not find levelshot for "' . $mapName . '". Using "default.jpg".');
         $backgroundImageUrl = StatusData::DEFAULT_BACKGROUND_IMAGE_URL;
-        $backgroundImageBlurRadius = $this->config->getBackgroundBlurRadius('default');
         $backgroundImageOpacity = $this->config->getBackgroundOpacity('default');
     }
 

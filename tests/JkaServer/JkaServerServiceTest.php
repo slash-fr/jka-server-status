@@ -149,7 +149,6 @@ final class JkaServerServiceTest extends TestCase
         $this->assertSame(0, count($statusData->players));
         // No map => default background
         $this->assertSame('/levelshots/default.jpg', $statusData->backgroundImageUrl);
-        $this->assertSame(0, $statusData->backgroundImageBlurRadius);
         $this->assertSame(50, $statusData->backgroundImageOpacity);
         // The background image URIs are NOT prefixed by the "asset URL" at this point.
         // The TemplateHelper::asset() method will do that in the templates.
@@ -355,10 +354,6 @@ final class JkaServerServiceTest extends TestCase
 
         $this->assertSame('/levelshots/' . self::CVARS['mapname'] . '.jpg', $statusData->backgroundImageUrl);
         $this->assertSame(
-            $this->config->getBackgroundBlurRadius(self::CVARS['mapname']),
-            $statusData->backgroundImageBlurRadius
-        );
-        $this->assertSame(
             $this->config->getBackgroundOpacity(self::CVARS['mapname']),
             $statusData->backgroundImageOpacity
         );
@@ -420,10 +415,6 @@ final class JkaServerServiceTest extends TestCase
 
         // Background image URL = "default.jpg", because we don't have a map with the specified name
         $this->assertSame('/levelshots/default.jpg', $statusData->backgroundImageUrl);
-
-        // Background image blur = 0, because it corresponds to "default.jpg",
-        // and it's NOT the implicit default value (5) for levelshots that don't have an explicit default.
-        $this->assertSame(0, $statusData->backgroundImageBlurRadius);
 
         // Background opacity = 50, because it corresponds to "default.jpg" (but it's the default value anyway)
         $this->assertSame(50, $statusData->backgroundImageOpacity);

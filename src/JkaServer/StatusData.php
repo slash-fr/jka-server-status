@@ -34,11 +34,6 @@ class StatusData
     public readonly string $backgroundImageUrl;
 
     /**
-     * @var int $backgroundImageBlurRadius Blur radius for the map-dependent background image (e.g. 5)
-     */
-    public readonly int $backgroundImageBlurRadius;
-
-    /**
      * @var int $backgroundImageOpacity Opacity for the map-dependent background image (e.g. 50)
      */
     public readonly int $backgroundImageOpacity;
@@ -99,7 +94,6 @@ class StatusData
      * @param string $address Server IP address or domain name (with optional port)
      * @param bool $isUp Is the server up?
      * @param string $status Status string (e.g. 'Up', 'Down', 'Timeout', ...)
-     * @param int $backgroundImageBlurRadius Blur radius for the map-dependent background image (e.g. 5).
      * @param int $backgroundImageOpacity Opacity for the map-dependent background image (e.g. 50).
      * @param string $backgroundImageUrl URL of the background image (e.g. '/levelshots/mp/ffa3.jpg').
      *                                   If not set, defaults to 'default.jpg'.
@@ -124,7 +118,6 @@ class StatusData
         string $address,
         bool $isUp,
         string $status,
-        int $backgroundImageBlurRadius,
         int $backgroundImageOpacity,
         string $backgroundImageUrl = self::DEFAULT_BACKGROUND_IMAGE_URL,
         ?string $mapName = null,
@@ -147,7 +140,6 @@ class StatusData
         $this->address = $address;
         $this->isUp = $isUp;
         $this->status = $status;
-        $this->backgroundImageBlurRadius = $backgroundImageBlurRadius;
         $this->backgroundImageOpacity = $backgroundImageOpacity;
         $this->backgroundImageUrl = $backgroundImageUrl;
         $this->mapName = $mapName;

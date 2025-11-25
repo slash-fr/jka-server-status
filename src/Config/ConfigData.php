@@ -45,30 +45,6 @@ class ConfigData
     public const DEFAULT_ABOUT_PAGE_TITLE = 'About';
 
     /**
-     * @var int Blur radius to use when no other value is set. Radius in pixels [0-10].
-     */
-    public const DEFAULT_BACKGROUND_BLUR_RADIUS = 5;
-
-    /**
-     * @var int[] Blur radius per map / background image. Radius in pixels [0-10].
-     */
-    public const DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP = [
-        'default' => 0, // "default.jpg"
-        'mp/ctf1' => 7,
-        'mp/ctf3' => 7,
-        'mp/ffa5' => 7,
-        'mp/siege_hoth' => 7,
-        'mp/siege_korriban' => 7,
-        't3_hevil' => 7,
-        't3_rift' => 7,
-        't3_stamp' => 7,
-        'vjun2' => 7,
-        'yavin1' => 7,
-        'yavin1b' => 7,
-        // Other levelshots default to ConfigData::DEFAULT_BACKGROUND_BLUR
-    ];
-
-    /**
      * @var int Background opacity to use when no other value is set. Percentage [0-100].
      */
     public const DEFAULT_BACKGROUND_OPACITY = 50;
@@ -171,11 +147,6 @@ class ConfigData
     public readonly ?string $canonicalUrl;
 
     /**
-     *  @var int[] $blurRadiusPerMap Blur radius in pixels (int [0-10]) by image name.
-     */
-    private readonly array $blurRadiusPerMap;
-
-    /**
      * @var int[] $opacityPerMap Opacity percentage (int [0-100]) by image name.
      */
     private readonly array $opacityPerMap;
@@ -190,10 +161,6 @@ class ConfigData
      * @param string $aboutPageUri URI of the "About" page (e.g. '/about')
      * @param string $aboutPageTitle Title of the "About" page, and "About" link (e.g. 'About')
      * @param JkaServerConfigData[] $jkaServers
-     * @param int[] $blurRadiusPerMap Indexed array. Blur radius in pixels (int [0-10]) by image name.
-     *                                E.g. "mp/siege_korriban" => 5 (= 5px for "mp/siege_korriban.jpg"),
-     *                                or "default" => 0 (= 0px for "default.jpg").
-     *                                Any map missing from the array will default to ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS.
      * @param int[] $opacityPerMap Indexed array. Opacity percentage (int [0-100]) by image name.
      *                             E.g. "mp/siege_korriban" => 30 (= 30% for "mp/siege_korriban.jpg"),
      *                             or "default" => 50 (= 50% for "default.jpg").
@@ -212,7 +179,6 @@ class ConfigData
         string $aboutPageUri = self::DEFAULT_ABOUT_PAGE_URI,
         string $aboutPageTitle = self::DEFAULT_ABOUT_PAGE_TITLE,
         array $jkaServers = [],
-        array $blurRadiusPerMap = self::DEFAULT_BACKGROUND_BLUR_RADIUS_PER_MAP,
         array $opacityPerMap = self::DEFAULT_BACKGROUND_OPACITY_PER_MAP,
         string $projectDir = self::DEFAULT_PROJECT_DIR,
         string $cacheDir = self::DEFAULT_CACHE_DIR,
@@ -227,22 +193,10 @@ class ConfigData
         $this->aboutPageUri = $aboutPageUri;
         $this->aboutPageTitle = $aboutPageTitle;
         $this->jkaServers = $jkaServers;
-        $this->blurRadiusPerMap = $blurRadiusPerMap;
         $this->opacityPerMap = $opacityPerMap;
         $this->projectDir = $projectDir;
         $this->cacheDir = $cacheDir;
         $this->canonicalUrl = $canonicalUrl;
-    }
-
-    /**
-     * Returns the blur radius, in pixels [0-10], to apply to the specified background image.
-     * @param string $mapName The name of the image, without the extension (.jpg), relative to the "levelshots" folder.
-     *                        Typically, the map name (e.g. "mp/ffa3") or "default" for "default.jpg".
-     * @return int The blur radius to apply, in pixels
-     */
-    public function getBackgroundBlurRadius(string $mapName): int
-    {
-        return $this->blurRadiusPerMap[$mapName] ?? self::DEFAULT_BACKGROUND_BLUR_RADIUS;
     }
 
     /**

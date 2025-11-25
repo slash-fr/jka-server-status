@@ -91,25 +91,6 @@ $jka_servers = [
     // Other JKA servers...
 ];
 
-// Blur radius per background image (i.e. per map)
-// Usually 5px, but some images look better with different settings.
-$background_blur_radius = [
-    // Allowed range: [0-10]
-    'default' => 0, // "default.jpg" (defaults to 0 if omitted)
-    'mp/ctf1' => 7, // "mp/ctf1" defaults to 7 if omitted
-    'mp/ctf3' => 7, // "mp/ctf3" defaults to 7 if omitted
-    'mp/ffa5' => 7, // "mp/ffa5" defaults to 7 if omitted
-    'mp/siege_hoth' => 7, // "mp/siege_hoth" defaults to 7 if omitted
-    'mp/siege_korriban' => 7, // "mp/siege_korriban" defaults to 7 if omitted
-    't3_hevil' => 7, // "t3_hevil" defaults to 7 if omitted
-    't3_rift' => 7, // "t3_rift" defaults to 7 if omitted
-    't3_stamp' => 7, // "t3_stamp" defaults to 7 if omitted
-    'vjun2' => 7, // "vjun2" defaults to 7 if omitted
-    'yavin1' => 7, // "yavin1" defaults to 7 if omitted
-    'yavin1b' => 7, // "yavin1b" defaults to 7 if omitted
-    // Other levelshots default to 5
-];
-
 // Opacity per background image (i.e. per map)
 // Usually 50%, but some images are brighter, or have more contrast, which hurts readability.
 $background_opacity = [

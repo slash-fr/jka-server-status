@@ -51,11 +51,6 @@ body.page-not-found img {
     background-position: center;
     background-attachment: scroll; /* Safari on iOS doesn't like "fixed" background-attachments */
     opacity: 50%;
-    filter: blur(5px);
-}
-
-body.landing-page #background-image {
-    filter: none; /* No blur on the landing page */
 }
 
 #content, #settings, #cvars {

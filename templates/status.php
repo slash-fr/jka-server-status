@@ -11,7 +11,6 @@
     <body>
         <div id="background-image"
              style="<?= 'background-image: url(' . $templateHelper->asset($data->backgroundImageUrl) . '); '
-                      . 'filter: blur(' . (int)$data->backgroundImageBlurRadius . 'px); '
                       . 'opacity: ' . (int)$data->backgroundImageOpacity . '%; '
                     ?>" >
         </div>
