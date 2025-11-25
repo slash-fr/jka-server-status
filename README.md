@@ -2,7 +2,9 @@
 This tool can send requests to a **Jedi Academy** server, to retrieve some basic server info,
 as well as the player list.
 
-[![Player list screenshot (desktop)](doc/screenshots/desktop-player-list-thumbnail.jpg)](doc/screenshots/screenshots.md)
+![Player list screenshot (desktop)](doc/screenshots/desktop-player-list-thumbnail.jpg)
+
+[→ Click here for more screenshots](doc/screenshots/screenshots.md)
 
 ## Features
 - **Server status** info,
