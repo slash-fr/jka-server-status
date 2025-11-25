@@ -56,7 +56,6 @@ body.page-not-found img {
 
 body.landing-page #background-image {
     filter: none; /* No blur on the landing page */
-    /* Note: User settings don't apply to the landing page background */
 }
 
 #content, #settings, #cvars {
@@ -312,23 +311,6 @@ label strong {
     text-align: left;
 }
 
-.background-image-tweak label {
-    font-weight: normal; /* Sub-labels don't use a bold font */
-    padding-left: 5px;
-}
-
-.background-image-tweak input[type=radio] {
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    margin-left: 15px;
-    vertical-align: text-bottom;
-}
-
-.background-image-tweak input[type=radio]:first-child {
-    margin-left: 0;
-}
-
 #close-settings, #close-cvars {
     margin-top: 32px;
 }
@@ -476,12 +458,6 @@ body.about-page #main-content a {
     #setting-grid label {
         margin-top: 0;
         text-align: right;
-    }
-
-    .background-image-tweak input[type=radio] {
-        width: 20px;
-        height: 20px;
-        margin-left: 20px;
     }
 
     #cvar-table {

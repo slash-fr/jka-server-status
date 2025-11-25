@@ -9,8 +9,8 @@ as well as the player list.
 - **Player list**,
 - List of `cvars` (**Server info** button),
 - **Background images** from my [**Widescreen levelshots**](https://jkhub.org/files/file/4179-widescreen-levelshots/)
-  pack,
-- User-configurable background **blur** and **opacity**, to improve the readability,
+  pack,  
+  → Blurred and dimmed, to improve readability,
 - Optional **auto-refresh** (user-configurable),
 - **Responsive** layout,
 - **Server-side caching** (configurable, 10 seconds by default).

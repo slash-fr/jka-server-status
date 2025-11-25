@@ -43,22 +43,6 @@ class StatusData
      */
     public readonly int $backgroundImageOpacity;
 
-    /**
-     * @var string $default Default background image URL. Root-relative. WITHOUT $asset_url prefix.
-     * Please call TemplateHelper::asset() on it to get the correct path, with the cache busting query string.
-     */
-    public readonly string $defaultBackgroundImageUrl;
-
-    /**
-     * @var int $defaultBackgroundImageBlurRadius Blur radius for the default background image (e.g. 0)
-     */
-    public readonly int $defaultBackgroundImageBlurRadius;
-
-    /**
-     * @var int $defaultBackgroundImageOpacity Opacity for the default background image (e.g. 50)
-     */
-    public readonly int $defaultBackgroundImageOpacity;
-
     /** 
      * @var string|null $mapName Map name (e.g. "mp/ffa3").
      * Might not be set (e.g. if the server is down, or doesn't give the info, for some reason)
@@ -115,14 +99,8 @@ class StatusData
      * @param string $address Server IP address or domain name (with optional port)
      * @param bool $isUp Is the server up?
      * @param string $status Status string (e.g. 'Up', 'Down', 'Timeout', ...)
-     * @param int $defaultBackgroundImageBlurRadius Blur radius for "default.jpg" (e.g. 0).
-     * @param int $defaultBackgroundImageOpacity Opacity percentage for "default.jpg" (e.g. 50).
-     * @param int|null $backgroundImageBlurRadius Blur radius for the map-dependent background image (e.g. 5).
-     *                                            If not set, defaults to $defaultBackgroundImageBlurRadius.
-     *                                            Always set this, unless there's no map (server down, timeout, ...)
-     * @param int|null $backgroundImageOpacity Opacity for the map-dependent background image (e.g. 50).
-     *                                         If not set, defaults to $defaultBackgroundImageOpacity.
-     *                                         Always set this, unless there's no map (server down, timeout, ...)
+     * @param int $backgroundImageBlurRadius Blur radius for the map-dependent background image (e.g. 5).
+     * @param int $backgroundImageOpacity Opacity for the map-dependent background image (e.g. 50).
      * @param string $backgroundImageUrl URL of the background image (e.g. '/levelshots/mp/ffa3.jpg').
      *                                   If not set, defaults to 'default.jpg'.
      *                                   Always set this, unless there's no map (server down, timeout, ...)
@@ -146,10 +124,8 @@ class StatusData
         string $address,
         bool $isUp,
         string $status,
-        int $defaultBackgroundImageBlurRadius,
-        int $defaultBackgroundImageOpacity,
-        ?int $backgroundImageBlurRadius = null,
-        ?int $backgroundImageOpacity = null,
+        int $backgroundImageBlurRadius,
+        int $backgroundImageOpacity,
         string $backgroundImageUrl = self::DEFAULT_BACKGROUND_IMAGE_URL,
         ?string $mapName = null,
         ?string $gameType = null,
@@ -171,12 +147,9 @@ class StatusData
         $this->address = $address;
         $this->isUp = $isUp;
         $this->status = $status;
-        $this->defaultBackgroundImageBlurRadius = $defaultBackgroundImageBlurRadius;
-        $this->defaultBackgroundImageOpacity = $defaultBackgroundImageOpacity;
-        $this->backgroundImageBlurRadius = $backgroundImageBlurRadius ?? $defaultBackgroundImageBlurRadius;
-        $this->backgroundImageOpacity = $backgroundImageOpacity ?? $defaultBackgroundImageOpacity;
+        $this->backgroundImageBlurRadius = $backgroundImageBlurRadius;
+        $this->backgroundImageOpacity = $backgroundImageOpacity;
         $this->backgroundImageUrl = $backgroundImageUrl;
-        $this->defaultBackgroundImageUrl = self::DEFAULT_BACKGROUND_IMAGE_URL; // Not configurable, currently
         $this->mapName = $mapName;
         $this->gameType = $gameType;
         $this->gameName = $gameName;

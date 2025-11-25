@@ -171,8 +171,8 @@ final class JkaServerService implements JkaServerServiceInterface
         $this->countPlayers($players, $nbPlayers, $nbBots, $nbHumans);
 
         $backgroundImageUrl = '';
-        $backgroundImageBlurRadius = 5;
-        $backgroundImageOpacity = 50;
+        $backgroundImageBlurRadius = ConfigData::DEFAULT_BACKGROUND_BLUR_RADIUS;
+        $backgroundImageOpacity = ConfigData::DEFAULT_BACKGROUND_OPACITY;
         $this->initializeBackgroundImageSettings(
             $cvars, // Input parameter
             $backgroundImageUrl, // Output parameter
@@ -190,8 +190,6 @@ final class JkaServerService implements JkaServerServiceInterface
             $jkaServerConfig->address,
             true, // isUp
             'Up',
-            $this->config->getBackgroundBlurRadius('default'),
-            $this->config->getBackgroundOpacity('default'),
             $backgroundImageBlurRadius,
             $backgroundImageOpacity,
             $backgroundImageUrl,

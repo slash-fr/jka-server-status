@@ -14,7 +14,6 @@
                       . 'filter: blur(' . (int)$config->getBackgroundBlurRadius('default') . 'px); '
                       . 'opacity: ' . (int)$config->getBackgroundOpacity('default') . '%; '
                     ?>" >
-            <?php /* User settings for opacity and blur don't apply to the landing page. */ ?>
         </div>
         
         <div id="content">

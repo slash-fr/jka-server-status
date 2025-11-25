@@ -91,7 +91,7 @@ $jka_servers = [
     // Other JKA servers...
 ];
 
-// Blur radius per background image (i.e. per map) - if the user has their settings on "Auto"
+// Blur radius per background image (i.e. per map)
 // Usually 5px, but some images look better with different settings.
 $background_blur_radius = [
     // Allowed range: [0-10]
@@ -110,7 +110,7 @@ $background_blur_radius = [
     // Other levelshots default to 5
 ];
 
-// Opacity per background image (i.e. per map) - if the user has their settings on "Auto"
+// Opacity per background image (i.e. per map)
 // Usually 50%, but some images are brighter, or have more contrast, which hurts readability.
 $background_opacity = [
     // Allowed range: [0-100]

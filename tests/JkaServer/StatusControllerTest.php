@@ -304,8 +304,6 @@ final class StatusControllerTest extends TestCase
         $nbHumans = 11;
         $nbBots = 2;
 
-        $defaultBlurRadius = 0; // For "default.jpg"
-        $defaultOpacity = 50; // For "default.jpg"
         $backgroundBlurRadius = 7;
         $backgroundOpacity = 40;
 
@@ -346,8 +344,6 @@ final class StatusControllerTest extends TestCase
             $jkaServerConfig->address,
             true, // Is up?
             $statusText,
-            $defaultBlurRadius,
-            $defaultOpacity,
             $backgroundBlurRadius,
             $backgroundOpacity,
             $backgroundImageUrl,
@@ -425,55 +421,6 @@ final class StatusControllerTest extends TestCase
             $html
         );
 
-        ///////////////////////////////////////
-        // Background images and blur / opacity
-
-        $this->assertMatchesRegularExpression(
-            '/' . preg_quote('<input') . '.*' . preg_quote('id="map-background-image"') . '.*'
-                . preg_quote(
-                    'value="' . htmlspecialchars($backgroundImageUrl),
-                    '/' // Also escape the '/' delimiter
-                ) . '/s',
-                // /s = dot also matches newlines
-                // No closing double quote for the "value" attribute, because the URL may have a query string
-            $html
-        );
-
-        $this->assertMatchesRegularExpression(
-            '/' . preg_quote('<input') . '.*' . preg_quote('id="map-background-image-blur-radius"') . '.*'
-                . preg_quote('value="' . $backgroundBlurRadius . '"') . '/s', // s = dot also matches newlines
-            $html
-        );
-
-        $this->assertMatchesRegularExpression(
-            '/' . preg_quote('<input') . '.*' . preg_quote('id="map-background-image-opacity"') . '.*'
-                . preg_quote('value="' . $backgroundOpacity . '"') . '/s', // s = dot also matches newlines
-            $html
-        );
-
-        $this->assertMatchesRegularExpression(
-            '/' . preg_quote('<input') . '.*' . preg_quote('id="default-background-image"') . '.*'
-                . preg_quote(
-                    'value="' . htmlspecialchars(StatusData::DEFAULT_BACKGROUND_IMAGE_URL),
-                    '/' // Also escape the '/' delimiter
-                )
-                . '/s',
-                // No closing double quote for the "value" attribute, because the URL may have a query string
-            $html
-        );
-
-        $this->assertMatchesRegularExpression(
-            '/' . preg_quote('<input') . '.*' . preg_quote('id="default-background-image-blur-radius"') . '.*'
-                . preg_quote('value="' . $defaultBlurRadius . '"') . '/s', // s = dot also matches newlines
-            $html
-        );
-
-        $this->assertMatchesRegularExpression(
-            '/' . preg_quote('<input') . '.*' . preg_quote('id="default-background-image-opacity"') . '.*'
-                . preg_quote('value="' . $defaultOpacity . '"') . '/s', // s = dot also matches newlines
-            $html
-        );
-
         ////////////////////
         // Players and cvars
 
@@ -516,8 +463,8 @@ final class StatusControllerTest extends TestCase
             $jkaServerConfig->address,
             false, // Is up?
             'Timeout', // Status
-            0, // Default background blur radius
-            50, // Default background blur radius
+            0, // Background blur radius
+            50, // Background blur radius
         );
 
         // Don't let the JkaServerService send UDP data, return the desired StatusData immediately
@@ -542,14 +489,6 @@ final class StatusControllerTest extends TestCase
 
         $this->assertStringContainsString('Status:', $html);
         $this->assertStringContainsString('Timeout', $html);
-
-        // The **map-dependent** background image should also be "default.jpg" (because there's no map)
-        $this->assertMatchesRegularExpression(
-            '/' . preg_quote('<input') . '.*' . preg_quote('id="map-background-image"') . '.*'
-                . preg_quote('value="' . StatusData::DEFAULT_BACKGROUND_IMAGE_URL , '/') . '/s',
-                // No closing double quote for the "value" attribute, because the URL may have a query string
-            $html
-        );
 
         $this->assertStringNotContainsString('<table class="player-list">', $html); // No players
 

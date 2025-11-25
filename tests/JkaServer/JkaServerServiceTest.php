@@ -122,11 +122,6 @@ final class JkaServerServiceTest extends TestCase
         $this->assertSame('/tell-me-about-it', $statusData->aboutPageUri);
         $this->assertSame('Credits (and legal stuff)', $statusData->aboutPageTitle);
         $this->assertSame(self::CONFIG_SERVER_ADDRESS, $statusData->address);
-        $this->assertSame('/levelshots/default.jpg', $statusData->defaultBackgroundImageUrl);
-        $this->assertSame(0, $statusData->defaultBackgroundImageBlurRadius);
-        $this->assertSame(50, $statusData->defaultBackgroundImageOpacity);
-        // The background image URIs are NOT prefixed by the "asset URL" at this point.
-        // The TemplateHelper::asset() method will do that in the templates.
         $this->assertIsArray($statusData->cvars);
     }
 
